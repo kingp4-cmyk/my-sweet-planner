@@ -1,191 +1,72 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>My Sweet Planner | Arkadaş Yarışı</title>
-  <link rel="stylesheet" href="./race.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffebf5">
+  <title>Koşu Kulübü ♡ My Sweet Planner</title>
+  <link rel="stylesheet" href="./club.css">
 </head>
-<body>
-  <div class="page">
-    <header class="header">
-      <a href="./index.html" class="back">← Ajandaya dön</a>
-
-      <div class="eyebrow">
-        MY SWEET PLANNER · STUDY CLUB
-      </div>
-
-      <h1>🏁 Arkadaşlarınla Saat Yarışı</h1>
-
-      <p>
-        Çalıştıkça avatarın ilerlesin.
-        Ay sonunda lideri birlikte kutlayın!
-      </p>
-
-      <div id="connectionStatus"
-           class="connection"
-           role="status">
-        Bağlantı kontrol ediliyor…
-      </div>
+<body data-club-page="race" class="club-race-page">
+  <div class="club-page-wrap">
+    <header class="club-race-header">
+      <a class="club-back" href="./index.html">← Ajandaya dön</a>
+      <button id="clubProfileOpen" class="club-profile-button" type="button" hidden>👤 Profilim</button>
     </header>
 
-    <div class="layout">
-      <main class="main">
-
-        <section class="panel">
-          <div class="heading-row">
-            <h2>💌 Yarış odan</h2>
-            <button class="button secondary" id="newRoomBtn">
-              Yeni oda
-            </button>
-          </div>
-
-          <label for="raceLinkInput">Davet bağlantısı</label>
-
-          <div class="link-row">
-            <input id="raceLinkInput"
-                   readonly
-                   aria-label="Davet bağlantısı">
-
-            <button class="button" id="copyLinkBtn">
-              Kopyala
-            </button>
-          </div>
-
-          <p class="hint" id="shareHint">
-            Bağlantıyı arkadaşlarına göndererek
-            aynı yarışta buluşabilirsiniz.
-          </p>
-        </section>
-
-        <section class="panel">
-          <h2>💖 Benim yarışçım</h2>
-
-          <div class="profile-layout">
-            <div class="avatar-sample"
-                 id="avatarPreview"
-                 aria-hidden="true"></div>
-
-            <div class="fields">
-              <label for="nameInput">Görünen adın</label>
-
-              <input id="nameInput"
-                     maxlength="24"
-                     placeholder="Örnek: Pelin"
-                     autocomplete="nickname">
-
-              <label for="avatarSelect">Avatarın</label>
-
-              <select id="avatarSelect">
-                <option value="pink">Pink girl</option>
-                <option value="denim">Denim girl</option>
-                <option value="violet">Purple girl</option>
-                <option value="black">Cool black</option>
-                <option value="mint">Mint girl</option>
-              </select>
-            </div>
-          </div>
-
-          <p id="myHours" class="my-hours">
-            Ajandandaki bu ayın çalışma süresi: 0 saat
-          </p>
-
-          <div class="action-row">
-            <button id="joinBtn" class="button primary">
-              Yarışa katıl
-            </button>
-
-            <button id="syncBtn" class="button secondary">
-              Saatimi güncelle
-            </button>
-
-            <button id="demoBtn"
-                    class="button secondary"
-                    hidden>
-              Örnek arkadaş ekle
-            </button>
-          </div>
-
-          <p class="hint">
-            Sadece adın, avatarın ve toplam çalışma
-            saatin paylaşılır. Görev ve notların paylaşılmaz.
-          </p>
-        </section>
-
-        <section class="panel">
-          <div class="heading-row">
-            <h2>👟 Yarış parkuru</h2>
-
-            <input id="monthPicker"
-                   type="month"
-                   aria-label="Yarış ayını seç">
-          </div>
-
-          <p class="hint">
-            Avatarların konumu, o ay en çok çalışan kişinin
-            saatine göre karşılaştırılır. 🏁 çizgisi
-            ay sonunu temsil eder.
-          </p>
-
-          <div id="raceTracks"
-               class="tracks"
-               aria-live="polite"></div>
-        </section>
-
-        <div class="bottom-grid">
-          <section class="panel">
-            <h2>🏆 Ay sonu sonucu</h2>
-            <p id="finishText" class="hint"></p>
-
-            <div id="winnerBox" class="winner">
-              Henüz sonuç yok.
-            </div>
-          </section>
-
-          <section class="panel">
-            <h2>✨ Sıralama</h2>
-            <ol id="leaderboard" class="leaderboard"></ol>
-          </section>
-        </div>
-
-      </main>
-
-      <aside class="panel chat-panel">
-        <div class="chat-head">
-          <h2>💬 Yarış sohbeti</h2>
-
-          <span class="chat-subtitle">
-            Aynı odadaki arkadaşlarınla
-          </span>
-        </div>
-
-        <div id="chatMessages"
-             class="chat-messages"
-             aria-live="polite"></div>
-
-        <form id="chatForm" class="chat-form">
-          <input id="chatInput"
-                 maxlength="300"
-                 placeholder="Bir mesaj yaz…"
-                 autocomplete="off"
-                 required>
-
-          <button class="button primary"
-                  id="sendBtn"
-                  type="submit">
-            Gönder
-          </button>
-        </form>
-
-        <p class="hint" id="chatHint">
-          Sohbet için önce yarışa katıl.
-        </p>
-      </aside>
+    <div class="club-hero">
+      <span class="club-kicker">MY SWEET PLANNER · STUDY CLUB</span>
+      <h1>🏁 Koşu kulübü</h1>
+      <p>Tek yolda birlikte ilerleyin. En çok çalışan en önde!</p>
+      <p class="club-connection" id="clubStatus" role="status">Bağlanılıyor…</p>
     </div>
+
+    <main>
+      <section class="club-card club-road-card" aria-labelledby="clubRoadTitle">
+        <div class="club-section-heading">
+          <h2 id="clubRoadTitle">👟 Bu ayın yarış yolu</h2>
+          <span id="clubMonthName" class="club-subtle"></span>
+        </div>
+
+        <div id="clubMount"></div>
+
+        <div class="club-road-bottom">
+          <span id="clubMyHours">Çalışma saatlerin hesaplanıyor…</span>
+          <button type="button" class="club-btn club-btn-soft" id="clubSyncBtn">Saatimi güncelle</button>
+        </div>
+      </section>
+
+      <section class="club-card club-invite-card" aria-labelledby="clubInviteTitle">
+        <h2 id="clubInviteTitle">💌 Arkadaşlarını çağır</h2>
+        <p>Bu bağlantıyı gönderdiğin kişiler aynı yarış odasına gelir.</p>
+
+        <div class="club-invite-row">
+          <input aria-label="Davet bağlantısı" id="clubInvite" readonly>
+          <button class="club-btn" id="clubCopyBtn" type="button">Kopyala</button>
+        </div>
+      </section>
+
+      <div class="club-bottom-grid">
+        <section class="club-card">
+          <h2>🏆 Sıralama</h2>
+          <ol class="club-ranking" id="clubRanking"></ol>
+        </section>
+
+        <section class="club-card club-chat-panel">
+          <h2>💬 Sohbet</h2>
+          <div id="clubChatList" class="club-chat-messages" aria-live="polite"></div>
+
+          <form id="clubChatForm" class="club-chat-form">
+            <input id="clubChatInput" placeholder="Bir mesaj yaz…" maxlength="300" aria-label="Mesajın" required>
+            <button id="clubChatSend" class="club-btn" type="submit">Gönder</button>
+          </form>
+        </section>
+      </div>
+    </main>
   </div>
 
   <script src="./firebase-config.js"></script>
-  <script src="./race.js" defer></script>
+  <script type="module" src="./club.js"></script>
 </body>
 </html>

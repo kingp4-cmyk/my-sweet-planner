@@ -4,11 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="My Sweet Planner ile günlük görevlerini planla, saatlerini takip et ve ajandanı süsle.">
+  <meta name="description" content="My Sweet Planner ile günlük görevlerini planla, notlarını ve saatlerini takip et, ajandanı renklerle ve stickerlarla süsle.">
   <title>My Sweet Planner ♡</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./club.css">
 </head>
-<body>
+<body data-club-page="planner">
 
 <header class="topbar">
   <div class="brand">
@@ -20,30 +21,24 @@
   </div>
 
   <div class="top-actions">
-    <a class="btn invite-btn" href="./race.html">
-      🏁 Arkadaşlarını davet et
-    </a>
+    <a class="btn invite-btn" id="clubRaceLink" href="./race.html">🏁 Koşu</a>
     <span class="save-status" id="saveStatus">♡ Hazır</span>
     <button class="btn" id="printBtn">◫ Yazdır</button>
   </div>
 </header>
 
-<div class="shell">
+<div id="clubMount" class="club-planner-mount" hidden></div>
 
+<div class="shell">
   <main class="main-column">
 
     <section class="hero" data-paint="site:hero">
-      <div class="hero-bubbles">🌷✨</div>
+      <div class="hero-bubbles">🌷🧸</div>
       <div class="overline">
         ✦ <span id="heroYear">2026</span> • Mini günlük ajandam
       </div>
-
       <h1>Bugün biraz kendime zaman ♡</h1>
-
-      <p>
-        Görevlerini tamamla, saatlerini kaydet,
-        gününü değerlendir ve stickerlarla süsle.
-      </p>
+      <p>Görevlerini tamamla, saatlerini kaydet, gününü değerlendir ve stickerlarla süsle.</p>
 
       <div class="year-switch">
         <button id="prevYear" aria-label="Önceki yıl">‹</button>
@@ -51,8 +46,7 @@
         <button id="nextYear" aria-label="Sonraki yıl">›</button>
       </div>
 
-      <nav class="month-switch" id="monthSwitch"
-           aria-label="Ay seçimi"></nav>
+      <nav class="month-switch" id="monthSwitch" aria-label="Ay seçimi"></nav>
     </section>
 
     <section class="summary">
@@ -108,16 +102,17 @@
 
     <div class="side-heading">
       <h2>Sticker bahçem</h2>
-      <span>💖</span>
+      <span>🎀</span>
     </div>
 
     <p class="side-caption">
-      Stickerları ajandana sürükle.
-      Taşımak için tut, silmek için çift tıkla.
+      Stickerlarını sürükleyip yerleştir.
+      Kaldırmak için stickerın üzerine çift tıkla.
     </p>
 
     <div class="side-note">
-      ✨ Y2K & cool girl stickerlarını istediğin kadar kullanabilirsin.
+      <b>✨ Nasıl kullanılır?</b>
+      <p>Stickerı ajandaya sürükle. Taşımak için sürükle, silmek için çift tıkla.</p>
     </div>
 
     <div class="section-label">
@@ -142,14 +137,9 @@
     </div>
 
     <div class="upload-sticker-box">
-      <label class="upload-title" for="uploadStickerInput">
-        Kendi stickerını ekle
-      </label>
-      <input type="file" id="uploadStickerInput"
-             accept="image/png,image/jpeg,image/webp">
-      <p class="upload-note">
-        PNG, JPG veya WEBP dosyası yükleyebilirsin.
-      </p>
+      <label class="upload-title" for="uploadStickerInput">Kendi stickerını ekle</label>
+      <input type="file" id="uploadStickerInput" accept="image/png,image/jpeg,image/webp">
+      <p class="upload-note">PNG, JPG veya WEBP yükleyebilirsin.</p>
     </div>
 
     <section class="color-section">
@@ -159,7 +149,7 @@
       </div>
 
       <p class="side-caption">
-        Rengi sürükleyip boyamak istediğin alana bırak.
+        Bir rengi sürükle ve boyamak istediğin alana bırak.
       </p>
 
       <div class="color-grid" id="colorPalette"></div>
@@ -167,39 +157,27 @@
       <div class="custom-color">
         <label for="customColor">Kendi rengin</label>
         <input type="color" id="customColor" value="#cdb4ff">
-        <button class="color-option custom-swatch"
-                id="customColorSwatch"
-                data-color="#cdb4ff"
-                style="background:#cdb4ff"
-                title="Özel rengi sürükle">
+        <button
+          class="color-option custom-swatch"
+          id="customColorSwatch"
+          data-color="#cdb4ff"
+          style="background:#cdb4ff"
+          title="Özel rengi sürükle">
         </button>
       </div>
 
       <div class="theme-targets">
-        <div class="theme-drop" data-paint="site:background">
-          🖼️ Site arka planı
-          <small>Rengi buraya sürükle</small>
-        </div>
-
-        <div class="theme-drop" data-paint="site:text">
-          ✏️ Yazıların rengi
-          <small>Rengi buraya sürükle</small>
-        </div>
+        <div class="theme-drop" data-paint="site:background">🖼️ Site arka planı<small>Rengi buraya sürükle</small></div>
+        <div class="theme-drop" data-paint="site:text">✏️ Yazıların rengi<small>Rengi buraya sürükle</small></div>
       </div>
-
-      <button class="btn small reset-colors" id="resetColors">
-        Bu ayın kart renklerini sıfırla
-      </button>
-
-      <button class="btn small reset-colors" id="resetTheme">
-        Orijinal tema renklerine dön
-      </button>
+      <button class="btn small reset-colors" id="resetColors">Bu ayın kart renklerini sıfırla</button>
+      <button class="btn small reset-colors" id="resetTheme">Orijinal tema renklerine dön</button>
     </section>
 
     <div class="sidebar-footer">
-      ♡ Stickerlar ve renkler otomatik kaydedilir.
-      ♡ Görevlerin bu tarayıcıda saklanır.
-      ♡ Başka cihazlarla otomatik senkronizasyon yapılmaz.
+      ♡ Stickerlar ve renkler kaydedilir.
+      ♡ Yazdıkların bu tarayıcıda otomatik saklanır.
+      ♡ Veriler tarayıcıda saklanır; başka cihazlarla otomatik senkronize olmaz.
     </div>
 
   </aside>
@@ -212,5 +190,7 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script src="./script.js" defer></script>
+<script src="./firebase-config.js"></script>
+<script type="module" src="./club.js"></script>
 </body>
 </html>
