@@ -1,0 +1,674 @@
+
+:root {
+    --pink: #d55691;
+    --dark: #733858;
+    --light: #fff4f9;
+    --border: #f2cfdf;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    color: var(--dark);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 9% 12%, #ffdeee, transparent 37%),
+      #fff8fc;
+  }
+  
+  button, input, select {
+    font: inherit;
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+  
+  .page {
+    max-width: 1440px;
+    margin: auto;
+    padding: 25px 24px 60px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .back {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: var(--pink);
+    font-weight: 800;
+    text-decoration: none;
+  }
+  
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #be7c9d;
+    font-weight: 900;
+  }
+  
+  .header h1 {
+    font-size: clamp(27px, 3.2vw, 43px);
+    color: #99416d;
+    margin: 8px 0;
+  }
+  
+  .header > p {
+    color: #aa738d;
+    margin: 0 0 12px;
+  }
+  
+  .connection {
+    display: inline-block;
+    border: 1px solid var(--border);
+    background: #fff;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 750;
+  }
+  
+  /* SAYFA YERLEŞİMİ */
+  
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    gap: 18px;
+  }
+  
+  .main {
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+  }
+  
+  .panel {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.95);
+    border-radius: 23px;
+    padding: 20px;
+    box-shadow: 0 10px 25px #ae63891a;
+    min-width: 0;
+  }
+  
+  .panel h2 {
+    font-size: 18px;
+    color: #9f4a77;
+    margin: 0 0 13px;
+  }
+  
+  .heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  
+  .heading-row h2 {
+    margin: 0;
+  }
+  
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #98627c;
+    margin: 8px 0 5px;
+  }
+  
+  input, select {
+    min-width: 0;
+    width: 100%;
+    border: 1px solid #efcadd;
+    background: #fff9fc;
+    color: #724358;
+    border-radius: 12px;
+    padding: 11px 12px;
+    outline-color: #e988b5;
+  }
+  
+  .button {
+    background: white;
+    color: #ad4f80;
+    border: 1px solid #ebc2d5;
+    border-radius: 12px;
+    padding: 10px 13px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .button:hover:not(:disabled) {
+    background: #fff0f7;
+  }
+  
+  .button.primary {
+    background: #d9639d;
+    color: white;
+    border-color: #d9639d;
+  }
+  
+  .button.secondary {
+    background: #fff7fb;
+  }
+  
+  .link-row,
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .link-row input {
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .hint {
+    font-size: 12px;
+    color: #a67993;
+    line-height: 1.5;
+    margin: 9px 0 0;
+  }
+  
+  /* AVATAR SEÇİMİ */
+  
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 17px;
+    align-items: center;
+  }
+  
+  .avatar-sample {
+    height: 120px;
+    border-radius: 16px;
+    background: linear-gradient(#fff2fa, #ffdbec);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  
+  .my-hours {
+    background: #fff2f8;
+    border-radius: 11px;
+    padding: 10px;
+    color: #a24b7b;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  
+  /* YARIŞ YOLLARI */
+  
+  .tracks {
+    display: grid;
+    gap: 13px;
+    margin-top: 14px;
+  }
+  
+  .track-lane {
+    background: #fff5fa;
+    border: 1px solid #f3d8e5;
+    border-radius: 17px;
+    padding: 13px;
+  }
+  
+  .track-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  
+  .track-label b {
+    color: #8a3f69;
+  }
+  
+  .track-label small {
+    font-size: 12px;
+    color: #b0678c;
+  }
+  
+  .track-line {
+    height: 132px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 13px;
+    background: linear-gradient(
+      #fff 0 51%,
+      #ffe5f1 52% 100%
+    );
+    border: 1px dashed #e9b9d1;
+  }
+  
+  .track-line::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      #d98cae 0 19px,
+      transparent 19px 34px
+    );
+    opacity: .5;
+  }
+  
+  .track-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    background: linear-gradient(
+      90deg,
+      #ffd7e960,
+      #eb89b436
+    );
+    transition: width .5s;
+  }
+  
+  .finish {
+    position: absolute;
+    right: 5%;
+    top: 0;
+    height: 100%;
+    width: 12px;
+    background: conic-gradient(
+      #2b2930 25%,
+      white 0 50%,
+      #2b2930 0 75%,
+      white 0
+    ) 0 0 / 12px 24px;
+  }
+  
+  .finish::after {
+    content: "🏁";
+    position: absolute;
+    top: 4px;
+    left: -7px;
+    font-size: 24px;
+  }
+  
+  .runner {
+    position: absolute;
+    bottom: 17px;
+    left: var(--position);
+    width: 62px;
+    height: 96px;
+    transform: translateX(-50%);
+    transition: left .7s ease;
+    z-index: 2;
+  }
+  
+  .runner-tag {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -4px;
+    white-space: nowrap;
+    background: white;
+    border: 1px solid #ecc1d5;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 9px;
+    color: #a04f7c;
+    font-weight: 900;
+  }
+  
+  /* YÜRÜYEN İNSAN FİGÜRLERİ */
+  
+  .runner .person {
+    position: absolute;
+    left: 9px;
+    bottom: 0;
+    transform: scale(.8);
+    transform-origin: bottom center;
+  }
+  
+  .person {
+    position: relative;
+    width: 54px;
+    height: 112px;
+    --hair: #4f2939;
+    --top: #f47dac;
+    --skin: #f4b691;
+    --pants: #7f5686;
+  }
+  
+  .person.look-denim {
+    --hair: #b66c35;
+    --top: #77a9e2;
+    --skin: #f4c4a5;
+    --pants: #345c8f;
+  }
+  
+  .person.look-violet {
+    --hair: #302436;
+    --top: #bd8ff1;
+    --skin: #bc7b58;
+    --pants: #735893;
+  }
+  
+  .person.look-black {
+    --hair: #171820;
+    --top: #363746;
+    --skin: #d09b77;
+    --pants: #272836;
+  }
+  
+  .person.look-mint {
+    --hair: #9b5b2c;
+    --top: #8ee5bd;
+    --skin: #edb18d;
+    --pants: #508a84;
+  }
+  
+  .hair-back {
+    position: absolute;
+    width: 35px;
+    height: 48px;
+    top: 7px;
+    left: 10px;
+    background: var(--hair);
+    border-radius: 21px 21px 12px 12px;
+  }
+  
+  .face {
+    position: absolute;
+    width: 29px;
+    height: 31px;
+    left: 13px;
+    top: 15px;
+    background: var(--skin);
+    border-radius: 43% 43% 48% 48%;
+    z-index: 4;
+  }
+  
+  .face::after {
+    content: "•  •";
+    position: absolute;
+    top: 9px;
+    left: 6px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #603c3a;
+  }
+  
+  .fringe {
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    width: 34px;
+    height: 19px;
+    border-radius: 60% 60% 25% 25%;
+    background: var(--hair);
+    z-index: 5;
+  }
+  
+  .torso {
+    position: absolute;
+    width: 24px;
+    height: 36px;
+    left: 15px;
+    top: 45px;
+    background: var(--top);
+    border-radius: 11px 11px 6px 6px;
+    z-index: 3;
+  }
+  
+  .arm,
+  .leg {
+    position: absolute;
+    transform-origin: top center;
+    border-radius: 12px;
+    animation: walk .62s ease-in-out infinite alternate;
+  }
+  
+  .arm {
+    top: 47px;
+    width: 8px;
+    height: 30px;
+    background: var(--skin);
+    z-index: 2;
+  }
+  
+  .arm.a1 {
+    left: 12px;
+    animation-delay: 0s;
+  }
+  
+  .arm.a2 {
+    left: 36px;
+    animation-delay: -.31s;
+  }
+  
+  .leg {
+    top: 76px;
+    width: 10px;
+    height: 34px;
+    background: var(--pants);
+  }
+  
+  .leg.l1 {
+    left: 18px;
+    animation-delay: -.31s;
+  }
+  
+  .leg.l2 {
+    left: 29px;
+  }
+  
+  .shoe {
+    position: absolute;
+    bottom: 0;
+    width: 17px;
+    height: 7px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #b982ab;
+  }
+  
+  .shoe.s1 {
+    left: 11px;
+  }
+  
+  .shoe.s2 {
+    left: 28px;
+  }
+  
+  @keyframes walk {
+    from { transform: rotate(-22deg); }
+    to   { transform: rotate(24deg); }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .arm, .leg {
+      animation: none;
+    }
+  
+    .runner, .track-progress {
+      transition: none;
+    }
+  }
+  
+  /* KAZANAN VE SIRALAMA */
+  
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  
+  .winner {
+    margin-top: 12px;
+    background: #fff0f7;
+    border-radius: 13px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 850;
+  }
+  
+  .leaderboard {
+    padding-left: 19px;
+    margin: 0;
+  }
+  
+  .leaderboard li {
+    padding: 7px 0;
+    border-bottom: 1px dashed #edcbdc;
+    font-size: 13px;
+  }
+  
+  .leaderboard li span {
+    float: right;
+    font-weight: 800;
+  }
+  
+  .empty {
+    padding: 16px;
+    color: #a47791;
+    text-align: center;
+    font-size: 13px;
+  }
+  
+  /* SAĞ TARAFTAKİ SOHBET */
+  
+  .chat-panel {
+    position: sticky;
+    top: 16px;
+    display: flex;
+    flex-direction: column;
+    height: min(81vh, 760px);
+    min-height: 440px;
+  }
+  
+  .chat-head h2 {
+    margin-bottom: 3px;
+  }
+  
+  .chat-subtitle {
+    color: #af7994;
+    font-size: 11px;
+  }
+  
+  .chat-messages {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: #fff8fc;
+    border: 1px solid #f4dce7;
+    border-radius: 14px;
+    margin: 13px 0;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .chat-bubble {
+    max-width: 93%;
+    align-self: flex-start;
+    padding: 9px 11px;
+    background: white;
+    border: 1px solid #f0d7e4;
+    border-radius: 13px;
+    overflow-wrap: anywhere;
+  }
+  
+  .chat-bubble.mine {
+    align-self: flex-end;
+    background: #ffe8f3;
+  }
+  
+  .chat-bubble strong {
+    display: block;
+    font-size: 11px;
+    color: #ad5485;
+    margin-bottom: 3px;
+  }
+  
+  .chat-bubble p {
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+  
+  .chat-form {
+    display: flex;
+    gap: 7px;
+  }
+  
+  .chat-form input {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .chat-form .button {
+    flex-shrink: 0;
+  }
+  
+  /* TELEFON GÖRÜNÜMÜ */
+  
+  @media (max-width: 1000px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  
+    .chat-panel {
+      position: static;
+      height: 480px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .page {
+      padding: 16px 12px 35px;
+    }
+  
+    .panel {
+      padding: 15px;
+    }
+  
+    .profile-layout {
+      grid-template-columns: 78px minmax(0,1fr);
+    }
+  
+    .avatar-sample {
+      height: 115px;
+    }
+  
+    .bottom-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .header h1 {
+      font-size: 28px;
+    }
+  
+    .button {
+      padding: 10px;
+    }
+  
+    .track-label {
+      align-items: flex-start;
+    }
+  }
+  

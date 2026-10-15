@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="My Sweet Planner ile günlük görevlerini planla, saatlerini takip et ve ajandanı süsle.">
+  <title>My Sweet Planner ♡</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">🎀</div>
+    <div>
+      my sweet planner
+      <div class="brand-sub">Küçük adımlar, güzel günler ♡</div>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <a class="btn invite-btn" href="./race.html">
+      🏁 Arkadaşlarını davet et
+    </a>
+    <span class="save-status" id="saveStatus">♡ Hazır</span>
+    <button class="btn" id="printBtn">◫ Yazdır</button>
+  </div>
+</header>
+
+<div class="shell">
+
+  <main class="main-column">
+
+    <section class="hero" data-paint="site:hero">
+      <div class="hero-bubbles">🌷✨</div>
+      <div class="overline">
+        ✦ <span id="heroYear">2026</span> • Mini günlük ajandam
+      </div>
+
+      <h1>Bugün biraz kendime zaman ♡</h1>
+
+      <p>
+        Görevlerini tamamla, saatlerini kaydet,
+        gününü değerlendir ve stickerlarla süsle.
+      </p>
+
+      <div class="year-switch">
+        <button id="prevYear" aria-label="Önceki yıl">‹</button>
+        <strong id="yearTitle">2026</strong>
+        <button id="nextYear" aria-label="Sonraki yıl">›</button>
+      </div>
+
+      <nav class="month-switch" id="monthSwitch"
+           aria-label="Ay seçimi"></nav>
+    </section>
+
+    <section class="summary">
+      <div class="stat" data-paint="site:stat-done">
+        <div class="stat-label">✓ Tamamlanan görev</div>
+        <div class="stat-val" id="statDone">0</div>
+        <div class="stat-foot" id="statDoneFoot">Bu ayın görevleri</div>
+      </div>
+
+      <div class="stat" data-paint="site:stat-planned">
+        <div class="stat-label">◷ Planlanan saat</div>
+        <div class="stat-val" id="statPlanned">0</div>
+        <div class="stat-foot">Küçük hedefler, büyük adımlar</div>
+      </div>
+
+      <div class="stat" data-paint="site:stat-worked">
+        <div class="stat-label">✿ Çalışılan saat</div>
+        <div class="stat-val" id="statWorked">0</div>
+        <div class="stat-foot">Kendine ayırdığın emek</div>
+      </div>
+
+      <div class="stat" data-paint="site:stat-productivity">
+        <div class="stat-label">♡ Ortalama verim</div>
+        <div class="stat-val" id="statProductivity">—</div>
+        <div class="stat-foot">5 üzerinden puan</div>
+      </div>
+    </section>
+
+    <section class="progress-section" data-paint="site:progress">
+      <span class="progress-label">🌼 Aylık ilerlemem</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-number" id="progressNumber">0%</span>
+    </section>
+
+    <div class="content-title">
+      <div>
+        <h2 id="monthHeading">Günlüğüm ✧</h2>
+        <p>Her gün küçük bir sayfa, her gün güzel bir hatırlatma. ♡</p>
+      </div>
+      <button class="today-btn" id="todayBtn">♡ Bugüne git</button>
+    </div>
+
+    <div class="planner-stage" id="plannerStage">
+      <div class="day-grid" id="dayGrid"></div>
+      <div class="sticker-layer" id="stickerLayer"></div>
+    </div>
+
+  </main>
+
+  <aside class="side-panel" data-paint="site:sidebar">
+
+    <div class="side-heading">
+      <h2>Sticker bahçem</h2>
+      <span>💖</span>
+    </div>
+
+    <p class="side-caption">
+      Stickerları ajandana sürükle.
+      Taşımak için tut, silmek için çift tıkla.
+    </p>
+
+    <div class="side-note">
+      ✨ Y2K & cool girl stickerlarını istediğin kadar kullanabilirsin.
+    </div>
+
+    <div class="section-label">
+      <span>Y2K yazılı stickerlar</span>
+      <span>12 sticker ✨</span>
+    </div>
+    <div class="sticker-grid" id="imagePalette"></div>
+
+    <div class="section-label">
+      <span>Cool girl aksesuarları</span>
+      <span>12 sticker 💖</span>
+    </div>
+    <div class="sticker-grid" id="emojiPalette"></div>
+
+    <div class="tiny-tools">
+      <label for="stickerSize">Sticker boyutu</label>
+      <select id="stickerSize">
+        <option value="52">Küçük</option>
+        <option value="74" selected>Orta</option>
+        <option value="100">Büyük</option>
+      </select>
+    </div>
+
+    <div class="upload-sticker-box">
+      <label class="upload-title" for="uploadStickerInput">
+        Kendi stickerını ekle
+      </label>
+      <input type="file" id="uploadStickerInput"
+             accept="image/png,image/jpeg,image/webp">
+      <p class="upload-note">
+        PNG, JPG veya WEBP dosyası yükleyebilirsin.
+      </p>
+    </div>
+
+    <section class="color-section">
+      <div class="section-label">
+        <span>Renk paletim</span>
+        <span>🎨</span>
+      </div>
+
+      <p class="side-caption">
+        Rengi sürükleyip boyamak istediğin alana bırak.
+      </p>
+
+      <div class="color-grid" id="colorPalette"></div>
+
+      <div class="custom-color">
+        <label for="customColor">Kendi rengin</label>
+        <input type="color" id="customColor" value="#cdb4ff">
+        <button class="color-option custom-swatch"
+                id="customColorSwatch"
+                data-color="#cdb4ff"
+                style="background:#cdb4ff"
+                title="Özel rengi sürükle">
+        </button>
+      </div>
+
+      <div class="theme-targets">
+        <div class="theme-drop" data-paint="site:background">
+          🖼️ Site arka planı
+          <small>Rengi buraya sürükle</small>
+        </div>
+
+        <div class="theme-drop" data-paint="site:text">
+          ✏️ Yazıların rengi
+          <small>Rengi buraya sürükle</small>
+        </div>
+      </div>
+
+      <button class="btn small reset-colors" id="resetColors">
+        Bu ayın kart renklerini sıfırla
+      </button>
+
+      <button class="btn small reset-colors" id="resetTheme">
+        Orijinal tema renklerine dön
+      </button>
+    </section>
+
+    <div class="sidebar-footer">
+      ♡ Stickerlar ve renkler otomatik kaydedilir.
+      ♡ Görevlerin bu tarayıcıda saklanır.
+      ♡ Başka cihazlarla otomatik senkronizasyon yapılmaz.
+    </div>
+
+  </aside>
+</div>
+
+<footer class="footer">
+  Made with ♡ • Her gün aynı tempoda olmak zorunda değilsin.
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="./script.js" defer></script>
+</body>
+</html>
