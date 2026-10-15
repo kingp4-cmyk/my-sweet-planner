@@ -1,0 +1,728 @@
+
+/* Koşu Kulübü tasarımı */
+
+.club-race-page,
+.club-race-page * {
+  box-sizing: border-box;
+}
+
+.club-race-page {
+  margin: 0;
+  background: radial-gradient(circle at 8% 8%, #ffe1ef, transparent 38%), #fff8fc;
+  color: #783a5b;
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.club-race-page button,
+.club-race-page input {
+  font: inherit;
+}
+
+.club-race-page button,
+.club-profile-button,
+.club-avatar-choice {
+  cursor: pointer;
+}
+
+.club-race-page button:disabled,
+.club-profile-button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.club-page-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px 20px 70px;
+}
+
+.club-race-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.club-back {
+  color: #c34b86;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.club-hero {
+  text-align: center;
+  padding: 20px 0 24px;
+}
+
+.club-kicker {
+  color: #b96b96;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.club-hero h1 {
+  margin: 9px 0 0;
+  font-size: clamp(26px, 5vw, 40px);
+  color: #a33f70;
+}
+
+.club-hero p {
+  margin: 6px 0;
+}
+
+.club-connection {
+  display: inline-block;
+  padding: 6px 15px;
+  border: 1px solid #f1c8de;
+  border-radius: 40px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.club-card,
+.club-planner-mount .club-card {
+  background: #fff;
+  border: 1px solid #f4cfe1;
+  border-radius: 22px;
+  box-shadow: 0 8px 28px #cc8ea20f;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.club-card h2 {
+  color: #a34170;
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+
+.club-card p {
+  color: #aa7492;
+}
+
+.club-section-heading,
+.club-road-bottom {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.club-subtle {
+  font-size: 12px;
+  color: #aa7992;
+}
+
+.club-road-bottom {
+  font-size: 13px;
+  margin-top: 14px;
+  color: #8e5674;
+}
+
+.club-invite-row {
+  display: flex;
+  gap: 10px;
+}
+
+.club-invite-row input,
+.club-chat-form input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #f0c4da;
+  background: #fff8fc;
+  color: #803f62;
+  border-radius: 12px;
+  padding: 11px 13px;
+}
+
+.club-btn {
+  background: #d75b9b;
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.club-btn-soft {
+  background: #fff0f7;
+  color: #b1467e;
+  border: 1px solid #f1c5da;
+}
+
+.club-bottom-grid {
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: 18px;
+}
+
+.club-ranking {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.club-ranking li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 3px;
+  border-bottom: 1px dashed #f1d4e3;
+}
+
+.club-ranking li:last-child {
+  border-bottom: 0;
+}
+
+.club-ranking b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.club-ranking small {
+  white-space: nowrap;
+  color: #985d7b;
+}
+
+.club-chat-messages {
+  height: 265px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: #fff8fc;
+  border: 1px solid #fae0ed;
+  border-radius: 14px;
+}
+
+.club-chat-message {
+  max-width: 83%;
+  border: 1px solid #f3d5e4;
+  border-radius: 14px;
+  padding: 8px 11px;
+  background: #fff;
+  align-self: flex-start;
+  overflow-wrap: anywhere;
+}
+
+.club-chat-message.mine {
+  background: #fbe5f1;
+  align-self: flex-end;
+}
+
+.club-chat-message strong {
+  font-size: 11px;
+  color: #965273;
+}
+
+.club-chat-message p {
+  color: #723a56;
+  margin: 3px 0 0;
+}
+
+.club-chat-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.club-empty {
+  color: #ae8098;
+  text-align: center;
+  padding: 25px 6px;
+}
+
+/* Tüm avatarlar için yalnızca bir ortak yol */
+
+.club-road-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 5px 0 12px;
+}
+
+.club-road {
+  position: relative;
+  height: 234px;
+  min-width: 620px;
+  isolation: isolate;
+}
+
+.club-road-surface {
+  position: absolute;
+  left: 1%;
+  right: 1%;
+  top: 97px;
+  height: 93px;
+  border-top: 5px dashed #fff;
+  border-bottom: 5px dashed #fff;
+  border-radius: 48px;
+  background: repeating-linear-gradient(
+    90deg,
+    #f6c9dd 0 42px,
+    #efbcd5 42px 84px
+  );
+  box-shadow: inset 0 0 0 1px #eca4c7;
+}
+
+.club-road-surface::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 43px;
+  border-top: 3px dashed #fff9fd;
+  opacity: .9;
+}
+
+.club-start,
+.club-finish {
+  position: absolute;
+  top: 122px;
+  z-index: 1;
+  font-weight: 900;
+  font-size: 11px;
+  color: #975b7b;
+}
+
+.club-start {
+  left: 1.5%;
+}
+
+.club-finish {
+  right: 1%;
+  top: 78px;
+  font-size: 22px;
+}
+
+.club-runner {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 91px;
+  text-align: center;
+  transition: left .5s ease;
+}
+
+.club-runner-name {
+  display: block;
+  margin-bottom: 3px;
+  max-width: 91px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #fff;
+  padding: 2px 5px;
+  border-radius: 9px;
+  border: 1px solid #efd2df;
+  font-size: 10px;
+  font-weight: 850;
+  color: #8f456c;
+}
+
+.club-runner-hours {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 7px;
+  background: #fff;
+  color: #975b7b;
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: 0 2px 7px #c887a133;
+}
+
+.club-runner.mine .club-runner-name {
+  background: #d95d9a;
+  color: white;
+}
+
+/* Hafif CSS avatarları, görsel yüklemesi gerektirmez */
+
+.club-person {
+  --shirt: #ed75ae;
+  --hair: #603b4a;
+  --skin: #efbd9a;
+  --pants: #77587a;
+  position: relative;
+  margin: 0 auto;
+  width: 34px;
+  height: 66px;
+}
+
+.club-person .head {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 18px;
+  height: 19px;
+  border-radius: 42% 42% 47% 47%;
+  background: var(--skin);
+  z-index: 3;
+}
+
+.club-person .hair {
+  position: absolute;
+  top: 1px;
+  left: 5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 48% 48% 20% 20%;
+  background: var(--hair);
+  z-index: 2;
+}
+
+.club-person.female .hair {
+  height: 31px;
+  border-radius: 48% 48% 20% 20%;
+}
+
+.club-person .eyes {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  z-index: 4;
+  font-size: 7px;
+  letter-spacing: 2px;
+  line-height: 1;
+  color: #483c45;
+}
+
+.club-person .body {
+  position: absolute;
+  top: 23px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  background: var(--shirt);
+  border-radius: 7px 7px 4px 4px;
+  z-index: 3;
+}
+
+.club-person .arm {
+  position: absolute;
+  top: 25px;
+  width: 7px;
+  height: 24px;
+  border-radius: 5px;
+  background: var(--skin);
+  transform-origin: top center;
+  z-index: 2;
+}
+
+.club-person .arm.left {
+  left: 3px;
+  animation: club-arm-left .8s ease-in-out infinite alternate;
+}
+
+.club-person .arm.right {
+  right: 3px;
+  animation: club-arm-right .8s ease-in-out infinite alternate;
+}
+
+.club-person .leg {
+  position: absolute;
+  top: 43px;
+  width: 9px;
+  height: 20px;
+  background: var(--pants);
+  border-radius: 4px;
+  transform-origin: top center;
+}
+
+.club-person .leg.left {
+  left: 8px;
+  animation: club-leg-left .8s ease-in-out infinite alternate;
+}
+
+.club-person .leg.right {
+  left: 18px;
+  animation: club-leg-right .8s ease-in-out infinite alternate;
+}
+
+.club-person .leg::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: -1px;
+  background: #fff;
+  border: 1px solid #9c7291;
+  border-radius: 3px;
+  width: 11px;
+  height: 5px;
+}
+
+/* Kız ve erkek karakterler */
+
+.club-person[data-look="pink"] {
+  --shirt: #f28bbb;
+  --hair: #65394f;
+}
+
+.club-person[data-look="denim"] {
+  --shirt: #6b9ad2;
+  --hair: #493533;
+}
+
+.club-person[data-look="violet"] {
+  --shirt: #ab8ce3;
+  --hair: #503f54;
+}
+
+.club-person[data-look="black"] {
+  --shirt: #46424c;
+  --hair: #24232d;
+}
+
+.club-person[data-look="mint"] {
+  --shirt: #70c7a5;
+  --hair: #8b5f48;
+}
+
+.club-person[data-look="blonde"] {
+  --shirt: #f5b3a2;
+  --hair: #d2aa55;
+}
+
+.club-person[data-look="sky"] {
+  --shirt: #6bb8db;
+  --hair: #443838;
+}
+
+.club-person[data-look="navy"] {
+  --shirt: #445f9d;
+  --hair: #302b2c;
+}
+
+.club-person[data-look="moss"] {
+  --shirt: #79a57d;
+  --hair: #6b4933;
+}
+
+.club-person[data-look="charcoal"] {
+  --shirt: #575d6b;
+  --hair: #242326;
+}
+
+.club-person[data-look="amber"] {
+  --shirt: #e9ab59;
+  --hair: #c08d53;
+}
+
+.club-person[data-look="coral"] {
+  --shirt: #ec907c;
+  --hair: #49362c;
+}
+
+@keyframes club-leg-left {
+  to { transform: rotate(18deg); }
+}
+
+@keyframes club-leg-right {
+  to { transform: rotate(-18deg); }
+}
+
+@keyframes club-arm-left {
+  to { transform: rotate(-17deg); }
+}
+
+@keyframes club-arm-right {
+  to { transform: rotate(17deg); }
+}
+
+/* Ajandanın üstündeki mini parkur */
+
+.club-planner-mount {
+  margin: 16px auto 4px;
+  padding: 0 20px;
+  max-width: 1430px;
+}
+
+.club-planner-mount .club-card {
+  margin: 0;
+}
+
+.club-planner-mount .club-road {
+  height: 207px;
+}
+
+.club-planner-mount .club-road-surface {
+  top: 75px;
+}
+
+.club-planner-mount .club-start {
+  top: 101px;
+}
+
+.club-planner-mount .club-finish {
+  top: 58px;
+}
+
+.club-planner-mount .club-runner {
+  top: var(--y);
+}
+
+.club-profile-button {
+  border-radius: 30px;
+  border: 1px solid #edbfd6;
+  background: #fff6fa;
+  color: #a33d71;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.club-race-page .club-profile-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.club-profile-button[hidden] {
+  display: none !important;
+}
+
+/* Kayıt ve profil düzenleme ekranı */
+
+.club-dialog-backdrop {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  background: #2e1934a3;
+}
+
+.club-dialog {
+  width: min(490px, 100%);
+  max-height: 94vh;
+  overflow-y: auto;
+  background: #fff9fc;
+  color: #793d60;
+  border: 1px solid #efc4d9;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 24px 70px #24102255;
+}
+
+.club-dialog h2 {
+  margin: 4px 0;
+  color: #aa4076;
+  font-size: 25px;
+}
+
+.club-dialog p {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+
+.club-dialog label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.club-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #ecc3d8;
+  border-radius: 12px;
+  background: white;
+  padding: 11px 12px;
+  font: inherit;
+  color: #66354f;
+}
+
+.club-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 13px 0 17px;
+}
+
+.club-avatar-choice {
+  border: 2px solid #f0d1e0;
+  border-radius: 12px;
+  background: white;
+  padding: 7px 2px 5px;
+  min-width: 0;
+}
+
+.club-avatar-choice[aria-pressed="true"] {
+  border-color: #c74a86;
+  background: #ffe9f4;
+}
+
+.club-avatar-choice .club-person {
+  transform: scale(.8);
+  margin: -4px auto -8px;
+}
+
+.club-avatar-choice small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  color: #955e7d;
+}
+
+.club-dialog-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.club-dialog-error {
+  min-height: 19px;
+  color: #b11b53;
+  font-size: 12px;
+  margin-top: 9px;
+}
+
+@media (max-width: 800px) {
+  .club-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .club-page-wrap {
+    padding: 12px 12px 40px;
+  }
+
+  .club-card {
+    padding: 15px;
+  }
+
+  .club-avatar-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .club-planner-mount {
+    padding: 0 12px;
+  }
+
+  .club-invite-row {
+    flex-wrap: wrap;
+  }
+
+  .club-invite-row input {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .club-person .arm,
+  .club-person .leg {
+    animation: none !important;
+  }
+
+  .club-runner {
+    transition: none;
+  }
+}
