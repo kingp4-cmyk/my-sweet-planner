@@ -1,41 +1,65 @@
 
 'use strict';
 
-/* My Sweet Planner - Koşu Kulübü */
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  addDoc,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
+const { user, db, hoursReady } = window.MSP;
 const IS_RACE = document.body.dataset.clubPage === 'race';
-
-const PLANNER_KEY = 'my-sweet-daily-planner-2026-v1';
-const ROOM_KEY = 'msp-club-room-id-v1';
-
-const AVATARS = [
-  { id: 'pink', label: 'Pink girl', gender: 'female' },
-  { id: 'denim', label: 'Denim girl', gender: 'female' },
-  { id: 'violet', label: 'Purple girl', gender: 'female' },
-  { id: 'black', label: 'Cool girl', gender: 'female' },
-  { id: 'mint', label: 'Mint girl', gender: 'female' },
-  { id: 'blonde', label: 'Blonde girl', gender: 'female' },
-  { id: 'sky', label: 'Sky boy', gender: 'male' },
-  { id: 'navy', label: 'Navy boy', gender: 'male' },
-  { id: 'moss', label: 'Green boy', gender: 'male' },
-  { id: 'charcoal', label: 'Cool boy', gender: 'male' },
-  { id: 'amber', label: 'Blonde boy', gender: 'male' },
-  { id: 'coral', label: 'Coral boy', gender: 'male' }
-];
-
-const LOOKS = new Map(AVATARS.map(a => [a.id, a]));
 const $ = id => document.getElementById(id);
 
-const TODAY = new Date();
-const MONTH = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}`;
+const HOUR_KEY = 'my-sweet-daily-planner-2026-v1';
+const ROOM_KEY = 'msp-club-room-id-v1';
+const USER_ROOM = `msp-club-room-${user.uid}`;
+
+const MONTH = new Date()
+  .toLocaleDateString('sv-SE')
+  .slice(0, 7);
+
+/* Y2K GIRL AVATARS v22 */
+const AVATARS = [
+  ['pink', 'Gizemli siyah sac', 'female'],
+  ['denim', 'Pembe kurdeleli sarisin', 'female'],
+  ['violet', 'Kulaklikli cool girl', 'female'],
+  ['black', 'Gece prensesi', 'female'],
+  ['mint', 'Kizil sacli tatli kiz', 'female'],
+  ['blonde', 'Pembe sapkali cool girl', 'female'],
+  ['sky', 'Yaz gunu sarisin', 'female'],
+  ['navy', 'Cupcake seven romantik', 'female']
+];
+
+const LOOKS = new Map(
+  AVATARS.map(([id, label, gender]) => [
+    id, { label, gender }
+  ])
+);
+
+const LEGACY_AVATAR_MAP = {
+  moss: 'pink', charcoal: 'black', amber: 'denim', coral: 'mint'
+};
+
+const resolveAvatar = look => {
+  const id = LEGACY_AVATAR_MAP[look] || look;
+  return LOOKS.has(id) ? id : 'pink';
+};
 
 const fmt = n =>
   Number(n || 0).toLocaleString('tr-TR', {
     maximumFractionDigits: 2
   });
 
-const escapeHTML = s =>
-  String(s ?? '').replace(/[&<>"']/g, c => ({
+const esc = v =>
+  String(v ?? '').replace(/[&<>"']/g, c => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -43,198 +67,289 @@ const escapeHTML = s =>
     "'": '&#39;'
   }[c]));
 
-const randomRoom = () =>
+const validRoom = s =>
+  typeof s === 'string' &&
+  /^[a-zA-Z0-9_-]{16,64}$/.test(s);
+
+const makeRoom = () =>
   Array.from(
     crypto.getRandomValues(new Uint8Array(16)),
     b => b.toString(16).padStart(2, '0')
   ).join('');
 
-/* Eski odayı hatırla */
+const urlRoom =
+  new URLSearchParams(location.search).get('room');
 
-const queryRoom = new URLSearchParams(location.search).get('room');
-
-const validRoom = s =>
-  typeof s === 'string' && /^[a-zA-Z0-9_-]{16,64}$/.test(s);
-
-const roomId = validRoom(queryRoom)
-  ? queryRoom
+const roomId = validRoom(urlRoom)
+  ? urlRoom
   : (
-      validRoom(localStorage.getItem(ROOM_KEY))
-        ? localStorage.getItem(ROOM_KEY)
-        : randomRoom()
-    );
+    validRoom(localStorage.getItem(USER_ROOM))
+      ? localStorage.getItem(USER_ROOM)
+      : (
+        validRoom(localStorage.getItem(ROOM_KEY))
+          ? localStorage.getItem(ROOM_KEY)
+          : makeRoom()
+      )
+  );
 
+localStorage.setItem(USER_ROOM, roomId);
 localStorage.setItem(ROOM_KEY, roomId);
 
-if (IS_RACE && !validRoom(queryRoom)) {
-  const u = new URL(location.href);
-  u.searchParams.set('room', roomId);
-  history.replaceState(null, '', u.href);
+if (IS_RACE && !validRoom(urlRoom)) {
+  const url = new URL(location.href);
+  url.searchParams.set('room', roomId);
+  history.replaceState(null, '', url);
 }
 
-if (!IS_RACE && $('clubRaceLink')) {
+if ($('clubRaceLink')) {
   $('clubRaceLink').href =
     `./race.html?room=${encodeURIComponent(roomId)}`;
 }
 
-/* Uygulama durumu */
-
-let fs;
-let db;
-let auth;
-let uid;
-
 let profile = null;
 let members = [];
+let lastDraw = '';
+let lastHoursWritten = '';
+let writing = false;
+let queuedWrite = false;
+let syncDebounce;
+let unsubscribeMembers;
+let unsubscribeChat;
+let choice = 'pink';
 
-let unsubMembers = null;
-let unsubMessages = null;
+const memberRef = () =>
+  doc(
+    db,
+    'raceRooms',
+    roomId,
+    'months',
+    MONTH,
+    'members',
+    user.uid
+  );
 
-let lastMembersRender = '';
-let lastMemberWrite = '';
+const profileRef = () =>
+  doc(db, 'raceProfiles', user.uid);
 
-let writeInFlight = false;
-let pendingSync = false;
-let syncTimer = null;
+const monthCollection = type =>
+  collection(
+    db,
+    'raceRooms',
+    roomId,
+    'months',
+    MONTH,
+    type
+  );
 
-let dialogIsFirst = false;
-let chosenAvatar = 'pink';
-let statusMessage = '';
+const publicUrl = () =>
+  `https://kingp4-cmyk.github.io/my-sweet-planner/race.html?room=${encodeURIComponent(roomId)}`;
 
-function monthTitle() {
-  return TODAY.toLocaleDateString('tr-TR', {
-    month: 'long',
-    year: 'numeric'
-  });
+function status(text) {
+  if ($('clubStatus')) {
+    $('clubStatus').textContent = text;
+  }
+
+  if ($('clubInlineStatus')) {
+    $('clubInlineStatus').textContent = text;
+  }
 }
 
-/* Mevcut ajandadaki çalışma saatlerini okur */
-
-function plannerHours() {
+function hoursFromPlanner() {
   try {
-    const state = JSON.parse(localStorage.getItem(PLANNER_KEY));
+    const days = JSON.parse(
+      localStorage.getItem(HOUR_KEY)
+    )?.days || {};
 
-    if (!state || !state.days) return 0;
+    let hours = 0;
 
-    let total = 0;
+    for (const [day, info] of Object.entries(days)) {
+      if (!day.startsWith(`${MONTH}-`)) continue;
 
-    for (const [dayKey, data] of Object.entries(state.days)) {
-      if (!dayKey.startsWith(MONTH + '-')) continue;
+      for (const task of info?.tasks || []) {
+        const n = Number(task.worked || 0);
 
-      for (const task of data?.tasks || []) {
-        const value = Number(task?.worked || 0);
-
-        if (Number.isFinite(value) && value > 0) {
-          total += Math.min(24, value);
+        if (Number.isFinite(n) && n > 0) {
+          hours += Math.min(n, 24);
         }
       }
     }
 
-    return Math.min(744, Math.round(total * 100) / 100);
+    const state = JSON.parse(
+      localStorage.getItem(HOUR_KEY) || '{}'
+    );
+
+    const extra = (state.timerSessions || []).reduce(
+      (sum, session) =>
+        sum + (
+          !session.taskId
+            ? Math.max(0, Number(session.seconds) || 0) / 3600
+            : 0
+        ),
+      0
+    );
+
+    return Math.min(
+      744,
+      Math.round((hours + extra) * 10000) / 10000
+    );
   } catch {
     return 0;
   }
 }
 
-/* CSS ile çizilen karakter */
+/* GLITTER CARS v23 */
+const GLITTER_CAR_FILES = [
+  'rose-classic.webp', 'lilac-classic.webp',
+  'rose-bug.webp', 'lilac-bug.webp'
+];
 
-function person(look) {
-  const avatar = LOOKS.get(look) || LOOKS.get('pink');
+function glitterCarHTML(look) {
+  const id = resolveAvatar(look);
+  const index = Math.max(0, AVATARS.findIndex(a => a[0] === id));
+  const car = GLITTER_CAR_FILES[index % GLITTER_CAR_FILES.length];
+
+  return `<span class="glam-car" aria-hidden="true"><img
+    src="./assets/cars/${car}"
+    alt="" draggable="false" loading="lazy"></span>`;
+}
+
+function avatarHTML(look) {
+  const id = LEGACY_AVATAR_MAP[look] || look;
+  const safe = LOOKS.has(id) ? id : 'pink';
+  const index = AVATARS.findIndex(item => item[0] === safe) + 1;
+  const src = `./assets/avatars/girl-${String(index).padStart(2, '0')}.webp`;
 
   return `
-    <div class="club-person ${avatar.gender}"
-         data-look="${avatar.id}" aria-hidden="true">
-      <i class="hair"></i>
-      <i class="head"></i>
-      <i class="eyes">••</i>
-      <i class="body"></i>
-      <i class="arm left"></i>
-      <i class="arm right"></i>
-      <i class="leg left"></i>
-      <i class="leg right"></i>
-    </div>
+    <span class="glam-avatar" aria-hidden="true">
+      <img src="${src}" alt="" loading="lazy"
+           draggable="false"
+           style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%">
+    </span>
   `;
 }
 
-function notice(message) {
-  statusMessage = message;
-
-  if ($('clubStatus')) {
-    $('clubStatus').textContent = message;
-  }
-
-  if ($('clubInlineStatus')) {
-    $('clubInlineStatus').textContent = message;
-  }
-
-  if (message.startsWith('⚠')) {
-    console.warn('[Koşu Kulübü]', message);
-  }
-}
-
-/* En çok çalışandan en az çalışana sıralama */
-
-function sortedMembers() {
-  return [...members].sort((a, b) =>
-    Number(b.totalHours || 0) - Number(a.totalHours || 0)
-    || String(a.displayName).localeCompare(
-      String(b.displayName),
-      'tr'
-    )
+function sorted() {
+  return [...members].sort(
+    (a, b) =>
+      Number(b.totalHours || 0) -
+        Number(a.totalHours || 0) ||
+      String(a.displayName || '').localeCompare(
+        String(b.displayName || ''),
+        'tr'
+      )
   );
 }
 
-/* Tüm yarışçılar tek yol üzerinde gösterilir */
+function getRunnerX(list, rankIndex, hours) {
+  const maxH = Math.max(
+    1,
+    ...list.map(v => Number(v.totalHours) || 0)
+  );
 
-function renderRoad() {
-  const mount = $('clubMount');
+  const now = new Date();
+  const daysInMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0
+  ).getDate();
 
-  if (!mount || !profile) return;
+  const day = now.getDate();
+  const ratio = Math.min(1, (Number(hours) || 0) / maxH);
+  const rankBoost = list.length > 1
+    ? (list.length - 1 - rankIndex) / (list.length - 1)
+    : 1;
 
-  if (mount.hidden) {
-    mount.hidden = false;
+  if (day >= daysInMonth) {
+    return Math.min(108, 92 + rankBoost * 12 + ratio * 4);
   }
 
-  const list = sortedMembers();
+  if (day === daysInMonth - 1) {
+    return Math.min(84, 28 + ratio * 52 + rankBoost * 4);
+  }
+
+  const calendarProgress = Math.max(
+    0,
+    Math.min(1, (day - 1) / Math.max(1, daysInMonth - 2))
+  );
+
+  const start = 12 + calendarProgress * 16;
+  const maxBeforeFinish = 48 + calendarProgress * 20;
+
+  return Math.min(
+    76,
+    start + ratio * (maxBeforeFinish - start) + rankBoost * 2
+  );
+}
+
+function render() {
+  if (!profile || !$('clubMount')) return;
+
+  const list = sorted();
 
   const signature = JSON.stringify(
-    list.map(x => [
-      x.uid,
-      x.displayName,
-      x.avatar,
-      x.totalHours
+    list.map(m => [
+      m.uid, m.displayName, m.avatar, m.totalHours
     ])
   );
 
-  if (signature === lastMembersRender) {
-    return;
+  if (signature === lastDraw) return;
+
+  lastDraw = signature;
+
+  const count = $('clubHeroDivaCount');
+
+  if (count) {
+    count.textContent = `${list.length} kişi`;
   }
 
-  lastMembersRender = signature;
+  const names = $('clubHeroNames');
 
-  const width = Math.max(620, list.length * 100);
+  if (names) {
+    names.innerHTML = list.length
+      ? list.map(
+          (m, i) => `
+            <span class="club-hero-pill ${m.uid === user.uid ? 'mine' : ''}">
+              ${i === 0 ? '👑 ' : '✦ '}
+              ${esc(m.displayName)}
+            </span>
+          `
+        ).join('')
+      : `
+        <span class="club-hero-empty">
+          Henüz yarışçı yok ♡
+        </span>
+      `;
+  }
+
+  const width = Math.max(
+    620,
+    list.length * 105
+  );
 
   const runners = list.map((m, i) => {
-    const x = list.length === 1
-      ? 83
-      : 16 + 67 * (list.length - 1 - i) / (list.length - 1);
+    const x = getRunnerX(
+      list,
+      i,
+      Number(m.totalHours) || 0
+    );
 
     const y = IS_RACE
       ? 42 + (i % 3) * 19
       : 22 + (i % 3) * 19;
 
-    const mine = m.uid === uid;
-
     return `
-      <div class="club-runner ${mine ? 'mine' : ''}"
-           style="--x:${x}%;--y:${y}px"
-           title="${escapeHTML(m.displayName)} · ${fmt(m.totalHours)} saat">
+      <div
+        class="club-runner ${m.uid === user.uid ? 'mine' : ''}"
+        style="--x:${x}%;--y:${y}px">
 
         <span class="club-runner-name">
-          ${mine ? '★ ' : ''}${escapeHTML(m.displayName)}
+          ${esc(m.displayName)}
         </span>
 
-        ${person(m.avatar)}
+        <span class="glam-racer-picture">
+          ${avatarHTML(m.avatar)}
+          ${glitterCarHTML(m.avatar)}
+        </span>
 
         <span class="club-runner-hours">
           ${fmt(m.totalHours)} sa
@@ -245,548 +360,555 @@ function renderRoad() {
 
   const road = `
     <div class="club-road-scroller">
-      <div class="club-road" style="width:${width}px">
+      <div class="club-road"
+           style="min-width:${width}px;width:100%">
+
         <div class="club-road-surface"></div>
         <span class="club-start">START</span>
         <span class="club-finish">🏁</span>
+
         ${runners}
       </div>
     </div>
   `;
 
   if (IS_RACE) {
-    mount.innerHTML = list.length
+    $('clubMount').innerHTML = list.length
       ? road
-      : '<div class="club-empty">Henüz yarışçı yok. İlk sırayı sen al! ♡</div>';
+      : `
+        <div class="club-empty">
+          İlk yarışçı bekleniyor ♡
+        </div>
+      `;
   } else {
-    mount.innerHTML = `
+    $('clubMount').hidden = false;
+
+    $('clubMount').innerHTML = `
       <section class="club-card">
         <div class="club-section-heading">
-          <h2>🏁 Koşu · ${escapeHTML(monthTitle())}</h2>
-          <span class="club-subtle">Tek yol, birlikte ilerle ♡</span>
+          <h2>
+            🏁 Koşu ·
+            ${esc(new Date().toLocaleDateString('tr-TR', {
+              month: 'long',
+              year: 'numeric'
+            }))}
+          </h2>
+
+          <a
+            href="./race.html?room=${encodeURIComponent(roomId)}"
+            class="club-btn club-btn-soft"
+            style="text-decoration:none">
+            Yarışa git →
+          </a>
         </div>
 
         ${list.length
           ? road
-          : '<div class="club-empty">İlk yarışçı bekleniyor…</div>'}
+          : '<div class="club-empty">Henüz yarışçı yok.</div>'}
 
-        <div class="club-road-bottom">
-          <span id="clubInlineStatus">
-            ${escapeHTML(statusMessage)}
-          </span>
-
-          <a href="./race.html?room=${encodeURIComponent(roomId)}"
-             class="club-btn club-btn-soft"
-             style="text-decoration:none">
-            Yarışa git →
-          </a>
-        </div>
+        <small id="clubInlineStatus">☁ Canlı yarış</small>
       </section>
     `;
   }
 
+  if (IS_RACE && names) {
+    const top = Math.max(
+      1,
+      ...list.map(m => Number(m.totalHours) || 0)
+    );
+
+    names.innerHTML = list.length
+      ? list.map((m, i) => `
+        <div class="glam-rank ${m.uid === user.uid ? 'mine' : ''}">
+          <span class="glam-rank-number">
+            ${i === 0 ? '👑' : i + 1}
+          </span>
+
+          ${avatarHTML(m.avatar)}
+
+          <div class="glam-rank-person">
+            <div>
+              <strong>${esc(m.displayName)}</strong>
+              ${m.uid === user.uid ? '<small>Sen</small>' : ''}
+              <b>${fmt(m.totalHours)} sa</b>
+            </div>
+
+            <div class="glam-bar">
+              <span style="width:${Math.max(
+                3,
+                100 * (Number(m.totalHours) || 0) / top
+              )}%"></span>
+            </div>
+          </div>
+        </div>
+      `).join('')
+      : '<p class="club-hero-empty">Henüz yarışçı yok ♡</p>';
+  }
+
   if ($('clubRanking')) {
     $('clubRanking').innerHTML = list.length
-      ? list.map((m, i) => `
-          <li>
-            <b>
-              ${i === 0 ? '👑 ' : `${i + 1}. `}
-              ${escapeHTML(m.displayName)}
-              ${m.uid === uid ? ' (Sen)' : ''}
-            </b>
-            <small>${fmt(m.totalHours)} saat</small>
-          </li>
-        `).join('')
+      ? list.map(
+          (m, i) => `
+            <li>
+              <b>
+                ${i === 0 ? '👑 ' : `${i + 1}. `}
+                ${esc(m.displayName)}
+                ${m.uid === user.uid ? ' (Sen)' : ''}
+              </b>
+
+              <small>${fmt(m.totalHours)} saat</small>
+            </li>
+          `
+        ).join('')
       : '<li>Henüz yarışçı yok.</li>';
   }
 
   if ($('clubMyHours')) {
     $('clubMyHours').textContent =
-      `Ajandandaki bu ayın çalışma süresi: ${fmt(plannerHours())} saat`;
+      `Bu ayki çalışma süren: ${fmt(hoursFromPlanner())} saat`;
   }
 }
-
-/* Sağ üstteki profil butonu */
 
 function profileButton() {
   let btn = $('clubProfileOpen');
 
   if (!btn && !IS_RACE) {
-    const actions = document.querySelector('.top-actions');
+    const top = document.querySelector('.top-actions');
 
-    if (!actions) return;
+    if (!top) return;
 
     btn = document.createElement('button');
-
     btn.type = 'button';
     btn.id = 'clubProfileOpen';
     btn.className = 'club-profile-button';
-
-    actions.appendChild(btn);
+    top.append(btn);
   }
 
-  if (btn) {
-    btn.hidden = !profile;
+  if (!btn) return;
 
-    if (profile) {
-      btn.textContent = `👤 ${profile.displayName}`;
-    }
+  btn.hidden = !profile;
 
-    if (!btn.dataset.bound) {
-      btn.dataset.bound = 'yes';
+  if (profile) {
+    // Avatar is already stored in Firestore; reuse the exact same
+    // image/legacy-avatar mapping as the profile selection dialog.
+    btn.innerHTML = `
+      ${avatarHTML(profile.avatar)}
+      <span class="club-profile-name">${esc(profile.displayName)}</span>
+    `;
 
-      btn.addEventListener('click', () => {
-        openProfileDialog(false);
-      });
-    }
+    btn.setAttribute('aria-label', `Profilimi düzenle: ${profile.displayName}`);
+  }
+
+  if (!btn.dataset.bound) {
+    btn.dataset.bound = '1';
+
+    btn.addEventListener(
+      'click',
+      () => showProfile(false)
+    );
   }
 }
 
-/* Kayıt ve profil düzenleme */
-
-function closeDialog() {
+function closeProfile() {
   $('clubDialogBackdrop')?.remove();
   document.body.style.removeProperty('overflow');
 }
 
-function openProfileDialog(firstTime) {
-  closeDialog();
+function showProfile(first) {
+  closeProfile();
 
-  dialogIsFirst = firstTime;
+  choice = resolveAvatar(profile?.avatar);
 
-  chosenAvatar = LOOKS.has(profile?.avatar)
-    ? profile.avatar
-    : 'pink';
+  const node = document.createElement('div');
 
-  const root = document.createElement('div');
+  node.id = 'clubDialogBackdrop';
+  node.className = 'club-dialog-backdrop';
 
-  root.className = 'club-dialog-backdrop';
-  root.id = 'clubDialogBackdrop';
-
-  root.innerHTML = `
+  node.innerHTML = `
     <div class="club-dialog"
          role="dialog"
          aria-modal="true"
          aria-labelledby="clubDialogTitle">
 
       <h2 id="clubDialogTitle">
-        ${firstTime
-          ? '🎀 My Sweet Planner’a hoş geldin!'
+        ${first
+          ? '🎀 Avatarını seç ve başla'
           : '💖 Profilimi düzenle'}
       </h2>
 
       <p>
-        ${firstTime
-          ? 'Ajandaya başlamadan önce ismini ve avatarını seç. Bu kayıt için şifre gerekmiyor.'
-          : 'Adını veya avatarını değiştirebilirsin.'}
+        Yarışta sadece adın, avatarın ve toplam saatin
+        görünür; ajanda notların gizlidir.
       </p>
 
       <form id="clubProfileForm">
-        <label for="clubDisplayName">Görünen adın</label>
+        <label for="clubDisplayName">
+          Görünen adın
+        </label>
 
         <input
           id="clubDisplayName"
-          type="text"
-          maxlength="24"
           minlength="1"
-          autocomplete="nickname"
-          placeholder="Örnek: Pelin"
+          maxlength="24"
+          placeholder="Görünen adın"
           required
-          value="${escapeHTML(profile?.displayName || '')}"
-        >
+          value="${esc(profile?.displayName || '')}">
 
         <p style="margin:12px 0 4px;font-weight:800">
-          Avatarını seç
+          Avatarını seç ♡
         </p>
 
         <div class="club-avatar-grid" id="clubAvatarGrid">
-          ${AVATARS.map(a => `
-            <button
-              type="button"
-              class="club-avatar-choice"
-              data-avatar="${a.id}"
-              aria-pressed="${a.id === chosenAvatar}">
-              ${person(a.id)}
-              <small>${escapeHTML(a.label)}</small>
-            </button>
-          `).join('')}
+          ${AVATARS.map(
+            ([id, label]) => `
+              <button
+                type="button"
+                class="club-avatar-choice"
+                data-avatar="${id}"
+                aria-label="${esc(label)}"
+                title="${esc(label)}"
+                aria-pressed="${id === choice}">
+
+                ${avatarHTML(id)}
+              </button>
+            `
+          ).join('')}
         </div>
 
-        <p style="font-size:12px">
-          Yarışta yalnızca adın, avatarın ve çalışma saatin görünür.
-          Ajanda notların paylaşılmaz.
-        </p>
-
         <div class="club-dialog-footer">
-          ${!firstTime
-            ? '<button type="button" id="clubCancelProfile" class="club-btn club-btn-soft">Vazgeç</button>'
-            : ''}
+          ${first
+            ? ''
+            : `
+              <button
+                type="button"
+                id="clubCancelProfile"
+                class="club-btn club-btn-soft">
+                Vazgeç
+              </button>
+            `}
 
-          <button type="submit"
-                  class="club-btn"
-                  id="clubSaveProfile">
-            ${firstTime ? 'Kayıt ol ve başla' : 'Kaydet'}
+          <button
+            class="club-btn"
+            id="clubSaveProfile"
+            type="submit">
+            ${first ? 'Yarışa katıl ♡' : 'Kaydet'}
           </button>
         </div>
 
-        <div id="clubProfileError"
-             class="club-dialog-error"
+        <div class="club-dialog-error"
+             id="clubProfileError"
              role="alert"></div>
       </form>
     </div>
   `;
 
-  document.body.appendChild(root);
+  document.body.append(node);
   document.body.style.overflow = 'hidden';
 
-  root.querySelector('#clubAvatarGrid').addEventListener(
-    'click',
-    e => {
-      const button = e.target.closest('[data-avatar]');
+  node
+    .querySelector('#clubAvatarGrid')
+    .addEventListener('click', event => {
+      const b = event.target.closest('[data-avatar]');
 
-      if (!button) return;
+      if (!b) return;
 
-      chosenAvatar = button.dataset.avatar;
+      choice = b.dataset.avatar;
 
-      root.querySelectorAll('[data-avatar]').forEach(b => {
-        b.setAttribute(
-          'aria-pressed',
-          String(b === button)
-        );
-      });
-    }
-  );
+      node
+        .querySelectorAll('[data-avatar]')
+        .forEach(x => {
+          x.setAttribute(
+            'aria-pressed',
+            String(x === b)
+          );
+        });
+    });
 
-  root.querySelector('#clubCancelProfile')
-    ?.addEventListener('click', closeDialog);
+  node
+    .querySelector('#clubCancelProfile')
+    ?.addEventListener('click', closeProfile);
 
-  root.querySelector('#clubProfileForm')
+  node
+    .querySelector('#clubProfileForm')
     .addEventListener('submit', saveProfile);
 
-  root.querySelector('#clubDisplayName').focus();
+  node.querySelector('#clubDisplayName').focus();
 }
 
-async function saveProfile(event) {
-  event.preventDefault();
+async function saveProfile(e) {
+  e.preventDefault();
 
   const name = $('clubDisplayName')
-    .value.trim()
+    .value
+    .trim()
     .replace(/\s+/g, ' ')
     .slice(0, 24);
 
-  const errorEl = $('clubProfileError');
+  if (!name) return;
 
-  if (!name) {
-    errorEl.textContent = 'Lütfen adını yaz.';
-    return;
-  }
-
-  if (!db || !uid) {
-    errorEl.textContent = 'Firebase henüz bağlanmadı.';
-    return;
-  }
-
-  const button = $('clubSaveProfile');
-
-  button.disabled = true;
+  $('clubSaveProfile').disabled = true;
 
   try {
-    const candidate = {
-      uid,
-      displayName: name,
-      avatar: chosenAvatar,
-      updatedAt: fs.serverTimestamp()
-    };
-
-    await fs.setDoc(
-      fs.doc(db, 'raceProfiles', uid),
-      candidate
+    await setDoc(
+      profileRef(),
+      {
+        uid: user.uid,
+        displayName: name,
+        avatar: choice,
+        updatedAt: serverTimestamp()
+      }
     );
 
     profile = {
-      uid,
+      uid: user.uid,
       displayName: name,
-      avatar: chosenAvatar
+      avatar: choice
     };
 
-    closeDialog();
+    closeProfile();
     profileButton();
-    startListening();
-
-    lastMemberWrite = '';
+    listenMembers();
 
     await syncHours(true);
-
-    notice('🟢 Çevrimiçi · Yarış odan kaydedildi.');
-  } catch (err) {
-    errorEl.textContent =
-      `Kayıt yapılamadı: ${err.message}`;
-
-    button.disabled = false;
+  } catch (error) {
+    $('clubProfileError').textContent = error.message;
+    $('clubSaveProfile').disabled = false;
   }
-}
-
-/* Saatleri Firebase'e kaydet */
-
-function myMemberRef() {
-  return fs.doc(
-    db,
-    'raceRooms',
-    roomId,
-    'months',
-    MONTH,
-    'members',
-    uid
-  );
 }
 
 async function syncHours(force = false) {
-  if (!profile || !fs || !uid) return;
+  if (!profile) return;
 
-  const totalHours = plannerHours();
-
-  const signature =
-    `${profile.displayName}|${profile.avatar}|${totalHours}`;
-
-  if (!force && signature === lastMemberWrite) {
+  if (writing) {
+    queuedWrite = true;
     return;
   }
 
-  if (writeInFlight) {
-    pendingSync = true;
-    return;
-  }
-
-  writeInFlight = true;
-  lastMemberWrite = signature;
+  writing = true;
 
   try {
-    await fs.setDoc(myMemberRef(), {
-      uid,
-      displayName: profile.displayName,
-      avatar: profile.avatar,
-      totalHours,
-      updatedAt: fs.serverTimestamp()
-    });
+    if (!(await hoursReady)) {
+      status(
+        '⚠ Çalışma saati yüklenemedi; eski saatlere dokunulmadı.'
+      );
+      return;
+    }
+
+    const hours = Math.min(
+      744,
+      hoursFromPlanner() +
+      (window.MSP.activeTimer?.getActiveSeconds() || 0) / 3600
+    );
+
+    const sign =
+      `${profile.displayName}|${profile.avatar}|${hours}`;
+
+    if (!force && sign === lastHoursWritten) return;
+
+    await setDoc(
+      memberRef(),
+      {
+        uid: user.uid,
+        displayName: profile.displayName,
+        avatar: profile.avatar,
+        totalHours: hours,
+        updatedAt: serverTimestamp()
+      }
+    );
+
+    lastHoursWritten = sign;
 
     if ($('clubMyHours')) {
       $('clubMyHours').textContent =
-        `Ajandandaki bu ayın çalışma süresi: ${fmt(totalHours)} saat`;
+        `Bu ayki çalışma süren: ${fmt(hours)} saat`;
     }
-  } catch (err) {
-    lastMemberWrite = '';
-
-    notice(`⚠ Saatler kaydedilemedi: ${err.message}`);
+  } catch (error) {
+    status(
+      error.code === 'permission-denied'
+        ? '⚠ Saat kaydedilemedi: Firestore kurallarını ve e-posta doğrulamanı kontrol et.'
+        : `⚠ Yarış kaydı: ${error.message}`
+    );
   } finally {
-    writeInFlight = false;
+    writing = false;
 
-    if (pendingSync) {
-      pendingSync = false;
+    if (queuedWrite) {
+      queuedWrite = false;
       void syncHours();
     }
   }
 }
 
-function scheduleSync() {
+function syncSoon() {
   if (!profile) return;
 
-  clearTimeout(syncTimer);
+  clearTimeout(syncDebounce);
 
-  syncTimer = setTimeout(() => {
-    void syncHours();
-  }, 1200);
+  syncDebounce = setTimeout(
+    () => void syncHours(),
+    1600
+  );
 }
 
-/* Gerçek zamanlı yarışçı listesi */
+function listenMembers() {
+  if (unsubscribeMembers || !profile) return;
 
-function startListening() {
-  if (!profile || unsubMembers) return;
+  unsubscribeMembers = onSnapshot(
+    monthCollection('members'),
 
-  unsubMembers = fs.onSnapshot(
-    fs.collection(
-      db,
-      'raceRooms',
-      roomId,
-      'months',
-      MONTH,
-      'members'
-    ),
-
-    snap => {
-      members = snap.docs.map(d => d.data());
-
-      const mine = members.find(m => m.uid === uid);
-
-      const sig =
-        `${profile.displayName}|${profile.avatar}|${plannerHours()}`;
-
-      if (
-        mine &&
-        mine.displayName === profile.displayName &&
-        mine.avatar === profile.avatar &&
-        Number(mine.totalHours) === plannerHours()
-      ) {
-        lastMemberWrite = sig;
-      } else {
-        void syncHours();
-      }
-
-      renderRoad();
+    snapshot => {
+      members = snapshot.docs.map(d => d.data());
+      render();
     },
 
-    err => notice(
-      `⚠ Yarışçılar yüklenemedi: ${err.message}`
-    )
+    err => {
+      status(`⚠ Yarışçılar okunamadı: ${err.message}`);
+    }
   );
 
   if (IS_RACE) {
-    startChat();
+    listenChat();
   }
 }
 
-/* Gerçek zamanlı sohbet */
+function listenChat() {
+  if (unsubscribeChat) return;
 
-function startChat() {
-  if (unsubMessages) return;
-
-  const chatQuery = fs.query(
-    fs.collection(
-      db,
-      'raceRooms',
-      roomId,
-      'months',
-      MONTH,
-      'messages'
-    ),
-    fs.orderBy('createdAt', 'desc'),
-    fs.limit(60)
+  const q = query(
+    monthCollection('messages'),
+    orderBy('createdAt', 'desc'),
+    limit(60)
   );
 
-  unsubMessages = fs.onSnapshot(
-    chatQuery,
+  unsubscribeChat = onSnapshot(
+    q,
 
     snapshot => {
-      const chat = $('clubChatList');
-
-      if (!chat) return;
+      const target = $('clubChatList');
+      if (!target) return;
 
       const atBottom =
-        chat.scrollHeight -
-        chat.scrollTop -
-        chat.clientHeight < 60;
+        target.scrollHeight -
+        target.scrollTop -
+        target.clientHeight < 55;
 
-      const chatData = snapshot.docs
+      const rows = snapshot.docs
         .map(d => d.data())
         .reverse();
 
-      chat.innerHTML = chatData.length
-        ? chatData.map(m => `
-            <div class="club-chat-message ${m.uid === uid ? 'mine' : ''}">
-              <strong>${escapeHTML(m.name)}</strong>
-              <p>${escapeHTML(m.text)}</p>
-            </div>
-          `).join('')
-        : '<div class="club-empty">İlk mesajı sen yaz! 💬</div>';
+      target.innerHTML = rows.length
+        ? rows.map(m => `
+          <div class="club-chat-message ${m.uid === user.uid ? 'mine' : ''}">
+            <strong>${esc(m.name)}</strong>
+            <p>${esc(m.text)}</p>
+          </div>
+        `).join('')
+        : `
+          <div class="club-empty">
+            İlk mesajı sen yaz! 💌
+          </div>
+        `;
 
       if (atBottom) {
-        chat.scrollTop = chat.scrollHeight;
+        target.scrollTop = target.scrollHeight;
       }
     },
 
-    err => notice(
-      `⚠ Sohbet yüklenemedi: ${err.message}`
-    )
+    err => {
+      status(`⚠ Sohbet: ${err.message}`);
+    }
   );
 }
 
-async function sendChat(e) {
+async function sendMessage(e) {
   e.preventDefault();
 
   if (!profile) return;
 
   const input = $('clubChatInput');
-  const text = input.value.trim();
+  const text = input.value.trim().slice(0, 300);
 
   if (!text) return;
 
   const button = $('clubChatSend');
-
   button.disabled = true;
 
   try {
-    await fs.addDoc(
-      fs.collection(
-        db,
-        'raceRooms',
-        roomId,
-        'months',
-        MONTH,
-        'messages'
-      ),
+    await addDoc(
+      monthCollection('messages'),
       {
-        uid,
+        uid: user.uid,
         name: profile.displayName,
         avatar: profile.avatar,
-        text: text.slice(0, 300),
-        createdAt: fs.serverTimestamp()
+        text,
+        createdAt: serverTimestamp()
       }
     );
 
     input.value = '';
-  } catch (err) {
-    alert(`Mesaj gönderilemedi: ${err.message}`);
+  } catch (error) {
+    alert(`Mesaj gönderilemedi: ${error.message}`);
   } finally {
     button.disabled = false;
   }
 }
 
-/* Davet bağlantısı */
+async function copyInvite() {
+  const button = $('clubCopyBtn');
 
-function inviteLink() {
-  const url = new URL('./race.html', location.href);
+  try {
+    await navigator.clipboard.writeText(publicUrl());
 
-  url.searchParams.set('room', roomId);
+    button.textContent = 'Kopyalandı ✓';
 
-  return url.href;
+    setTimeout(() => {
+      button.textContent = 'Kopyala';
+    }, 1400);
+  } catch {
+    window.prompt('Bağlantıyı kopyala:', publicUrl());
+  }
 }
 
-/* Butonlar ve otomatik saat takibi */
+async function shareInvite() {
+  const link = publicUrl();
 
-function initControls() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'My Sweet Ajanda - Koşu',
+        text: "Koşan Bitches'lar yarışına katıl! ♡",
+        url: link
+      });
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        await copyInvite();
+      }
+    }
+  } else {
+    await copyInvite();
+  }
+}
+
+async function initialize() {
   profileButton();
 
-  if (!IS_RACE) {
-    document.addEventListener('input', e => {
-      if (e.target.matches('[data-field="worked"]')) {
-        scheduleSync();
-      }
-    });
-  } else {
-    $('clubMonthName').textContent = monthTitle();
-    $('clubInvite').value = inviteLink();
+  if (IS_RACE) {
+    $('clubMonthName').textContent =
+      new Date().toLocaleDateString('tr-TR', {
+        month: 'long',
+        year: 'numeric'
+      });
+
+    $('clubInviteAnchor').href = publicUrl();
+    $('clubInviteAnchor').textContent = publicUrl();
 
     $('clubCopyBtn').addEventListener(
       'click',
-      async () => {
-        try {
-          await navigator.clipboard.writeText(
-            inviteLink()
-          );
+      copyInvite
+    );
 
-          $('clubCopyBtn').textContent =
-            'Kopyalandı ✓';
-
-          setTimeout(() => {
-            $('clubCopyBtn').textContent = 'Kopyala';
-          }, 1400);
-        } catch {
-          $('clubInvite').select();
-
-          alert(
-            'Bağlantıyı seçip kopyalayabilirsin.'
-          );
-        }
-      }
+    $('clubShareBtn').addEventListener(
+      'click',
+      shareInvite
     );
 
     $('clubSyncBtn').addEventListener(
@@ -796,13 +918,68 @@ function initControls() {
 
     $('clubChatForm').addEventListener(
       'submit',
-      sendChat
+      sendMessage
+    );
+  }
+
+  try {
+    const p = await getDoc(profileRef());
+
+    if (p.exists()) {
+      const data = p.data();
+
+      profile = {
+        uid: user.uid,
+        displayName: data.displayName,
+        avatar: resolveAvatar(data.avatar)
+      };
+    } else {
+      const m = await getDoc(memberRef());
+
+      if (m.exists()) {
+        const data = m.data();
+
+        profile = {
+          uid: user.uid,
+          displayName: data.displayName,
+          avatar: resolveAvatar(data.avatar)
+        };
+
+        await setDoc(
+          profileRef(),
+          {
+            ...profile,
+            updatedAt: serverTimestamp()
+          }
+        );
+      }
+    }
+
+    if (!profile) {
+      status(
+        '🎀 Avatarını ve adını seçerek yarışa katıl.'
+      );
+
+      showProfile(true);
+    } else {
+      profileButton();
+      listenMembers();
+
+      await syncHours();
+
+      status('🟢 Çevrimiçi · Canlı yarış');
+    }
+  } catch (error) {
+    status(
+      error.code === 'permission-denied'
+        ? '⚠ Firestore erişimi reddedildi. Önce e-postanı doğrula, sonra yeni güvenlik kurallarını Firebase’de yayımla.'
+        : `⚠ Firebase: ${error.message}`
     );
   }
 
   window.addEventListener('storage', e => {
-    if (e.key === PLANNER_KEY) {
-      scheduleSync();
+    if (e.key === HOUR_KEY) {
+      syncSoon();
     }
   });
 
@@ -810,146 +987,36 @@ function initControls() {
     'visibilitychange',
     () => {
       if (!document.hidden) {
-        scheduleSync();
+        syncSoon();
       }
     }
   );
 
-  window.addEventListener('focus', scheduleSync);
-}
-
-/* Firebase'e bağlan ve önceki hesabı kurtar */
-
-async function connect() {
-  const conf = window.MSP_FIREBASE_CONFIG;
-
-  if (
-    !conf ||
-    !['apiKey', 'authDomain', 'projectId', 'appId']
-      .every(k =>
-        conf[k] &&
-        !String(conf[k]).includes('BURAYA_')
-      )
-  ) {
-    notice(
-      '⚠ Firebase ayarları eksik. firebase-config.js dosyasını kontrol et.'
-    );
-    return;
-  }
-
-  if (!/^https?:$/.test(location.protocol)) {
-    notice(
-      '⚠ Sayfayı dosyadan değil, localhost veya HTTPS üzerinden aç.'
-    );
-    return;
-  }
-
-  try {
-    const base =
-      'https://www.gstatic.com/firebasejs/11.10.0/';
-
-    const [app, authentication, firestore] =
-      await Promise.all([
-        import(base + 'firebase-app.js'),
-        import(base + 'firebase-auth.js'),
-        import(base + 'firebase-firestore.js')
-      ]);
-
-    const firebaseApp = app.getApps().length
-      ? app.getApp()
-      : app.initializeApp(conf);
-
-    auth = authentication.getAuth(firebaseApp);
-
-    // Firebase'in eski oturumu okumasını bekle.
-    await auth.authStateReady();
-
-    uid = (
-      auth.currentUser ||
-      (await authentication.signInAnonymously(auth)).user
-    ).uid;
-
-    fs = firestore;
-    db = fs.getFirestore(firebaseApp);
-
-    notice('🟢 Çevrimiçi · Firebase bağlı.');
-
-    const profileSnap = await fs.getDoc(
-      fs.doc(db, 'raceProfiles', uid)
-    );
-
-    if (profileSnap.exists()) {
-      const p = profileSnap.data();
-
-      profile = {
-        uid,
-        displayName: p.displayName,
-        avatar: LOOKS.has(p.avatar)
-          ? p.avatar
-          : 'pink'
-      };
-    } else {
-      // Eski yarıştan profil varsa yeniden kayıt isteme.
-      const oldMember = await fs.getDoc(
-        myMemberRef()
-      );
-
-      let old = oldMember.exists()
-        ? oldMember.data()
-        : null;
-
-      if (!old) {
-        try {
-          old = JSON.parse(
-            localStorage.getItem(
-              `msp-race-profile-${roomId}`
-            )
-          );
-        } catch {
-          // Önceki profil bulunamadı.
-        }
+  if (!IS_RACE) {
+    document.addEventListener('input', e => {
+      if (e.target.matches('[data-field="worked"]')) {
+        syncSoon();
       }
+    });
 
-      const previousName =
-        old?.displayName || old?.name;
-
-      if (
-        previousName &&
-        LOOKS.has(old?.avatar)
-      ) {
-        profile = {
-          uid,
-          displayName:
-            previousName.trim().slice(0, 24),
-          avatar: old.avatar
-        };
-
-        await fs.setDoc(
-          fs.doc(db, 'raceProfiles', uid),
-          {
-            ...profile,
-            updatedAt: fs.serverTimestamp()
-          }
-        );
-      }
-    }
-
-    if (profile) {
-      profileButton();
-      startListening();
-    } else {
-      notice(
-        '🎀 Başlamak için profilini oluştur.'
-      );
-
-      openProfileDialog(true);
-    }
-  } catch (err) {
-    notice(
-      `⚠ Firebase bağlantısı kurulamadı: ${err.message}`
+    window.addEventListener(
+      'msp:planner-saved',
+      syncSoon
     );
   }
 }
 
-initControls();
-void connect();
+void initialize();
+
+if (IS_RACE) {
+  import('./race-timer.js?v=10')
+    .then(m => {
+      window.MSP.activeTimer = m.initRaceTimer({
+        user,
+        hoursReady,
+        syncSoon,
+        syncHours
+      });
+    })
+    .catch(console.error);
+}

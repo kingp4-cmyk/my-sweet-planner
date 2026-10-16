@@ -1,5 +1,5 @@
 
-/* Koşu Kulübü tasarımı */
+/* MY SWEET PLANNER - KOSU KULUBU */
 
 .club-race-page,
 .club-race-page * {
@@ -8,7 +8,7 @@
 
 .club-race-page {
   margin: 0;
-  background: radial-gradient(circle at 8% 8%, #ffe1ef, transparent 38%), #fff8fc;
+  background: #fff8fc;
   color: #783a5b;
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -237,7 +237,7 @@
   padding: 25px 6px;
 }
 
-/* Tüm avatarlar için yalnızca bir ortak yol */
+/* TEK ORTAK YARIS YOLU */
 
 .club-road-scroller {
   overflow-x: auto;
@@ -342,7 +342,7 @@
   color: white;
 }
 
-/* Hafif CSS avatarları, görsel yüklemesi gerektirmez */
+/* CSS ILE CIZILEN INSAN AVATARLARI */
 
 .club-person {
   --shirt: #ed75ae;
@@ -379,7 +379,6 @@
 
 .club-person.female .hair {
   height: 31px;
-  border-radius: 48% 48% 20% 20%;
 }
 
 .club-person .eyes {
@@ -457,8 +456,6 @@
   height: 5px;
 }
 
-/* Kız ve erkek karakterler */
-
 .club-person[data-look="pink"] {
   --shirt: #f28bbb;
   --hair: #65394f;
@@ -535,7 +532,7 @@
   to { transform: rotate(17deg); }
 }
 
-/* Ajandanın üstündeki mini parkur */
+/* AJANDA SAYFASININ USTUNDEKI MINI PARKUR */
 
 .club-planner-mount {
   margin: 16px auto 4px;
@@ -586,7 +583,7 @@
   display: none !important;
 }
 
-/* Kayıt ve profil düzenleme ekranı */
+/* PROFIL VE KAYIT EKRANI */
 
 .club-dialog-backdrop {
   position: fixed;
@@ -686,17 +683,625 @@
   margin-top: 9px;
 }
 
+/* YENI Y2K DIVA TASARIMI */
+
+.club-race-page {
+  min-height: 100vh;
+  background-color: #fff3f9;
+  background-image:
+    radial-gradient(circle at 10% 11%, #ffd2e6 0, transparent 28%),
+    radial-gradient(circle at 89% 22%, #e0d5ff 0, transparent 27%),
+    radial-gradient(circle at 20% 85%, #ffe8be 0, transparent 19%),
+    radial-gradient(circle at 86% 78%, #ffdceb 0, transparent 27%),
+    radial-gradient(#e9bfd6 0.75px, transparent 0.75px);
+  background-size: auto, auto, auto, auto, 24px 24px;
+}
+
+.club-page-wrap {
+  max-width: 1180px;
+  padding: 19px 22px 55px;
+}
+
+.club-race-header {
+  margin-bottom: 14px;
+}
+
+.club-back {
+  background: #ffffffd9;
+  border: 1px solid #f0cbdd;
+  border-radius: 99px;
+  padding: 8px 14px;
+  box-shadow: 0 4px 13px #d39ab025;
+}
+
+/* UST BASLIK VE DIVALAR ALANI */
+
+.club-race-page .club-profile-button {
+  background: linear-gradient(125deg, #fff, #ffe1f1);
+  border: 1px solid #ecbcd5;
+  box-shadow: 0 3px 0 #f2cfe0;
+}
+
+.club-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  margin: 0 0 18px;
+  padding: 23px 28px;
+  border-radius: 27px;
+  background:
+    radial-gradient(circle at 7% 100%, #ffe7a8aa 0, transparent 21%),
+    radial-gradient(circle at 82% -22%, #dec8ffaa 0, transparent 37%),
+    linear-gradient(112deg, #ffe0f1 0%, #fff8fd 53%, #f0e8ff 100%);
+  border: 2px solid #fff;
+  box-shadow:
+    0 7px 0 #ebcee0a8,
+    0 18px 35px #ac6b9f19,
+    inset 0 0 0 1px #eecddd;
+}
+
+.club-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .22;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 17px,
+    #ffffff 17px 19px
+  );
+}
+
+.club-hero::after {
+  content: "";
+  position: absolute;
+  width: 165px;
+  height: 165px;
+  border-radius: 50%;
+  border: 18px solid #fff6;
+  left: -105px;
+  bottom: -115px;
+  pointer-events: none;
+}
+
+.club-hero-decor {
+  position: absolute;
+  color: #cd86b4;
+  pointer-events: none;
+  letter-spacing: 7px;
+  z-index: 0;
+}
+
+.club-hero-decor-top {
+  top: 8px;
+  right: 24px;
+  font-size: 14px;
+}
+
+.club-hero-decor-bottom {
+  bottom: 6px;
+  left: 31%;
+  font-size: 15px;
+  opacity: .6;
+}
+
+.club-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(285px, .97fr);
+  gap: 25px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.club-hero-left {
+  min-width: 0;
+}
+
+.club-race-page .club-kicker {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  color: #b8699a;
+  font-weight: 850;
+}
+
+.club-race-page .club-hero h1 {
+  font-size: clamp(28px, 3.5vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #963a70;
+  margin: 9px 0 14px;
+  font-weight: 900;
+}
+
+.club-hero h1 em {
+  color: #c3579e;
+  font-style: normal;
+}
+
+.club-heading-star {
+  color: #e0a0cd;
+  font-size: .74em;
+}
+
+/* THE QUEEN IS RUNNING STICKERI */
+
+.club-queen-banner {
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 9px 14px 9px 17px;
+  border-radius: 16px;
+  background: #fff8fddd;
+  border: 1px solid #efc9dd;
+  color: #a8467f;
+  font: italic 800 15px/1.2 Georgia, "Times New Roman", serif;
+  box-shadow:
+    0 4px 0 #ebc6de,
+    0 7px 18px #c989a41c;
+}
+
+.club-queen-sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 47px;
+  height: 43px;
+  flex: none;
+  transform: rotate(10deg);
+  font: 27px/1 system-ui;
+  background: linear-gradient(140deg, #fce68c, #ffbedd);
+  border: 2px solid #fff;
+  border-radius: 13px;
+  box-shadow: 0 3px 8px #bd70953b;
+}
+
+.club-queen-sticker span {
+  position: absolute;
+  right: -9px;
+  bottom: -9px;
+  font-size: 22px;
+  transform: rotate(-20deg);
+}
+
+.club-race-page .club-connection {
+  display: table;
+  margin: 18px 0 0;
+  padding: 5px 12px;
+  background: #fffcfff0;
+  border: 1px solid #eec5dc;
+  color: #945574;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+/* DIVALARIN ISIMLERI */
+
+.club-hero-right {
+  min-width: 0;
+  background: #ffffffc7;
+  border: 1px solid #edc6dc;
+  border-radius: 21px;
+  padding: 16px 17px;
+  box-shadow:
+    0 6px 0 #e8c1dd72,
+    0 12px 26px #c27ca229;
+}
+
+.club-divas-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.club-divas-eyebrow {
+  font-size: 9px;
+  color: #ba7ca5;
+  letter-spacing: 1.25px;
+  font-weight: 850;
+}
+
+.club-divas-top h2 {
+  font-size: 17px;
+  line-height: 1.2;
+  color: #a3437d;
+  margin: 4px 0 0;
+  font-weight: 900;
+}
+
+.club-diva-count {
+  flex: none;
+  border-radius: 13px;
+  background: #ffe5f2;
+  padding: 6px 9px;
+  border: 1px solid #efc6dd;
+  color: #a4487a;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.club-hero-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+  min-height: 30px;
+}
+
+.club-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 29px;
+  background: #fff;
+  border: 1px solid #edd0e1;
+  border-radius: 999px;
+  padding: 5px 11px;
+  color: #925071;
+  font-size: 12px;
+  font-weight: 850;
+  box-shadow: 0 3px 9px #bd8aa41c;
+  overflow-wrap: anywhere;
+}
+
+.club-hero-pill.mine {
+  color: #fff;
+  background: linear-gradient(120deg, #e975b4, #ba7ad9);
+  border-color: #dc90c6;
+}
+
+.club-hero-empty {
+  color: #b47c99;
+  font-size: 12px;
+}
+
+.club-divas-footnote {
+  display: block;
+  text-align: right;
+  margin-top: 11px;
+  color: #b589a4;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* YENI KART TASARIMLARI */
+
+.club-race-page .club-card {
+  background: #fffdfef7;
+  border: 1px solid #efcddd;
+  border-radius: 23px;
+  padding: 19px;
+  box-shadow:
+    0 5px 0 #edd5e27d,
+    0 12px 26px #b4769914;
+}
+
+.club-race-page .club-card h2 {
+  margin: 0;
+  color: #a5497e;
+  font-size: 17px;
+}
+
+.club-race-page .club-section-heading {
+  margin-bottom: 5px;
+}
+
+.club-race-description {
+  font-size: 12px;
+  color: #a77799;
+  margin-bottom: 10px;
+}
+
+/* RENKLI YARIS PISTI */
+
+.club-race-page .club-road-scroller {
+  border: 2px solid #e4d6ed;
+  border-radius: 19px;
+  background:
+    radial-gradient(
+      ellipse at 18% 12%,
+      #ffffffb9 0 8%,
+      transparent 8.5%
+    ),
+    radial-gradient(
+      ellipse at 72% 19%,
+      #ffffffa6 0 11%,
+      transparent 11.5%
+    ),
+    linear-gradient(
+      180deg,
+      #dff0ff 0%,
+      #f2edff 35%,
+      #ffe3f0 70%,
+      #dff1df 100%
+    );
+  padding: 10px 12px;
+  box-shadow: inset 0 3px 11px #baa4cf2e;
+}
+
+/* Yol her zaman kutunun tamamini doldurur */
+
+.club-road {
+  width: 100%;
+}
+
+.club-race-page .club-road::before {
+  content: "☁️       ✦        ☁️       ✨        ☁️";
+  position: absolute;
+  left: 4%;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 21px;
+  letter-spacing: 12px;
+}
+
+.club-race-page .club-road::after {
+  content: "🌷      ✿        🌼      ✿        🌷       ✿";
+  position: absolute;
+  left: 3%;
+  right: 0;
+  top: 194px;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 19px;
+  letter-spacing: 9px;
+}
+
+.club-race-page .club-road-surface {
+  z-index: 1;
+  top: 97px;
+  height: 93px;
+  left: 1%;
+  right: 1%;
+  border: 4px solid #fff;
+  border-radius: 45px;
+  background: linear-gradient(
+    180deg,
+    #f7a7ce,
+    #efbad9 49%,
+    #e9a7ce
+  );
+  box-shadow:
+    0 5px 0 #dba4c0,
+    0 9px 17px #b56b9e28,
+    inset 0 0 0 2px #eaa4c7;
+}
+
+.club-race-page .club-road-surface::before {
+  left: 10px;
+  right: 10px;
+  top: 41px;
+  border-top: 3px dashed #fff;
+}
+
+.club-race-page .club-road-surface::after {
+  content: "";
+  position: absolute;
+  right: 28px;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background: conic-gradient(
+    #fff 25%,
+    #ac6194 0 50%,
+    #fff 0 75%,
+    #ac6194 0
+  ) 0 0 / 12px 12px;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+
+.club-race-page .club-start {
+  left: 2%;
+  top: 127px;
+  z-index: 3;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 10px;
+}
+
+.club-race-page .club-finish {
+  right: 2%;
+  top: 71px;
+  z-index: 3;
+  font-size: 26px;
+}
+
+.club-race-page .club-runner {
+  z-index: 4;
+}
+
+.club-race-page .club-runner-name {
+  border-radius: 10px;
+  padding: 3px 6px;
+  box-shadow: 0 3px 9px #ad75a049;
+}
+
+.club-race-page .club-runner.mine .club-runner-name {
+  background: linear-gradient(110deg, #d9629e, #b178c8);
+}
+
+.club-race-page .club-runner-hours {
+  border-radius: 10px;
+  background: #fffaf4;
+  padding: 3px 7px;
+}
+
+.club-race-page .club-road-bottom {
+  margin-top: 12px;
+  font-weight: 750;
+  font-size: 12px;
+}
+
+/* BUTONLAR */
+
+.club-race-page .club-btn {
+  background: linear-gradient(120deg, #dc74ad, #bc6bba);
+  border: 1px solid #c973a7;
+  box-shadow: 0 3px 0 #ad5a94;
+  color: #fff;
+  transition: transform .14s, box-shadow .14s;
+}
+
+.club-race-page .club-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #ad5a94;
+}
+
+.club-race-page .club-btn-soft {
+  background: #fff1f9;
+  border: 1px solid #ecc3d8;
+  color: #a75282;
+  box-shadow: 0 3px 0 #efd5e5;
+}
+
+/* SIRALAMA */
+
+.club-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.club-caption-star {
+  color: #d795c0;
+  font-size: 22px;
+}
+
+.club-chat-caption {
+  color: #b981a0;
+  font: italic 14px Georgia, serif;
+}
+
+.club-race-page .club-ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.club-race-page .club-ranking li {
+  border: 1px solid #f0d7e5;
+  border-radius: 13px;
+  padding: 12px 13px;
+  background: #fff7fc;
+}
+
+.club-race-page .club-ranking li:first-child {
+  background: linear-gradient(110deg, #fff0c2, #fff9e7);
+  border-color: #efdbad;
+}
+
+.club-race-page .club-ranking li:nth-child(2) {
+  background: linear-gradient(110deg, #eee9ff, #fff9fd);
+  border-color: #ded5f6;
+}
+
+.club-race-page .club-ranking li:nth-child(3) {
+  background: linear-gradient(110deg, #ffe8d9, #fff8f1);
+  border-color: #f4d6c1;
+}
+
+.club-race-page .club-ranking li small {
+  padding: 4px 7px;
+  background: #ffffffae;
+  border-radius: 9px;
+  font-weight: 850;
+}
+
+/* SOHBET */
+
+.club-race-page .club-chat-messages {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      #ffe6f5,
+      transparent 35%
+    ),
+    #fff9fc;
+  border-radius: 17px;
+  height: 265px;
+}
+
+.club-race-page .club-chat-message {
+  border-radius: 15px 15px 15px 4px;
+  box-shadow: 0 2px 9px #a66c9721;
+}
+
+.club-race-page .club-chat-message.mine {
+  background: linear-gradient(120deg, #ffe4f2, #f1e8ff);
+  border-radius: 15px 15px 4px 15px;
+}
+
+.club-race-page .club-chat-form input:focus {
+  outline: 2px solid #eaa7cf;
+  outline-offset: 1px;
+}
+
+/* EN ALTTAKU KUCUK DAVET KUTUSU */
+
+.club-race-page .club-invite-card {
+  width: min(100%, 550px);
+  margin: 0 auto 18px;
+  padding: 13px 16px;
+  background: linear-gradient(125deg, #fff7fb, #f8f0ff);
+  border: 1px dashed #e6b8d3;
+}
+
+.club-invite-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.club-race-page .club-invite-card h2 {
+  font-size: 14px;
+}
+
+.club-invite-heading span {
+  font: italic 12px Georgia, serif;
+  color: #b478a3;
+}
+
+.club-race-page .club-invite-row input {
+  font-size: 11px;
+  padding: 8px 10px;
+}
+
+.club-race-page .club-invite-row button {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.club-footer {
+  margin-top: 20px;
+  color: #ae7997;
+  font: italic 12px Georgia, serif;
+  text-align: center;
+}
+
+/* MOBIL UYUMLULUK */
+
 @media (max-width: 800px) {
   .club-bottom-grid {
     grid-template-columns: 1fr;
-  }
-
-  .club-page-wrap {
-    padding: 12px 12px 40px;
-  }
-
-  .club-card {
-    padding: 15px;
   }
 
   .club-avatar-grid {
@@ -706,13 +1311,49 @@
   .club-planner-mount {
     padding: 0 12px;
   }
+}
 
-  .club-invite-row {
+@media (max-width: 780px) {
+  .club-page-wrap {
+    padding: 12px 12px 35px;
+  }
+
+  .club-hero {
+    padding: 19px 16px;
+  }
+
+  .club-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 17px;
+  }
+
+  .club-hero-right {
+    padding: 15px;
+  }
+
+  .club-race-page .club-hero h1 {
+    font-size: 30px;
+  }
+
+  .club-hero-decor-top,
+  .club-hero-decor-bottom {
+    display: none;
+  }
+
+  .club-race-page .club-card {
+    padding: 14px;
+  }
+
+  .club-race-page .club-road-scroller {
+    padding: 8px;
+  }
+
+  .club-race-page .club-invite-row {
     flex-wrap: wrap;
   }
 
-  .club-invite-row input {
-    flex-basis: 100%;
+  .club-race-page .club-invite-row input {
+    flex: 1 1 100%;
   }
 }
 
@@ -722,7 +1363,83 @@
     animation: none !important;
   }
 
-  .club-runner {
+  .club-runner,
+  .club-race-page .club-btn {
     transition: none;
   }
+}
+
+/* AVATAR SECIM KARTLARI v23: labels omitted, accessibility aria-label intact */
+.club-avatar-choice {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px;
+  min-height:83px;
+  border-radius:16px;
+  cursor:pointer;
+}
+.club-avatar-choice .glam-avatar {display:block;width:66px;height:66px;margin:auto;}
+.club-avatar-choice .glam-avatar img {width:100%;height:100%;object-fit:cover;}
+.club-runner .glam-car {display:block;width:70px;height:43px;margin:-9px auto 0;}
+.club-runner .glam-car img {display:block;width:100%;height:100%;object-fit:contain;}
+
+/* v24 — Üst menüde seçilen profil avatarı */
+.club-profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.club-profile-button .glam-avatar {
+  display: block;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border: 2px solid #f5c4de;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.club-profile-button .glam-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.club-profile-button .club-profile-name {
+  min-width: 0;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* v25 — Küçük profil avatarı */
+
+.club-profile-button {
+  gap: 6px;
+  padding: 6px 10px;
+  min-height: 33px;
+  font-size: 12px;
+}
+
+.club-profile-button .glam-avatar {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  overflow: hidden;
+  border: 1px solid #efb9d5;
+  border-radius: 50%;
+}
+
+.club-profile-button .glam-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

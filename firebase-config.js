@@ -5,4 +5,3 @@ window.MSP_FIREBASE_CONFIG = {
     projectId: "my-sweet-planner",
     appId: "1:285356188167:web:63f2325119a4c26210c0a2"
   };
-  

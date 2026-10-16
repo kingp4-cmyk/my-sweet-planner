@@ -1,72 +1,270 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffebf5">
-  <title>Koşu Kulübü ♡ My Sweet Planner</title>
-  <link rel="stylesheet" href="./club.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff0f8">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=11">
+  <link rel="stylesheet" href="./account.css?v=11">
+  <title>My Sweet Ajanda ♡</title>
+  <link rel="stylesheet" href="./club.css?v=25">
+  <link rel="stylesheet" href="./race-glam.css?v=23">
 </head>
-<body data-club-page="race" class="club-race-page">
+<body class="club-race-page glam-race" data-club-page="race">
+
+<section class="account-gate" id="accountGate">
+  <div class="account-card">
+    <div class="account-logo">🏁🎀</div>
+    <h1>My Sweet Ajanda</h1>
+    <p>the queen is running ♡</p>
+
+    <div id="accountBootPanel" class="account-boot" role="status" aria-live="polite">
+      <span class="account-boot-spinner" aria-hidden="true"></span>
+      <span>Yarış hazırlanıyor… ♡</span>
+    </div>
+
+    <div id="accountFormPanel" hidden>
+      <form id="accountForm">
+        <label for="accountMode">Ne yapmak istersin?</label>
+        <select id="accountMode">
+          <option value="signup">Yeni hesap oluştur</option>
+          <option value="login">Hesabıma giriş yap</option>
+        </select>
+
+        <label for="accountEmail">E-posta</label>
+        <input id="accountEmail" type="email" required autocomplete="email">
+
+        <label for="accountPassword">Şifre</label>
+        <input id="accountPassword" type="password" minlength="6" required autocomplete="current-password">
+
+        <button class="account-action" id="accountSubmit" type="submit">
+          Kayıt ol ♡
+        </button>
+      </form>
+
+      <div class="account-actions-small">
+        <button class="account-link" id="resetPassword" type="button">
+          Şifremi unuttum
+        </button>
+        <button class="account-link" id="switchAccount" type="button">
+          Farklı hesap kullan
+        </button>
+      </div>
+    </div>
+
+    <div id="verifyPanel" hidden>
+      <p>
+        <strong id="verifyEmail"></strong>
+        adresine gelen e-postayı doğrula.
+      </p>
+
+      <button id="checkVerified" class="account-action" type="button">
+        E-postamı doğruladım ✓
+      </button>
+
+      <div class="account-actions-small">
+        <button id="resendVerification" class="account-link" type="button">
+          Tekrar gönder
+        </button>
+        <button id="verifySignOut" class="account-link" type="button">
+          Başka hesap
+        </button>
+      </div>
+    </div>
+
+    <p class="account-message" id="accountMessage" role="status"></p>
+
+    <div class="account-privacy">
+      🔒 Hesap doğrulaması olmadan yarışa katılınamaz.
+    </div>
+  </div>
+</section>
+
+<div id="siteRoot" hidden>
   <div class="club-page-wrap">
+
     <header class="club-race-header">
-      <a class="club-back" href="./index.html">← Ajandaya dön</a>
-      <button id="clubProfileOpen" class="club-profile-button" type="button" hidden>👤 Profilim</button>
+      <a class="club-back" href="./index.html">← Ajandama dön</a>
+
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span id="cloudStatus" class="cloud-status" role="status"></span>
+
+        <button class="club-profile-button" id="clubProfileOpen" type="button" hidden>
+          👤 Profilim
+        </button>
+
+        <button class="club-profile-button" id="logoutBtn" type="button">
+          Çıkış
+        </button>
+      </div>
     </header>
 
-    <div class="club-hero">
-      <span class="club-kicker">MY SWEET PLANNER · STUDY CLUB</span>
-      <h1>🏁 Koşu kulübü</h1>
-      <p>Tek yolda birlikte ilerleyin. En çok çalışan en önde!</p>
-      <p class="club-connection" id="clubStatus" role="status">Bağlanılıyor…</p>
-    </div>
+    <section class="club-hero" aria-labelledby="clubPageTitle">
+      <span class="club-hero-decor club-hero-decor-top" aria-hidden="true">✦ ✳ ♡ ✦</span>
+      <span class="club-hero-decor club-hero-decor-bottom" aria-hidden="true">✿ ✧ ★</span>
+
+      <div class="club-hero-grid">
+
+        <div class="club-hero-left">
+          <span class="club-kicker">
+            ✦ MY SWEET AJANDA ✦
+          </span>
+
+          <h1 id="clubPageTitle">
+            Koşan <em>Bitches’lar</em>
+            <span class="club-heading-star" aria-hidden="true">✧</span>
+          </h1>
+
+          <div class="club-queen-banner" aria-label="the queen is running">
+            <span>the queen is running</span>
+            <span class="club-queen-sticker" aria-hidden="true">
+              👑<span>🎀</span>
+            </span>
+          </div>
+
+          <p class="club-connection" id="clubStatus" role="status">
+            Bağlanılıyor…
+          </p>
+        </div>
+
+        <aside class="club-hero-right" aria-labelledby="clubDivasTitle">
+          <div class="club-divas-top">
+            <div>
+              <span class="club-divas-eyebrow">
+                ✦ OUR LITTLE RUNNING CLUB
+              </span>
+
+              <h2 id="clubDivasTitle">
+                Pistteki Divalar 💋
+              </h2>
+            </div>
+
+            <span class="club-diva-count" id="clubHeroDivaCount">
+              0 kişi
+            </span>
+          </div>
+
+          <div class="club-hero-names" id="clubHeroNames" aria-live="polite">
+            <span class="club-hero-empty">
+              Henüz yarışçı yok ♡
+            </span>
+          </div>
+
+          <span class="club-divas-footnote">
+            ♡ our study besties ♡
+          </span>
+        </aside>
+      </div>
+    </section>
 
     <main>
       <section class="club-card club-road-card" aria-labelledby="clubRoadTitle">
         <div class="club-section-heading">
-          <h2 id="clubRoadTitle">👟 Bu ayın yarış yolu</h2>
+          <h2 id="clubRoadTitle">🎀 Pink runway</h2>
           <span id="clubMonthName" class="club-subtle"></span>
+        </div>
+
+        <div class="club-race-description">
+          Beraber her zaman daha iyiye koşma dileğiyle ✨
         </div>
 
         <div id="clubMount"></div>
 
         <div class="club-road-bottom">
-          <span id="clubMyHours">Çalışma saatlerin hesaplanıyor…</span>
-          <button type="button" class="club-btn club-btn-soft" id="clubSyncBtn">Saatimi güncelle</button>
+          <span id="clubMyHours">
+            Çalışma saatlerin hesaplanıyor…
+          </span>
+
+          <button type="button" class="club-btn club-btn-soft" id="clubSyncBtn">
+            ↻ Saatimi güncelle
+          </button>
         </div>
       </section>
 
-      <section class="club-card club-invite-card" aria-labelledby="clubInviteTitle">
-        <h2 id="clubInviteTitle">💌 Arkadaşlarını çağır</h2>
-        <p>Bu bağlantıyı gönderdiğin kişiler aynı yarış odasına gelir.</p>
-
-        <div class="club-invite-row">
-          <input aria-label="Davet bağlantısı" id="clubInvite" readonly>
-          <button class="club-btn" id="clubCopyBtn" type="button">Kopyala</button>
-        </div>
-      </section>
-
-      <div class="club-bottom-grid">
-        <section class="club-card">
-          <h2>🏆 Sıralama</h2>
-          <ol class="club-ranking" id="clubRanking"></ol>
+      <div class="club-bottom-grid glam-bottom-grid">
+        <section class="club-card glam-timer-card" aria-labelledby="glamTimerTitle">
+          <h2 id="glamTimerTitle">♡ Kronometre <span class="glam-star">✧</span></h2>
+          <div class="glam-modes"><span>✦ Odaklan ve ilerle</span><span>STUDY MODE</span></div>
+          <div class="glam-clock" id="glamClock" role="timer">00:00:00</div>
+          <div class="glam-clock-actions">
+            <button type="button" id="glamReset" class="glam-round" title="Kaydı sıfırla">↺</button>
+            <button type="button" id="glamToggle" class="glam-play">▶</button>
+            <button type="button" id="glamFinish" class="glam-round" title="Süreyi kaydet">✓</button>
+          </div>
+          <p id="glamTimerNote" class="glam-note">Kronometreyi başlat, yarış yolunda ilerle ♡</p>
+          <div id="glamTodaySummary" class="glam-today">Bugün kronometre: 0 dakika</div>
         </section>
 
-        <section class="club-card club-chat-panel">
-          <h2>💬 Sohbet</h2>
-          <div id="clubChatList" class="club-chat-messages" aria-live="polite"></div>
+        <section class="club-card glam-assign-card">
+          <h2>✿ Bu süreyi nereye ekle?</h2>
+          <p>Kaydedilen süreyi ajandandaki bir göreve bağla. <strong>Aynı süre iki kez sayılmaz.</strong></p>
+          <div id="glamPendingSessions" class="glam-sessions"></div>
+          <label for="glamTaskSelect">Bugünün görevi</label>
+          <select id="glamTaskSelect"></select>
+          <label for="glamNewTask">İstersen yeni görev oluştur</label>
+          <input id="glamNewTask" maxlength="100" placeholder="Örn. Matematik soru çözümü">
+          <button id="glamAssign" type="button" class="glam-assign-btn">Bu süreyi göreve kaydet ✨</button>
+          <div id="glamAssignStatus" class="glam-assign-status" role="status"></div>
+        </section>
 
-          <form id="clubChatForm" class="club-chat-form">
-            <input id="clubChatInput" placeholder="Bir mesaj yaz…" maxlength="300" aria-label="Mesajın" required>
-            <button id="clubChatSend" class="club-btn" type="submit">Gönder</button>
+        <section class="club-card club-chat-panel" aria-labelledby="clubChatTitle">
+          <div class="club-card-heading">
+            <h2 id="clubChatTitle">💌 Besties chat</h2>
+            <span class="club-chat-caption">say hi! ♡</span>
+          </div>
+
+          <div class="club-chat-messages" id="clubChatList" aria-live="polite"></div>
+
+          <form class="club-chat-form" id="clubChatForm">
+            <input id="clubChatInput"
+                   placeholder="Kızlar, bugün kaç saat? 💗"
+                   maxlength="300"
+                   aria-label="Mesajın"
+                   required>
+
+            <button class="club-btn" id="clubChatSend" type="submit">
+              Gönder ♡
+            </button>
           </form>
         </section>
       </div>
-    </main>
-  </div>
 
-  <script src="./firebase-config.js"></script>
-  <script type="module" src="./club.js"></script>
+      <section class="club-card club-invite-card" aria-labelledby="clubInviteTitle">
+        <div class="club-invite-heading">
+          <h2 id="clubInviteTitle">💗 Arkadaşlarını davet et</h2>
+          <span>share the love ✧</span>
+        </div>
+
+        <div class="club-invite-row">
+          <a id="clubInviteAnchor"
+             class="club-invite-anchor"
+             target="_blank"
+             rel="noopener noreferrer"
+             href="#">
+            Davet bağlantısı
+          </a>
+
+          <button class="club-btn" id="clubCopyBtn" type="button">
+            Kopyala
+          </button>
+
+          <button class="club-btn club-btn-soft" id="clubShareBtn" type="button">
+            Paylaş ↗
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="club-footer">
+      made for the girls &amp; the besties ♡
+    </footer>
+  </div>
+</div>
+
+<script src="./firebase-config.js?v=11"></script>
+<script type="module" src="./app.js?v=25"></script>
+
 </body>
 </html>

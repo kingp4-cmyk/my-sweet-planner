@@ -1,0 +1,47 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 680" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="sky" x2="0" y2="1">
+    <stop stop-color="#f3b7db"/>
+    <stop offset=".55" stop-color="#ffd5e9"/>
+    <stop offset="1" stop-color="#f5c8c6"/>
+  </linearGradient>
+  <linearGradient id="sea" x2="0" y2="1">
+    <stop stop-color="#b4b1e9"/>
+    <stop offset="1" stop-color="#e8b6d8"/>
+  </linearGradient>
+</defs>
+<rect width="1500" height="680" fill="url(#sky)"/>
+<circle cx="1150" cy="170" r="90" fill="#fff7f3" opacity=".62"/>
+<path d="M0 290Q170 280 290 298T570 286T850 294T1140 274T1500 290V680H0Z" fill="url(#sea)"/>
+<path d="M0 490Q210 400 390 445T760 410T1190 445T1500 405V680H0Z" fill="#ca95ad"/>
+<path d="M0 520Q160 450 240 470T430 500T680 490T990 520T1270 475T1500 510V680H0Z" fill="#91a48d" opacity=".68"/>
+<path d="M0 560Q150 485 250 536T500 520T750 540T1150 518T1500 555V680H0Z" fill="#507f77" opacity=".55"/>
+<g opacity=".44" fill="#b975a0">
+  <rect x="255" y="248" width="22" height="58"/>
+  <rect x="280" y="260" width="14" height="46"/>
+  <rect x="310" y="231" width="30" height="75"/>
+  <rect x="345" y="250" width="20" height="56"/>
+  <rect x="385" y="225" width="28" height="80"/>
+  <rect x="421" y="266" width="30" height="39"/>
+  <rect x="460" y="230" width="22" height="74"/>
+</g>
+<g stroke="#7f806d" stroke-width="7" stroke-linecap="round">
+  <path d="M110 520L110 310M1300 515L1300 275M1335 540L1335 355"/>
+</g>
+<g fill="#617d62">
+  <path d="M110 330Q20 280 50 310Q80 322 100 348Q84 275 110 292Q137 316 115 348Q170 279 194 311Q144 313 113 354Z"/>
+  <path d="M1300 290Q1215 252 1235 283Q1275 285 1295 319Q1283 250 1305 255Q1329 270 1310 318Q1375 259 1386 291Q1350 287 1310 325Z"/>
+  <path d="M1335 359Q1290 320 1298 350L1335 379Q1335 326 1351 331L1345 380Q1402 338 1409 366L1345 387Z"/>
+</g>
+<g fill="#ffe8f6" opacity=".75">
+  <circle cx="192" cy="122" r="3"/>
+  <circle cx="540" cy="90" r="5"/>
+  <circle cx="920" cy="150" r="4"/>
+  <circle cx="1360" cy="95" r="3"/>
+</g>
+<g stroke="#ffffff" stroke-opacity=".45" stroke-width="3" fill="none">
+  <path d="M20 388Q220 374 320 389T610 385"/>
+  <path d="M930 363Q1100 347 1300 360T1500 365"/>
+</g>
+</svg>

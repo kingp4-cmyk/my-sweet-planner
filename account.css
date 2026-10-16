@@ -1,0 +1,228 @@
+
+/* My Sweet Planner - Hesap ve giriş sistemi */
+
+[hidden] {
+    display: none !important;
+  }
+
+  .account-gate,
+  .account-gate * {
+    box-sizing: border-box;
+  }
+
+  .account-gate {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 14px;
+    color: #8b426e;
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    background:
+      radial-gradient(circle at 8% 14%, #ffd8ec, transparent 35%),
+      radial-gradient(circle at 88% 78%, #e3d7ff, transparent 38%),
+      #fff7fc;
+  }
+
+  .account-card {
+    width: min(460px, 100%);
+    background: #ffffffed;
+    padding: 30px;
+    border: 2px solid #f0c9df;
+    border-radius: 28px;
+
+    box-shadow:
+      0 10px 0 #efd9e69c,
+      0 25px 60px #ab659528;
+  }
+
+  .account-logo {
+    font-size: 37px;
+    text-align: center;
+  }
+
+  .account-card h1 {
+    font-size: 28px;
+    margin: 5px 0 3px;
+    text-align: center;
+    color: #a6427f;
+  }
+
+  .account-card > p,
+  .account-card .account-caption {
+    text-align: center;
+    font-size: 13px;
+    color: #a16f8d;
+  }
+
+  .account-card label {
+    display: block;
+    margin-top: 13px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 850;
+  }
+
+  .account-card input,
+  .account-card select {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 13px;
+    border: 1px solid #e8b9d2;
+    background: #fffafd;
+    color: #78405c;
+    font: inherit;
+  }
+
+  .account-card input:focus-visible,
+  .account-card select:focus-visible {
+    outline: 2px solid #d781b3;
+    outline-offset: 2px;
+  }
+
+  .account-action {
+    display: block;
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    margin-top: 17px;
+
+    background: linear-gradient(
+      115deg,
+      #e572ad,
+      #b875c4
+    );
+
+    color: #fff;
+    border-radius: 13px;
+    padding: 12px;
+    font-weight: 850;
+    font-size: 14px;
+  }
+
+  .account-action:disabled {
+    opacity: .6;
+    cursor: wait;
+  }
+
+  .account-link {
+    background: none;
+    border: 0;
+    padding: 7px 4px;
+    color: #af5287;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 12px;
+  }
+
+  .account-actions-small {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 11px;
+  }
+
+  .account-message {
+    color: #915a7c;
+    min-height: 1.5em;
+    font-size: 12px;
+    margin-top: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  .account-message[data-kind="error"] {
+    color: #ac2453;
+  }
+
+  .account-message[data-kind="success"] {
+    color: #357b59;
+  }
+
+  .account-privacy {
+    margin-top: 15px;
+    padding: 10px;
+    background: #fff2f8;
+    border-radius: 12px;
+    font-size: 11px;
+    color: #986886;
+  }
+
+  .cloud-status {
+    font-size: 12px;
+    color: #995078;
+    display: inline-block;
+    max-width: 260px;
+  }
+
+  /* Arkadaşlara gönderilen gerçek tıklanabilir bağlantı */
+
+  .club-race-page .club-invite-row {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .club-race-page .club-invite-anchor {
+    flex: 1 1 100%;
+    display: block;
+
+    background: #fff;
+    border: 1px solid #edcadc;
+    color: #a84d80;
+
+    border-radius: 11px;
+    padding: 9px 11px;
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+  }
+
+  .club-race-page .club-invite-row .club-btn {
+    font-size: 12px;
+    padding: 9px 13px;
+  }
+
+  @media (max-width: 650px) {
+    .account-card {
+      padding: 20px;
+    }
+
+    .cloud-status {
+      max-width: 150px;
+    }
+  }
+
+/* Ilk açılış: Firebase oturumu denetlenirken giris formunu gostermeyiz. */
+.account-boot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 100px;
+  padding: 10px 0;
+  color: #a05684;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.account-boot-spinner {
+  width: 29px;
+  height: 29px;
+  display: block;
+  border-radius: 50%;
+  border: 3px solid #f4d5e6;
+  border-top-color: #d364a0;
+  animation: account-boot-spin .85s linear infinite;
+}
+
+@keyframes account-boot-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-boot-spinner { animation: none; }
+}

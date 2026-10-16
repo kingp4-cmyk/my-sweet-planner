@@ -1,0 +1,1239 @@
+
+/* MY SWEET AJANDA — SPRING RUNWAY
+   Koşu sayfasının tam ve temiz CSS kodu
+   Görsel: assets/race-bg-spring.png
+*/
+
+/* 1. SAYFANIN ÇİÇEKLİ ARKA PLANI */
+
+.glam-race {
+  margin: 0;
+  min-height: 100vh;
+  color: #713c5d;
+  font-family:
+    'Trebuchet MS',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+
+  background:
+    linear-gradient(
+      rgba(255, 250, 254, .12),
+      rgba(255, 250, 254, .20)
+    ),
+    url('./assets/race-bg-spring.png')
+      center center / cover no-repeat fixed;
+}
+
+/* Arka planda çok hafif pırıltılar */
+
+.glam-race::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .24;
+
+  background:
+    radial-gradient(
+      circle at 16% 19%,
+      #fff 0 2px,
+      transparent 3px
+    ) 0 0 / 185px 185px,
+
+    radial-gradient(
+      circle at 74% 48%,
+      #fff 0 1.5px,
+      transparent 2.5px
+    ) 0 0 / 241px 241px;
+}
+
+.glam-race .club-page-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding:
+    12px clamp(12px, 2vw, 24px) 36px;
+}
+
+/* 2. ÜST MENÜ */
+
+.glam-race .club-race-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  padding: 10px 16px;
+  margin: 0 0 12px;
+
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 20px;
+
+  background: rgba(255, 252, 255, .87);
+
+  -webkit-backdrop-filter: blur(13px);
+  backdrop-filter: blur(13px);
+
+  box-shadow:
+    0 10px 30px rgba(120, 81, 120, .13);
+}
+
+.glam-race .club-back,
+.glam-race .club-profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 13px;
+
+  border: 1px solid #f0c5da;
+  border-radius: 999px;
+
+  background: #fff4fa;
+  color: #9c4476;
+
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.glam-race #logoutBtn {
+  border: 0;
+
+  background:
+    linear-gradient(135deg, #f89bc2, #d95197);
+
+  color: #fff;
+}
+
+/* 3. CAM GÖRÜNÜMLÜ KARTLAR */
+
+.glam-race .club-card {
+  min-width: 0;
+  padding: 17px;
+
+  border: 2px solid rgba(255, 255, 255, .93);
+  border-radius: 22px;
+
+  background: rgba(255, 251, 254, .90);
+
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 10px 30px rgba(125, 78, 116, .15);
+}
+
+.glam-race .club-card h2 {
+  color: #88385f;
+}
+
+/* 4. ÜSTTEKİ KOŞU BAŞLIĞI */
+
+.glam-race .club-hero {
+  position: relative;
+  overflow: hidden;
+
+  min-height: 0;
+  margin: 0 0 12px;
+  padding: 18px 20px;
+
+  border: 2px solid rgba(255, 255, 255, .9);
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      112deg,
+      rgba(255, 235, 248, .91),
+      rgba(255, 252, 254, .91) 57%,
+      rgba(228, 245, 255, .88)
+    );
+
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 10px 30px rgba(125, 78, 116, .16);
+
+  text-align: left;
+}
+
+.glam-race .club-hero::before {
+  content: '✦   ♡   ✧';
+
+  position: absolute;
+  top: 9px;
+  right: 22%;
+
+  color: rgba(255, 255, 255, .9);
+  font-size: 21px;
+  letter-spacing: 14px;
+
+  pointer-events: none;
+}
+
+.glam-race .club-hero-grid {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr) minmax(275px, 365px);
+
+  align-items: center;
+  gap: 16px;
+}
+
+.glam-race .club-hero-left {
+  min-width: 0;
+  padding: 4px 10px;
+}
+
+.glam-race .club-kicker {
+  display: inline-block;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, .80);
+  color: #ad4b82;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.7px;
+}
+
+.glam-race .club-hero h1 {
+  margin: 11px 0 12px;
+
+  color: #e45d9d;
+
+  font-size: clamp(33px, 4.2vw, 56px);
+  font-weight: 1000;
+  letter-spacing: -2px;
+  line-height: 1.04;
+
+  -webkit-text-stroke: 1px #fff8fc;
+
+  text-shadow:
+    0 3px 0 #ae5384,
+    0 6px 0 #ffe1ef,
+    0 9px 18px #9a53753a;
+}
+
+.glam-race .club-hero h1 em {
+  color: #bf4289;
+  font-style: normal;
+}
+
+.glam-race .club-heading-star {
+  color: #fff;
+  font-size: .55em;
+  text-shadow: 0 2px 0 #ea79af;
+}
+
+.glam-race .club-hero-decor {
+  display: none;
+}
+
+/* THE QUEEN IS RUNNING */
+
+.glam-race .club-queen-banner {
+  display: inline-flex;
+  align-items: center;
+
+  max-width: 100%;
+  padding: 7px 14px;
+
+  border: 1px solid #fff;
+  border-radius: 17px;
+
+  background: rgba(255, 250, 253, .88);
+
+  color: #a64b7c;
+
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 850;
+
+  box-shadow:
+    0 5px 15px rgba(193, 101, 148, .16);
+
+  transform: rotate(-2deg);
+}
+
+.glam-race .club-queen-sticker {
+  margin-left: 8px;
+  font-style: normal;
+}
+
+.glam-race .club-connection {
+  display: table;
+  max-width: 100%;
+
+  margin: 13px 0 0;
+  padding: 6px 12px;
+
+  border: 1px solid #efbdd8;
+  border-radius: 999px;
+
+  background: rgba(255, 252, 255, .94);
+  color: #a14676;
+
+  font-size: 11px;
+
+  box-shadow:
+    0 3px 12px rgba(173, 87, 131, .13);
+}
+
+/* 5. PİSTTEKİ DİVALAR */
+
+.glam-race .club-hero-right {
+  min-width: 0;
+  min-height: 0;
+
+  padding: 12px 14px;
+
+  border: 1px solid #fff;
+  border-radius: 19px;
+
+  background: rgba(255, 255, 255, .84);
+
+  box-shadow:
+    0 8px 24px rgba(142, 100, 125, .14);
+}
+
+.glam-race .club-divas-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.glam-race .club-divas-eyebrow {
+  color: #c88baa;
+  font-size: 9px;
+  letter-spacing: 1.3px;
+}
+
+.glam-race #clubDivasTitle {
+  margin: 3px 0 7px;
+  color: #a8447a;
+  font-size: clamp(18px, 2.2vw, 23px);
+}
+
+.glam-race .club-diva-count {
+  flex-shrink: 0;
+  padding: 5px 8px;
+
+  border: 1px solid #f1cede;
+  border-radius: 999px;
+
+  background: #fff3fa;
+  color: #995478;
+
+  font-size: 10px;
+}
+
+.glam-race .club-hero-names {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  max-height: 170px;
+  overflow-y: auto;
+
+  padding-right: 4px;
+}
+
+.glam-race .club-divas-footnote {
+  display: block;
+  margin-top: 5px;
+
+  text-align: right;
+  color: #ae7c96;
+  font-size: 10px;
+}
+
+/* YARIŞÇI SIRALAMALARI */
+
+.glam-rank {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.glam-rank-number {
+  flex: none;
+  width: 19px;
+
+  color: #bd789e;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.glam-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+
+  width: 50px;
+  height: 50px;
+
+  overflow: hidden;
+
+  border: 3px solid #fff;
+  border-radius: 50%;
+
+  background: #ffe6f2;
+
+  box-shadow: 0 4px 11px #9f3d7836;
+}
+
+.glam-avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glam-rank .glam-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.glam-rank-person {
+  flex: 1;
+  min-width: 0;
+}
+
+.glam-rank-person > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.glam-rank-person strong {
+  overflow: hidden;
+
+  color: #853f62;
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glam-rank-person small {
+  padding: 2px 5px;
+
+  border-radius: 8px;
+
+  background: #e874a9;
+  color: #fff;
+  font-size: 9px;
+}
+
+.glam-rank-person b {
+  margin-left: auto;
+  color: #a45180;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.glam-bar {
+  height: 6px;
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  border-radius: 100px;
+  background: #f6e6ef;
+}
+
+.glam-bar span {
+  display: block;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(90deg, #e7a2c9, #e55c9b);
+}
+
+/* 6. PEMBE YARIŞ PİSTİ */
+
+.glam-race .club-road-card {
+  position: relative;
+  overflow: hidden;
+
+  padding: 12px 14px 7px;
+
+  border: 3px solid #fff;
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 227, 242, .94),
+      rgba(251, 198, 225, .95)
+    );
+
+  box-shadow:
+    0 12px 32px #b66c9d35;
+}
+
+.glam-race .club-section-heading {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+.glam-race #clubRoadTitle {
+  margin: 0;
+  color: #87375f;
+  font-size: 18px;
+}
+
+.glam-race .club-subtle {
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #ffffffcf;
+  color: #a3577f;
+
+  font-size: 10px;
+}
+
+.glam-race .club-race-description {
+  padding: 5px 2px 8px;
+  color: #974e77;
+  font-size: 11px;
+}
+
+.glam-race .club-road-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 0 0 6px;
+  border-radius: 17px;
+}
+
+/* YARIŞ YOLUNUN MANZARASI */
+
+.glam-race .club-road {
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+  min-width: 720px;
+  height: 235px;
+
+  overflow: hidden;
+
+  border: 2px solid #ffffffc9;
+  border-radius: 17px;
+
+  background:
+    url('./assets/glam-scene.svg')
+      center 55% / cover no-repeat,
+    linear-gradient(
+      #dbf3ff,
+      #fce7f4 65%,
+      #ebf7de
+    );
+
+  box-shadow:
+    inset 0 5px 19px #fff8;
+}
+
+/* PEMBE YOL */
+
+.glam-race .club-road-surface {
+  position: absolute;
+  z-index: 1;
+
+  top: 69px;
+  left: 2.5%;
+  right: 2.5%;
+
+  height: 120px;
+
+  border: 5px solid #fff2f5;
+
+  border-radius:
+    50% 34% 45% 32% /
+    35% 44% 40% 50%;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffe1ee,
+      #ffc0dd 48%,
+      #f1a5cb
+    );
+
+  box-shadow:
+    0 7px 0 #d989ac,
+    0 13px 20px #7f3c6436;
+
+  transform: skewY(-1deg);
+}
+
+/* YOLUN ORTA ÇİZGİSİ */
+
+.glam-race .club-road-surface::before {
+  content: '';
+
+  position: absolute;
+  inset: auto 12px 50%;
+
+  border-top: 3px dashed #fffbff;
+  transform: none;
+}
+
+/* DAMALI BİTİŞ ÇİZGİSİ */
+
+.glam-race .club-road-surface::after {
+  content: '';
+
+  position: absolute;
+
+  top: -5px;
+  right: 4%;
+  bottom: -5px;
+  left: auto;
+
+  width: 15px;
+
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+
+  background:
+    conic-gradient(
+      #fff 25%,
+      #a85080 0 50%,
+      #fff 0 75%,
+      #a85080 0
+    ) 0 0 / 14px 14px;
+
+  transform: none;
+
+  box-shadow:
+    0 0 5px #84315e50;
+}
+
+/* START VE FINISH İŞARETLERİ */
+
+.glam-race .club-start,
+.glam-race .club-finish {
+  position: absolute;
+  z-index: 3;
+
+  top: 18px;
+
+  padding: 6px 9px;
+
+  border-radius: 11px;
+
+  background: #fff9fc;
+  color: #b64c7e;
+
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+
+  box-shadow:
+    0 3px 0 #edb1cb;
+}
+
+.glam-race .club-start {
+  left: 12px;
+  transform: rotate(-5deg);
+}
+
+.glam-race .club-finish {
+  top: 14px;
+  right: 12px;
+
+  font-size: 0;
+  transform: rotate(5deg);
+}
+
+.glam-race .club-finish::before {
+  content: '🏁';
+
+  display: block;
+  font-size: 19px;
+  transform: scaleX(-1);
+}
+
+.glam-race .club-finish::after {
+  content: 'FINISH';
+
+  display: block;
+
+  color: #a64678;
+  font-size: 9px;
+}
+
+/* 7. ARABALAR VE AVATARLAR */
+
+.glam-race .club-runner {
+  position: absolute;
+  z-index: 4;
+
+  left: var(--x);
+  top: calc(65px + var(--y));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-width: 80px;
+
+  transform: translate(-50%, -35%);
+  transition: left .9s ease;
+
+  filter:
+    drop-shadow(0 4px 6px #ac4c8a68);
+}
+
+.glam-race .club-runner-name,
+.glam-race .club-runner-hours {
+  max-width: 110px;
+  overflow: hidden;
+
+  padding: 3px 8px;
+
+  border: 1px solid #ffd4e8;
+  border-radius: 12px;
+
+  background: #fff9f6f2;
+  color: #8b345d;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  box-shadow:
+    0 4px 12px #b1588430;
+}
+
+.glam-race .club-runner-hours {
+  margin-top: -3px;
+  padding: 2px 6px;
+  font-size: 9px;
+}
+
+.glam-race .club-runner.mine .club-runner-name {
+  background: #ed6cad;
+  color: #fff;
+}
+
+.glam-racer-picture {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.glam-race .glam-racer-picture .glam-avatar {
+  z-index: 2;
+  width: 43px;
+  height: 43px;
+}
+
+.glam-race .glam-car {
+  display: inline-block;
+
+  z-index: 1;
+
+  margin-top: -10px;
+  font-size: 28px;
+
+  transform: scaleX(-1);
+}
+
+.glam-race .club-road-bottom {
+  padding: 6px 4px;
+  margin-top: 4px;
+
+  color: #91426d;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.glam-race .club-btn-soft {
+  background: #fff5fa;
+  border-color: #eabbd2;
+  color: #a34c7b;
+}
+
+/* 8. KRONOMETRE, GÖREV VE SOHBET */
+
+.glam-race .glam-bottom-grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1.05fr 1.05fr;
+
+  gap: 12px;
+  align-items: stretch;
+
+  margin-top: 11px;
+}
+
+.glam-race .glam-bottom-grid > .club-card {
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border-radius: 19px;
+}
+
+.glam-race .glam-bottom-grid h2 {
+  margin: 0 0 12px;
+  color: #8c395f;
+  font-size: 18px;
+}
+
+.glam-star {
+  float: right;
+  color: #e981b6;
+}
+
+/* KRONOMETRE */
+
+.glam-modes {
+  display: flex;
+  justify-content: space-between;
+  gap: 9px;
+
+  padding: 9px 12px;
+
+  border-radius: 14px;
+
+  background: #ffeff7;
+  color: #a9688b;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.glam-clock {
+  padding: 17px 0 11px;
+
+  color: #a02d62;
+
+  font-size: clamp(31px, 3vw, 43px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 1000;
+  letter-spacing: .5px;
+
+  text-align: center;
+  white-space: nowrap;
+}
+
+.glam-clock-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.glam-round,
+.glam-play {
+  display: grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  border: 2px solid #ffd2e5;
+  border-radius: 50%;
+
+  background: #fff0f8;
+  color: #d65394;
+
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.glam-play {
+  width: 64px;
+  height: 64px;
+
+  border: 3px solid #f7bad6;
+
+  background:
+    linear-gradient(135deg, #fa8abd, #d94392);
+
+  color: #fff;
+  font-size: 27px;
+
+  box-shadow:
+    0 8px 20px #d6509942;
+}
+
+.glam-note {
+  min-height: 52px;
+  margin: 13px 0 0 !important;
+  padding: 10px;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(105deg, #ffedf6, #fff9fc);
+
+  color: #95476e;
+  font-size: 12px;
+  text-align: center;
+}
+
+.glam-today {
+  margin-top: 12px;
+
+  color: #a85382;
+
+  font-size: 11px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* GÖREVE SÜRE EKLEME */
+
+.glam-assign-card p {
+  color: #a66d89;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.glam-assign-card label {
+  display: block;
+
+  margin: 13px 0 7px;
+
+  color: #803a5f;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.glam-assign-card input,
+.glam-assign-card select {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ebbad3;
+  border-radius: 12px;
+
+  background: #fffafd;
+  color: #803f65;
+
+  font: inherit;
+}
+
+.glam-sessions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  max-height: 105px;
+  overflow-y: auto;
+
+  color: #b16a94;
+  font-size: 11px;
+}
+
+.glam-session {
+  padding: 7px 11px;
+
+  border: 1px solid #e8bfd2;
+  border-radius: 999px;
+
+  background: #fff0f7;
+  color: #a74e80;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.glam-session.chosen {
+  background: #df5899;
+  color: #fff;
+}
+
+.glam-assign-btn {
+  display: block;
+
+  width: 100%;
+  margin-top: 16px;
+  padding: 13px 10px;
+
+  border: 0;
+  border-radius: 13px;
+
+  background:
+    linear-gradient(110deg, #fa87b7, #e85199);
+
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+
+  box-shadow:
+    0 7px 17px #df82ab45;
+
+  cursor: pointer;
+}
+
+.glam-assign-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.glam-assign-status {
+  min-height: 34px;
+  margin-top: 9px;
+
+  color: #975177;
+  font-size: 11px;
+}
+
+/* SOHBET */
+
+.glam-race .club-chat-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.glam-race .club-chat-messages {
+  flex: 1;
+
+  min-height: 220px;
+  max-height: 340px;
+  height: 100%;
+
+  overflow-y: auto;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(#fffdfd, #fff5fa);
+}
+
+.glam-race .club-chat-message {
+  font-size: 12px;
+
+  box-shadow:
+    0 3px 12px #f3d1e3;
+}
+
+.glam-race .club-chat-message.mine {
+  background: #f6c6df;
+}
+
+.glam-race .club-chat-form {
+  display: flex;
+  gap: 8px;
+}
+
+.glam-race .club-chat-form input {
+  min-width: 0;
+  border-radius: 20px;
+}
+
+.glam-race .club-chat-form button {
+  flex: none;
+
+  width: 44px;
+  height: 44px;
+  padding: 0;
+
+  border-radius: 50%;
+  font-size: 0;
+}
+
+.glam-race .club-chat-form button::before {
+  content: '➤';
+  font-size: 20px;
+}
+
+/* 9. DAVET KUTUSU VE ALT YAZI */
+
+.glam-race .club-invite-card {
+  margin-top: 12px;
+  padding: 16px;
+}
+
+.glam-race .club-footer {
+  margin-top: 16px;
+
+  color: #774b69;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+
+  text-shadow:
+    0 1px 1px #ffffffb0;
+}
+
+.glam-race .club-avatar-choice .glam-avatar {
+  width: 68px;
+  height: 68px;
+}
+
+.glam-race .club-avatar-grid {
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+}
+
+/* 10. ETKİLEŞİMLER */
+
+.glam-race button,
+.glam-race a {
+  transition:
+    filter .15s ease,
+    transform .15s ease;
+}
+
+.glam-race button:hover:not(:disabled),
+.glam-race a:hover {
+  filter: brightness(1.035);
+}
+
+.glam-race :is(button, a, input, select):focus-visible {
+  outline: 3px solid #d76bad;
+  outline-offset: 3px;
+}
+
+/* 11. TABLET */
+
+@media (max-width: 1000px) {
+  .glam-race .club-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .glam-race .club-hero-left {
+    padding: 1px 2px;
+  }
+
+  .glam-race .glam-bottom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .glam-race .club-chat-panel {
+    grid-column: 1 / -1;
+  }
+
+  .glam-race .club-chat-messages {
+    height: 230px;
+    min-height: 230px;
+  }
+}
+
+/* 12. TELEFON */
+
+@media (max-width: 600px) {
+  .glam-race {
+    background-attachment: scroll;
+  }
+
+  .glam-race .club-page-wrap {
+    padding: 9px 9px 28px;
+  }
+
+  .glam-race .club-race-header {
+    padding: 9px 11px;
+    border-radius: 16px;
+  }
+
+  .glam-race .club-hero {
+    padding: 14px 12px;
+    border-radius: 19px;
+  }
+
+  .glam-race .club-hero h1 {
+    font-size: clamp(31px, 8vw, 42px);
+  }
+
+  .glam-race .club-hero-right {
+    padding: 11px;
+  }
+
+  .glam-race .club-queen-banner {
+    font-size: 12px;
+  }
+
+  .glam-race .club-road-card {
+    padding: 10px;
+    border-radius: 19px;
+  }
+
+  .glam-race .club-road {
+    min-width: 720px;
+    height: 235px;
+  }
+
+  .glam-race .glam-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .glam-race .club-chat-panel {
+    grid-column: auto;
+  }
+
+  .glam-race .glam-bottom-grid > .club-card {
+    padding: 14px;
+  }
+
+  .glam-race .club-avatar-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 13. AZALTILMIŞ HAREKET TERCİHİ */
+
+@media (prefers-reduced-motion: reduce) {
+  .glam-race .club-runner,
+  .glam-race button,
+  .glam-race a {
+    transition: none;
+  }
+
+  .glam-race {
+    background-attachment: scroll;
+  }
+}
+
+
+/* SIMLI PEMBE & LILA ARABALAR v23 */
+.glam-race .club-runner .glam-car {
+  display:block;
+  width:76px;
+  height:42px;
+  margin:-11px auto 0;
+  font-size:0;
+  transform:none !important;
+  filter:drop-shadow(0 3px 3px rgba(177,76,123,.30));
+}
+.glam-race .club-runner .glam-car img {
+  width:100%;height:100%;object-fit:contain;
+}
+.glam-race .club-avatar-choice {min-height:82px;}
+.glam-race .club-avatar-choice .glam-avatar {width:66px;height:66px;}
