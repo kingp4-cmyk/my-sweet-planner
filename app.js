@@ -344,7 +344,7 @@ async function loadLegacyPlannerScript() {
   await new Promise((resolve, reject) => {
     const s = document.createElement('script');
 
-    s.src = './script.js?v=26';
+    s.src = './script.js?v=28';
     s.onload = resolve;
 
     s.onerror = () => {
@@ -375,7 +375,7 @@ async function start(user) {
 
     $('logoutBtn')?.addEventListener('click', logout);
 
-    import('./club.js?v=25').catch(error => {
+    import('./club.js?v=28').catch(error => {
       console.error('[My Sweet Ajanda] Yarış yüklenemedi:', error);
       cloudStatus('⚠ Yarış bileşeni yüklenemedi. Sayfayı yenile.');
     });

@@ -21,7 +21,7 @@
       rgba(255, 250, 254, .12),
       rgba(255, 250, 254, .20)
     ),
-    url('./assets/race-bg-spring.png')
+    url('./assets/race-bg-spring.webp')
       center center / cover no-repeat fixed;
 }
 
@@ -1237,3 +1237,161 @@
 }
 .glam-race .club-avatar-choice {min-height:82px;}
 .glam-race .club-avatar-choice .glam-avatar {width:66px;height:66px;}
+
+/* Yarışta 0 saat = START çizgisi (%6.5). */
+.glam-race .club-road::after {
+  content:""; position:absolute; z-index:2; left:6.5%; top:69px; height:121px;
+  border-left:3px dashed #fff; filter:drop-shadow(0 1px 2px #bb5895);
+  pointer-events:none;
+}
+.glam-race .club-start { left:calc(6.5% - 29px); }
+@media (prefers-reduced-motion:reduce) { .glam-race .club-runner { transition:none; } }
+
+.race-page-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.race-journal-link{background:linear-gradient(120deg,#ffe6f5,#e9d7ff)!important;color:#a34482!important;border:1px solid #fff!important}
+
+/* V3: The requested, user-provided pink glitter texture for the running header. */
+.glam-race .club-hero{
+  background-image:linear-gradient(105deg,rgba(255,240,251,.8),rgba(255,245,253,.9) 60%,rgba(248,229,254,.76)),url('./assets/branding/pink-sparkle-user.webp');
+  background-position:center,center 48%;background-size:cover,cover;
+  box-shadow:0 9px 27px #c054a64d,inset 0 2px 3px #fff8;
+}
+.glam-race .club-hero h1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.glam-race .club-hero .race-heading-image{width:64px;height:64px;object-fit:contain;border:2px solid #fff;border-radius:15px;background:#fff8fd;box-shadow:0 4px 14px #a14d8550;flex-shrink:0}
+.glam-race .y2k-race-logo{width:29px;height:28px;object-fit:contain;border-radius:8px;background:#fff;margin-right:6px;vertical-align:middle}
+
+
+/* v7 — görünür, gerçek kart zeminleri. Beyaz opak örtü kaldırıldı. */
+.glam-race .glam-bottom-grid > .glam-timer-card,
+.glam-race .glam-bottom-grid > .glam-assign-card,
+.glam-race .glam-bottom-grid > .club-chat-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 2px solid #fff8fc;
+  box-shadow: 0 8px 25px #a848863a, inset 0 0 0 1px #f2b4d088;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* Önceki v5'in görünmeyen ::before katmanı yerine doğrudan kart zeminini kullanıyoruz. */
+.glam-race .glam-timer-card {
+  background: linear-gradient(145deg, #fffdfc, #fff3f8 55%, #f6efff);
+}
+.glam-race .glam-assign-card {
+  background: linear-gradient(145deg, #fffdfc, #fff3f8 55%, #f6efff);
+}
+.glam-race .club-chat-panel {
+  background: linear-gradient(180deg, #fff2f429, #ffeffa40),
+    url('./assets/branding/race-chat-bg.webp') center top / 270px auto repeat;
+}
+/* Kart başlıklarını ve eylem alanlarını desenin önünde okunaklı tut. */
+.glam-race .glam-timer-card h2,
+.glam-race .glam-assign-card h2,
+.glam-race .club-chat-panel h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: #fffcffdc;
+  box-shadow: 0 3px 12px #a7487830;
+}
+.glam-race .glam-timer-card .glam-modes,
+.glam-race .glam-timer-card .glam-note,
+.glam-race .glam-timer-card .glam-today {
+  background: #fff9fbd9;
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+.glam-race .glam-timer-card .glam-clock {
+  background: #fffafd99;
+  border: 1px solid #ffffffb8;
+  border-radius: 16px;
+  padding: 14px 8px 10px;
+  box-shadow: inset 0 1px 3px #fff9;
+}
+.glam-race .glam-assign-card p,
+.glam-race .glam-assign-card .glam-assign-status {
+  background: #fdfffcdf;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.glam-race .glam-assign-card label {
+  display: table;
+  padding: 3px 7px;
+  border-radius: 7px;
+  background: #fcfffce5;
+}
+.glam-race .glam-assign-card input,
+.glam-race .glam-assign-card select { background: #fffefdF2; }
+/* Sohbetin büyük mesaj alanında da desen belirgin olsun; mesaj balonları okunabilir kalsın. */
+.glam-race .club-chat-panel .club-chat-messages {
+  background: linear-gradient(180deg, #fffafcb0, #fff5fabd),
+    url('./assets/branding/race-chat-bg.webp') center top / 240px auto repeat;
+  border: 1px solid #e6b5d3;
+  box-shadow: inset 0 1px 10px #e9b0cd38;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.glam-race .club-chat-panel .club-chat-message { background-color: #fffafaef; }
+.glam-race .club-chat-panel .club-chat-message.mine { background-color: #f9c5e9f2; }
+@media (prefers-reduced-transparency:reduce) {
+  .glam-race .club-chat-panel .club-chat-messages { background-color: #fff7fc; }
+}
+
+
+
+/* ================================================
+   v12 — KRONOMETRE + SÜRE EKLEME: SAKİN PEMBE/LİLA
+   İki kart aynı, yormayan hafif zemin. Sohbet korunur.
+   ================================================ */
+.glam-race .glam-bottom-grid > .glam-timer-card,
+.glam-race .glam-bottom-grid > .glam-assign-card {
+  background:
+    radial-gradient(circle at 94% 8%, rgba(220, 191, 242, .20), transparent 36%),
+    radial-gradient(circle at 5% 93%, rgba(255, 206, 221, .20), transparent 42%),
+    linear-gradient(145deg, #fffcfd 0%, #fff4f9 56%, #f8f2ff 100%);
+  border: 1.5px solid #edc7de;
+  border-radius: 20px;
+  box-shadow: 0 8px 23px rgba(168, 92, 137, .12), inset 0 1px 0 #fff;
+}
+/* Arka planda eski resim/pseudo katmanlarının görünmesini engelle. */
+.glam-race .glam-timer-card::before,
+.glam-race .glam-assign-card::before { display:none; content:none; }
+.glam-race .glam-timer-card h2,
+.glam-race .glam-assign-card h2 {
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(240, 199, 220, .72);
+  border-radius: 13px;
+  box-shadow: none;
+  padding: 7px 12px;
+  color: #934e7d;
+}
+.glam-race .glam-timer-card .glam-modes,
+.glam-race .glam-timer-card .glam-note,
+.glam-race .glam-timer-card .glam-today {
+  background: rgba(255,255,255,.68);
+  border: 1px solid rgba(240,207,228,.61);
+  color: #99537d;
+}
+.glam-race .glam-timer-card .glam-clock {
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(234,195,222,.72);
+  box-shadow: 0 3px 12px rgba(186,128,170,.06);
+  color: #9b386f;
+}
+.glam-race .glam-assign-card p,
+.glam-race .glam-assign-card .glam-assign-status {
+  background: rgba(255,255,255,.54);
+  border: 1px solid rgba(244,216,234,.56);
+  color: #98597e;
+}
+.glam-race .glam-assign-card label {
+  background: transparent;
+  color: #90456c;
+}
+.glam-race .glam-assign-card select,
+.glam-race .glam-assign-card input {
+  background: #fffdfef2;
+  border: 1px solid #edc5dd;
+  color: #87466b;
+}

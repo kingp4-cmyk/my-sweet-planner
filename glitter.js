@@ -10,7 +10,7 @@
   const MAX_STROKES = 160;
   const MAX_POINTS = 9000;
 
-  const TEXTURE = './assets/pink-glitter.jpg';
+  const TEXTURE = './assets/pink-glitter.webp';
 
   const clamp = (n, min, max) =>
     Math.max(min, Math.min(max, n));

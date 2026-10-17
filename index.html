@@ -31,9 +31,9 @@
 
   <title>My Sweet Ajanda | Pembe Dijital Ajanda</title>
 
-  <link rel="stylesheet" href="./style.css?v=27">
-  <link rel="stylesheet" href="./club.css?v=25">
-  <link rel="stylesheet" href="./account.css?v=12">
+  <link rel="stylesheet" href="./style.css?v=31">
+  <link rel="stylesheet" href="./club.css?v=31">
+  <link rel="stylesheet" href="./account.css?v=13">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=12">
 </head>
 
@@ -48,18 +48,8 @@
     <h1>My Sweet Ajanda</h1>
     <p>your own little corner ♡</p>
 
-    <div
-      id="accountBootPanel"
-      class="account-boot"
-      role="status"
-      aria-live="polite">
-
-      <span
-        class="account-boot-spinner"
-        aria-hidden="true">
-      </span>
-
-      <span>Ajandan hazırlanıyor… ♡</span>
+    <div id="accountBootPanel" class="account-boot" role="status" aria-live="polite">
+      <span class="account-boot-subtitle">Ajandan hazırlanıyor...</span>
     </div>
 
     <div id="accountFormPanel" hidden>
@@ -184,7 +174,7 @@
   <header class="topbar">
     <div class="brand">
 
-      <div class="brand-icon">🎀</div>
+      <div class="brand-icon"><img src="./assets/branding/planner-logo.webp" alt=""></div>
 
       <div>
         my sweet ajanda
@@ -197,12 +187,14 @@
 
     <div class="top-actions">
 
+      <a class="btn journal-nav" href="./journal.html"><img class="y2k-nav-logo" src="./assets/branding/journal-logo.webp" alt=""> Günlüğüm ♡</a>
+
       <a
         class="btn invite-btn"
         id="clubRaceLink"
         href="./race.html">
 
-        🏁 Koşu
+        <img class="y2k-nav-logo" src="./assets/branding/running-logo.webp" alt=""> Koşu
       </a>
 
       <span
@@ -363,6 +355,17 @@
         </div>
       </section>
 
+      <!-- AYLIK ÖNCELİKLER: sadece kullanıcıya özel ajanda kaydına eklenir -->
+      <section class="monthly-priorities" aria-labelledby="priorityTitle">
+        <div class="priority-heading">
+          <div><span class="priority-eyebrow">✦ LITTLE BIG DREAMS ✦</span>
+          <h2 id="priorityTitle">🎀 Bu ayki 5 önceliğim</h2></div>
+          <span class="priority-count" id="priorityCount">0 / 5 ✨</span>
+        </div>
+        <p>Bu ay kendime verdiğim beş tatlı söz… ♡</p>
+        <div class="priority-grid" id="priorityGrid"></div>
+      </section>
+
       <!-- AYLIK İLERLEME -->
 
       <section
@@ -394,7 +397,7 @@
         <div>
 
           <h2 id="monthHeading">
-            Günlüğüm ✧
+            Ajandam ✧
           </h2>
 
           <p>
@@ -432,6 +435,27 @@
     <aside
       class="side-panel"
       data-paint="site:sidebar">
+
+      <!-- TEKRAR EDEN GÖREVLER -->
+      <section class="repeat-card" aria-labelledby="repeatTitle">
+        <div class="repeat-title"><div>
+          <span class="repeat-eyebrow">♡ EVERYDAY MAGIC ♡</span>
+          <h2 id="repeatTitle">🗓️ Tekrarlanan görevlerim</h2>
+        </div><span aria-hidden="true">🌷</span></div>
+        <p>Bir kere yaz, seçtiğin günlerde ajandana eklensin.</p>
+        <form id="repeatForm" class="repeat-form">
+          <label for="repeatName">Görevin adı</label>
+          <input id="repeatName" type="text" maxlength="160" required placeholder="Örn. 30 dakika kitap oku ♡">
+          <label for="repeatHours">Planlanan saat <small>(isteğe bağlı)</small></label>
+          <input id="repeatHours" type="number" inputmode="decimal" min="0" max="24" step="0.25" placeholder="Örn. 1">
+          <div class="repeat-day-head"><span>Ayın günlerini seç</span>
+            <button type="button" id="repeatAllDays">Tümünü seç</button></div>
+          <div class="repeat-days" id="repeatDays" role="group" aria-label="Ayın seçili günleri"></div>
+          <button class="repeat-add" type="submit">✦ Görevi günlere ekle</button>
+        </form>
+        <div id="repeatList" class="repeat-list" aria-live="polite"></div>
+        <p class="repeat-help">Not: Şablonu kaldırmak, tamamlanmış günlük görevlerini silmez. ♡</p>
+      </section>
 
       <div class="side-heading">
         <h2>Sticker bahçem</h2>
@@ -639,8 +663,8 @@
 </div>
 
 <script src="./firebase-config.js?v=12"></script>
-<script src="./glitter.js?v=19" defer></script>
-<script type="module" src="./app.js?v=26"></script>
+<script src="./glitter.js?v=28" defer></script>
+<script type="module" src="./app.js?v=28"></script>
 
 </body>
 </html>

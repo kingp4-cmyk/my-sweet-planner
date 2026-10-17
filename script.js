@@ -268,7 +268,10 @@ function defaultState() {
     days: {},
     stickers: {},
     colors: {},
-    customStickers: []
+    customStickers: [],
+    monthlyPriorities: {},
+    recurringTasks: {},
+    recurringSkip: {}
   };
 }
 
@@ -287,6 +290,9 @@ try {
 state.days = state.days || {};
 state.stickers = state.stickers || {};
 state.colors = state.colors || {};
+state.monthlyPriorities = state.monthlyPriorities || {};
+state.recurringTasks = state.recurringTasks || {};
+state.recurringSkip = state.recurringSkip || {};
 state.customStickers = Array.isArray(state.customStickers)
   ? state.customStickers
   : [];
@@ -407,6 +413,7 @@ function getDay(day) {
     };
   }
 
+  applyRecurringTasks(day, state.days[key]);
   return state.days[key];
 }
 
@@ -714,7 +721,7 @@ function renderMonth() {
 
   $('monthHeading').textContent =
     `${MONTHS[state.activeMonth]} ` +
-    `${state.year} günlüğüm ✧`;
+    `${state.year} ajandam ✧`;
 
   document.querySelectorAll('.month-tab')
     .forEach(button => {
@@ -738,6 +745,9 @@ function renderMonth() {
   }
 
   updateStats();
+  renderPriorities();
+  renderRepeatDays();
+  renderRecurringList();
   renderStickers();
   applyPaint();
 }
@@ -853,6 +863,10 @@ $('dayGrid').addEventListener('click', event => {
   if (event.target.closest('[data-remove-task]')) {
     const row = event.target.closest('[data-task]');
 
+    const removed = data.tasks.find(task => task.id === row.dataset.task);
+    if (removed?.recurringId) {
+      (state.recurringSkip[dayKey(day)] ||= []).push(removed.recurringId);
+    }
     data.tasks = data.tasks.filter(
       task => task.id !== row.dataset.task
     );
@@ -1689,6 +1703,136 @@ if (backToTop) {
 }
 
 
+
+/* ===============================
+   AYLIK ÖNCELİKLER & TEKRAR EDEN GÖREVLER
+   Eski version:1 / gün verisi korunur.
+================================ */
+const monthDataKey = () => `${state.year}-${String(state.activeMonth).padStart(2, '0')}`;
+let repeatSelectedDays = new Set();
+
+function applyRecurringTasks(day, data) {
+  const templates = state.recurringTasks?.[monthDataKey()] || [];
+  const skipped = state.recurringSkip?.[dayKey(day)] || [];
+  if (!Array.isArray(data.tasks)) return;
+  for (const item of templates) {
+    if (!Array.isArray(item.days) || !item.days.includes(day) || skipped.includes(item.id)) continue;
+    if (data.tasks.some(task => task.recurringId === item.id)) continue;
+    data.tasks.push({
+      ...newTask(), recurringId: item.id,
+      name: item.name, planned: item.planned || ''
+    });
+  }
+}
+
+function priorityEntries() {
+  const key = monthDataKey();
+  const arr = state.monthlyPriorities[key];
+  if (!Array.isArray(arr)) state.monthlyPriorities[key] = [];
+  while (state.monthlyPriorities[key].length < 5) {
+    state.monthlyPriorities[key].push({ text: '', done: false });
+  }
+  return state.monthlyPriorities[key];
+}
+
+function updatePriorityCount() {
+  const entries = priorityEntries();
+  $('priorityCount').textContent = `${entries.filter(x => x.done && x.text.trim()).length} / 5 ✨`;
+}
+
+function renderPriorities() {
+  $('priorityGrid').innerHTML = priorityEntries().slice(0, 5).map((item, i) => `
+    <label class="priority-item ${item.done ? 'is-done' : ''}">
+      <span class="priority-num">0${i + 1}</span>
+      <input type="checkbox" data-priority-check="${i}" ${item.done ? 'checked' : ''} aria-label="${i + 1}. öncelik tamamlandı">
+      <input type="text" data-priority-input="${i}" value="${escapeHTML(item.text)}" maxlength="120" placeholder="${i + 1}. önceliğim...">
+      <span aria-hidden="true">${['🌷','✨','🦋','🍒','💗'][i]}</span>
+    </label>`).join('');
+  updatePriorityCount();
+}
+
+$('priorityGrid').addEventListener('input', e => {
+  if (!e.target.matches('[data-priority-input]')) return;
+  priorityEntries()[Number(e.target.dataset.priorityInput)].text = e.target.value;
+  updatePriorityCount();
+  scheduleSave();
+});
+$('priorityGrid').addEventListener('change', e => {
+  if (!e.target.matches('[data-priority-check]')) return;
+  priorityEntries()[Number(e.target.dataset.priorityCheck)].done = e.target.checked;
+  e.target.closest('.priority-item').classList.toggle('is-done', e.target.checked);
+  updatePriorityCount();
+  scheduleSave();
+});
+
+function renderRepeatDays() {
+  const count = new Date(state.year, state.activeMonth, 0).getDate();
+  repeatSelectedDays = new Set([...repeatSelectedDays].filter(x => x <= count));
+  $('repeatDays').innerHTML = Array.from({ length: count }, (_, i) => {
+    const day = i + 1;
+    return `<button type="button" class="repeat-day ${repeatSelectedDays.has(day) ? 'chosen' : ''}" data-repeat-day="${day}" aria-pressed="${repeatSelectedDays.has(day)}">${day}</button>`;
+  }).join('');
+  $('repeatAllDays').textContent = repeatSelectedDays.size === count ? 'Seçimi kaldır' : 'Tümünü seç';
+}
+
+$('repeatDays').addEventListener('click', e => {
+  const btn = e.target.closest('[data-repeat-day]');
+  if (!btn) return;
+  const n = Number(btn.dataset.repeatDay);
+  if (repeatSelectedDays.has(n)) repeatSelectedDays.delete(n);
+  else repeatSelectedDays.add(n);
+  renderRepeatDays();
+});
+$('repeatAllDays').addEventListener('click', () => {
+  const count = new Date(state.year, state.activeMonth, 0).getDate();
+  repeatSelectedDays = repeatSelectedDays.size === count
+    ? new Set()
+    : new Set(Array.from({ length: count }, (_, i) => i + 1));
+  renderRepeatDays();
+});
+
+function renderRecurringList() {
+  const list = state.recurringTasks[monthDataKey()] || [];
+  $('repeatList').innerHTML = list.length
+    ? `<div class="repeat-list-heading">Bu ayın şablonları ♡</div>` + list.map(item => `
+      <div class="repeat-entry"><span><b>${escapeHTML(item.name)}</b>
+        <small>${item.days.length} gün ${item.planned ? `· ${escapeHTML(item.planned)} sa plan` : ''}</small></span>
+        <button type="button" data-remove-repeat="${escapeHTML(item.id)}" aria-label="Şablonu kaldır">×</button>
+      </div>`).join('')
+    : `<div class="repeat-empty">Henüz bir tekrarlanan görevin yok 🌸</div>`;
+}
+
+$('repeatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('repeatName').value.trim();
+  const hours = $('repeatHours').value;
+  const planned = hours === '' ? '' : String(safeHours(hours));
+  if (!name || !repeatSelectedDays.size) {
+    toast('Görev adını yaz ve en az bir gün seç ♡'); return;
+  }
+  if (hours !== '' && (Number(hours) < 0 || Number(hours) > 24)) {
+    toast('Planlanan saat 0 ile 24 arasında olmalı.'); return;
+  }
+  const key = monthDataKey();
+  (state.recurringTasks[key] ||= []).push({
+    id: uid(), name: name.slice(0, 160), planned,
+    days: [...repeatSelectedDays].sort((a,b) => a-b)
+  });
+  $('repeatForm').reset();
+  repeatSelectedDays = new Set();
+  renderMonth();
+  scheduleSave();
+  toast('Seçtiğin günlere eklendi! ✨');
+});
+$('repeatList').addEventListener('click', e => {
+  const btn = e.target.closest('[data-remove-repeat]');
+  if (!btn) return;
+  const list = state.recurringTasks[monthDataKey()] || [];
+  state.recurringTasks[monthDataKey()] = list.filter(x => x.id !== btn.dataset.removeRepeat);
+  renderRecurringList();
+  scheduleSave();
+  toast('Şablon kaldırıldı. Günlük kayıtların korundu ♡');
+});
 
 renderStickerPalette();
 renderMonth();

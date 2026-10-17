@@ -2256,3 +2256,51 @@ body::before {
     padding: 10px 14px;
   }
 }
+
+/* === 2026-10: Öncelikler, tekrarlanan görevler, günlük bağlantısı === */
+.journal-nav{background:linear-gradient(130deg,#ffe6f2,#e7d9ff);border-color:#eeb8d9;box-shadow:0 3px 10px #eaa6cf4d;text-decoration:none;white-space:nowrap}
+.monthly-priorities{margin:20px 0 17px;border:2px solid #fff;border-radius:26px;padding:19px 23px 21px;background:radial-gradient(circle at 95% 6%,#fff0ca 0,transparent 21%),linear-gradient(125deg,#fff2fa,#f9efff 56%,#fff7ed);box-shadow:0 10px 24px #d28aad1c, inset 0 0 0 1px #f1d4e5}
+.priority-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.priority-heading h2{color:#913d71;font-size:22px;margin:4px 0}
+.priority-eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#bf7b99}
+.priority-count{background:#fff;padding:9px 14px;border-radius:999px;border:1px solid #efc5dc;color:#ae5788;font-weight:900;white-space:nowrap}
+.monthly-priorities>p{margin:3px 0 14px;color:#af7e9a;font-size:13px}
+.priority-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.priority-item{display:flex;align-items:center;gap:8px;min-width:0;background:#fffafd;border:1.5px dashed #edbcda;border-radius:16px;padding:10px 12px;box-shadow:0 3px 8px #e5acd51b}
+.priority-num{font-weight:900;font-family:Georgia,serif;color:#cc90c8}
+.priority-item>input[type=checkbox]{accent-color:#dc81ae;width:18px;height:18px;flex:none;cursor:pointer}
+.priority-item>input[type=text]{min-width:0;flex:1;border:0;background:transparent;color:#84466c;outline-offset:4px;font-size:13px;font-weight:600}
+.priority-item>span:last-child{font-size:18px}
+.priority-item.is-done{background:#f1f9ee}.priority-item.is-done>input[type=text]{text-decoration:line-through;color:#94a395}
+.repeat-card{border:2px solid #fff0fa;border-radius:23px;padding:17px 15px 12px;margin:0 0 23px;background:radial-gradient(circle at 94% 12%,#fffbd3,transparent 28%),linear-gradient(145deg,#fff2fa,#f7f1ff 68%,#f0fff2);box-shadow:0 7px 23px #d593ba2b}
+.repeat-title{display:flex;align-items:center;justify-content:space-between;color:#9f447a;gap:10px}
+.repeat-title h2{font-size:19px;margin:4px 0 6px;line-height:1.25}
+.repeat-title>span{font-size:29px}
+.repeat-eyebrow{font-size:10px;letter-spacing:1.7px;color:#b97bad;font-weight:900}
+.repeat-card>p{font-size:12px;line-height:1.6;color:#9b7492;margin:2px 0 12px}
+.repeat-form{display:grid;gap:7px}.repeat-form>label{font-weight:800;font-size:12px;color:#85476b}
+.repeat-form>label small{font-weight:500;color:#a77d97}
+.repeat-form>input{width:100%;min-width:0;border:1px solid #efcddd;border-radius:13px;background:white;padding:10px 12px;color:#843a69;font-size:13px}
+.repeat-day-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;color:#8b5577;font-size:12px;font-weight:800}
+.repeat-day-head button{border:0;background:none;color:#b84c86;text-decoration:underline;font-weight:800;font-size:12px}
+.repeat-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.repeat-day{min-height:34px;border-radius:9px;border:1px solid #efd2e2;background:#fff;color:#91557b;font-size:12px;font-weight:800;padding:0}
+.repeat-day.chosen{background:linear-gradient(130deg,#f8a9d2,#d1b4fa);color:#712b61;border-color:#d487b7;box-shadow:inset 0 1px 2px #fff8}
+.repeat-add{margin-top:5px;padding:12px;border:1px solid #eba3ca;border-radius:15px;background:linear-gradient(125deg,#f9bad8,#f8d1f0,#e4d3fa);color:#983b73;font-weight:900}
+.repeat-list{display:grid;gap:7px;margin-top:14px}
+.repeat-list-heading{font-size:12px;color:#934878;font-weight:900}
+.repeat-entry{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;background:#fff9fd;border:1px solid #f0d1e0;border-radius:12px;color:#874b6c;font-size:12px;overflow-wrap:anywhere}
+.repeat-entry span{display:grid;gap:3px;min-width:0}.repeat-entry small{color:#aa799b}
+.repeat-entry button{flex:none;background:#fff;border:1px solid #efd0df;border-radius:8px;color:#b65885;font-size:17px;width:26px;height:26px}
+.repeat-empty{color:#b18eaa;font-size:12px;font-style:italic;text-align:center;padding:9px}
+.repeat-card .repeat-help{font-size:10px;margin:10px 0 0;color:#a57d94}
+@media (max-width:650px){.monthly-priorities{padding:15px}.priority-heading h2{font-size:18px}.priority-grid{grid-template-columns:1fr}.priority-count{font-size:12px}.journal-nav{font-size:12px}}
+@media print{.repeat-card{display:none}.monthly-priorities{break-inside:avoid}}
+/* V3: user-selected retro logos; sized to avoid layout shifts. */
+.y2k-nav-logo{width:30px;height:30px;object-fit:contain;vertical-align:middle;border-radius:8px;background:#fffafc;border:1px solid #f3c3dd;margin-right:5px}
+.brand .brand-icon{display:grid;place-items:center;overflow:hidden;padding:2px;background:#fff5fb}
+.brand .brand-icon img{width:38px;height:38px;object-fit:contain;border-radius:8px}
+
+/* v4 — All planner header actions match the larger profile avatar. */
+.top-actions .btn{min-height:46px;padding:9px 14px;display:inline-flex;align-items:center;justify-content:center}
+@media(max-width:650px){.top-actions{gap:6px}.top-actions .btn{min-height:44px;padding:8px 10px}}

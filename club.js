@@ -181,7 +181,7 @@ function hoursFromPlanner() {
     const extra = (state.timerSessions || []).reduce(
       (sum, session) =>
         sum + (
-          !session.taskId
+          !session.taskId && session.day?.startsWith(`${MONTH}-`)
             ? Math.max(0, Number(session.seconds) || 0) / 3600
             : 0
         ),
@@ -241,6 +241,9 @@ function sorted() {
 }
 
 function getRunnerX(list, rankIndex, hours) {
+  // Hiç çalışmamış kişi gün/ay sıralamasından etkilenmez:
+  // araç her zaman START çizgisinin tam üzerinde bekler.
+  if (!(Number(hours) > 0)) return 6.5;
   const maxH = Math.max(
     1,
     ...list.map(v => Number(v.totalHours) || 0)

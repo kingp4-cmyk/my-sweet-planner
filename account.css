@@ -195,34 +195,28 @@
     }
   }
 
-/* Ilk açılış: Firebase oturumu denetlenirken giris formunu gostermeyiz. */
+/* v6 — Only page-specific text while the Firebase session is checked. */
 .account-boot {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 100px;
-  padding: 10px 0;
-  color: #a05684;
-  font-size: 13px;
-  font-weight: 750;
+  min-height: 120px;
+  padding: 18px 8px;
+  text-align: center;
+}
+.account-boot-subtitle {
+  color: #ac4b87;
+  font-size: clamp(15px, 2vw, 19px);
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+/* During loading show just one sentence, not the login card branding. */
+#accountGate:has(#accountBootPanel:not([hidden])) .account-card > .account-logo,
+#accountGate:has(#accountBootPanel:not([hidden])) .account-card > h1,
+#accountGate:has(#accountBootPanel:not([hidden])) .account-card > p,
+#accountGate:has(#accountBootPanel:not([hidden])) .account-card > .account-privacy {
+  display: none;
 }
 
-.account-boot-spinner {
-  width: 29px;
-  height: 29px;
-  display: block;
-  border-radius: 50%;
-  border: 3px solid #f4d5e6;
-  border-top-color: #d364a0;
-  animation: account-boot-spin .85s linear infinite;
-}
-
-@keyframes account-boot-spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .account-boot-spinner { animation: none; }
-}
+/* v7 — Koşu hazırlığında minik bir pembe fiyonk. */
+.account-boot .race-boot-bow{display:inline-block;margin-right:6px;font-size:1.15em;vertical-align:-1px;filter:drop-shadow(0 1px 3px #d27bad55)}

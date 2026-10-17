@@ -1443,3 +1443,8 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* v4 — Same sized profile/avatar and top actions throughout the site. */
+.top-actions .club-profile-button{min-height:46px;display:inline-flex;align-items:center;gap:8px;padding:4px 13px 4px 5px;font-size:13px;border-radius:14px}
+.top-actions .club-profile-button .glam-avatar{height:36px;width:36px;flex:0 0 36px;border:2px solid #efb9d5}
+.top-actions .club-profile-button .glam-avatar img{height:100%;width:100%;object-fit:cover}

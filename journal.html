@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f6c4e6">
+  <title>Günlüğüm ♡ | My Sweet Ajanda</title>
+  <link rel="stylesheet" href="./journal.css?v=31">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+</head>
+<body class="journal-app">
+  <div class="journal-shell" id="journalRoot" hidden>
+    <header class="journal-site-header">
+      <a class="journal-logo" href="./index.html">My Sweet Ajanda <b>♡</b></a>
+      <nav class="journal-navigation" aria-label="Sayfa menüsü">
+        <a href="./index.html#dayGrid"><img class="nav-picture" src="./assets/branding/planner-logo.webp" alt=""> Ajandam</a>
+        <span class="active" aria-current="page"><img class="nav-picture" src="./assets/branding/journal-logo.webp" alt=""> Günlüğüm</span>
+        <a href="./race.html"><img class="nav-picture" src="./assets/branding/running-logo.webp" alt=""> Koşu</a>
+      </nav>
+      <a class="journal-avatar" href="./index.html" title="Profilime ve ajandama dön" aria-label="Profilime ve ajandama dön"><img id="journalAvatarImage" src="./assets/stickers/vintage-tatli-kedi.webp" alt=""><span id="journalAvatarName">Profilim</span></a>
+    </header>
+
+    <main class="journal-layout">
+      <aside class="journal-tools retro-box" aria-labelledby="journalToolsHeading">
+        <div class="retro-title compact"><span id="journalToolsHeading">✧ Araçlar</span><span class="window-controls" aria-hidden="true">▱ ▣ ×</span></div>
+        <div class="tools-body">
+          <button type="button" data-insert="♡" title="Kalp ekle"><span>💗</span> Kalp</button>
+          <button type="button" data-insert="✧" title="Yıldız ekle"><span>⭐</span> Yıldız</button>
+          <button type="button" data-insert="🎀" title="Fiyonk ekle"><span>🎀</span> Fiyonk</button>
+          <button type="button" data-insert="✿" title="Çiçek ekle"><span>🌸</span> Çiçek</button>
+          <button type="button" data-insert="• " title="Liste başlat"><span>📝</span> Liste</button>
+          <button type="button" id="journalFocus" title="Günlüğe yaz"><span>🖊️</span> Yaz</button>
+          <button type="button" id="journalThemeNext" title="Sayfa rengini değiştir"><span>🎨</span> Renk</button>
+          <button type="button" id="journalPatternNext" title="Desen değiştir"><span>✨</span> Desen</button>
+        </div>
+        <section class="journal-calendar" aria-label="Günlük arşivim">
+          <h2>📅 Günlük arşivim ♡</h2>
+          <div class="journal-calendar-nav">
+            <button type="button" id="journalMonthPrev" aria-label="Önceki ay">‹</button>
+            <label for="journalArchiveMonth" class="visually-hidden">Arşiv ayı</label>
+            <input id="journalArchiveMonth" type="month" min="1900-01" max="2099-12" aria-label="Arşiv ayını seç">
+            <button type="button" id="journalMonthNext" aria-label="Sonraki ay">›</button>
+          </div>
+          <div id="journalArchiveDays" class="journal-archive-days" aria-label="Gün seç"></div>
+          <button type="button" id="journalToday" class="journal-today">♡ Bugüne git</button>
+          <small>Her günün sayfası ayrı kaydedilir.</small>
+        </section>
+        <div class="tools-mascot"><img src="./assets/branding/journal-bunny.webp" alt="Pembe fiyonklu tatlı tavşan" loading="lazy"><small>Little memories ♡</small></div>
+      </aside>
+
+      <section class="journal-editor retro-box" aria-labelledby="journalHeading">
+        <div class="retro-title journal-title"><h1 id="journalHeading"><img class="journal-heading-icon" src="./assets/branding/journal-logo.webp" alt=""> Günlüğüm ♡</h1><span class="window-controls" aria-hidden="true">▱ ▣ ×</span></div>
+        <div class="journal-format-toolbar">
+          <label for="journalFont">✎ Yazı boyutu</label>
+          <select id="journalFont"><option value="16">16 px</option><option value="18" selected>18 px</option><option value="20">20 px</option><option value="23">23 px</option></select>
+          <label for="journalFontFamily">Yazı tipi</label>
+          <div class="journal-font-picker" id="journalFontPicker">
+            <select id="journalFontFamily" hidden aria-hidden="true" tabindex="-1"><option value="georgia">Klasik günlük</option><option value="trebuchet">Tatlı modern</option><option value="verdana">Kolay okunan</option><option value="comic">El yazısı havası</option><option value="courier">Daktilo</option><option value="times">Roman</option><option value="cursive">Romantik el yazısı</option></select>
+            <button type="button" id="journalFontTrigger" class="journal-font-trigger" aria-expanded="false" aria-controls="journalFontChoices" aria-haspopup="true">
+              <span id="journalFontTriggerName">Klasik günlük</span><span aria-hidden="true">⌄</span>
+            </button>
+            <div id="journalFontChoices" class="journal-font-choices" hidden aria-label="Yazı tipini seç"><button type="button" data-journal-font="georgia" style="font-family:Georgia,serif" aria-pressed="false"><span>Klasik günlük</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="trebuchet" style="font-family:'Trebuchet MS',sans-serif" aria-pressed="false"><span>Tatlı modern</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="verdana" style="font-family:Verdana,sans-serif" aria-pressed="false"><span>Kolay okunan</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="comic" style="font-family:'Comic Sans MS',cursive" aria-pressed="false"><span>El yazısı havası</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="courier" style="font-family:'Courier New',monospace" aria-pressed="false"><span>Daktilo</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="times" style="font-family:'Times New Roman',serif" aria-pressed="false"><span>Roman</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="cursive" style="font-family:cursive" aria-pressed="false"><span>Romantik el yazısı</span><strong>Bugün güzel bir gün ♡</strong></button></div>
+          </div>
+          <span class="toolbar-divider" aria-hidden="true"></span>
+          <span aria-hidden="true">🎀 ♡ ✦ 🌷</span>
+          <div class="journal-date-controls">
+            <button type="button" id="journalPrevDay" title="Önceki gün">‹</button>
+            <input type="date" id="journalDate" aria-label="Günlüğün tarihi">
+            <button type="button" id="journalNextDay" title="Sonraki gün">›</button>
+          </div>
+        </div>
+        <div id="journalPaper" class="journal-paper paper-rose pattern-lines">
+          <div class="paper-holes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="paper-inner">
+            <div class="paper-header">
+              <span class="paper-date">📅 <span id="journalPrettyDate">Bugünün tarihi</span></span>
+              <label for="journalMood">Bugünkü ruh hâlim: ♡
+                <select id="journalMood" aria-label="Bugünkü ruh halin">
+                  <option value="">Ruh hâlini seç</option>
+                  <option value="Mutlu">Mutlu</option>
+                  <option value="Neşeli">Neşeli</option>
+                  <option value="Huzurlu">Huzurlu</option>
+                  <option value="Heyecanlı">Heyecanlı</option>
+                  <option value="Enerjik">Enerjik</option>
+                  <option value="Umutlu">Umutlu</option>
+                  <option value="Motive">Motive</option>
+                  <option value="Minnettar">Minnettar</option>
+                  <option value="Sevgi dolu">Sevgi dolu</option>
+                  <option value="Sakin">Sakin</option>
+                  <option value="Düşünceli">Düşünceli</option>
+                  <option value="Duygusal">Duygusal</option>
+                  <option value="Yorgun">Yorgun</option>
+                  <option value="Uykulu">Uykulu</option>
+                  <option value="Endişeli">Endişeli</option>
+                  <option value="Üzgün">Üzgün</option>
+                  <option value="Kırgın">Kırgın</option>
+                  <option value="Bunalmış">Bunalmış</option>
+                  <option value="Cesur">Cesur</option>
+                </select>
+              </label>
+            </div>
+            <div class="paper-writing">
+              <span class="handwritten-heading">Sevgili günlüğüm... ♡</span>
+              <textarea id="journalText" maxlength="25000" placeholder="Bugün olanları, içinden geçenleri, küçük mutluluklarını buraya yaz..." spellcheck="true" aria-label="Günlük yazısı"></textarea>
+              <span class="paper-side-note">her gün yeni bir hikâye ✧</span>
+              <img class="paper-rose-sticker" src="./assets/stickers/vintage-pembe-laleler.webp" alt="" loading="lazy">
+              <img class="paper-bow-sticker" src="./assets/stickers/vintage-saten-fiyonk.webp" alt="" loading="lazy">
+              <span class="paper-star-top" aria-hidden="true">✦ ✿ ♡ ✧</span>
+              <span class="paper-star-bottom" aria-hidden="true">♡ ✦ ✧</span>
+            </div>
+            <div class="paper-footer"><span>♡ Bugünün hatırası, yarının mutluluğu...</span><span id="journalCharacters">0 / 25000</span></div>
+          </div>
+          <div id="journalDecorations" class="journal-decorations" aria-label="Günlük çıkartmaları"></div>
+          <svg id="journalGlitterLayer" class="journal-glitter-layer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Sim fırçası çizim alanı">
+            <defs><pattern id="journalGlitterTexture" width="92" height="92" patternUnits="userSpaceOnUse"><image href="./assets/pink-glitter.webp" width="92" height="92" preserveAspectRatio="xMidYMid slice"/></pattern></defs>
+            <g id="journalGlitterPaths"></g>
+          </svg>
+        </div>
+        <div class="journal-palette">
+          <div class="palette-tabs"><span>💗 Renkler</span><span>🌼 Desenler</span><span>🎀 Arka Planlar</span></div>
+          <div class="palette-swatches" id="journalSwatches" aria-label="Kâğıt renkleri"></div>
+          <div class="pattern-swatches" id="journalPatterns" aria-label="Kâğıt desenleri"></div>
+          <div class="journal-custom-color-row">
+            <label for="journalCustomColor">🎨 İstediğin kâğıt rengi</label>
+            <input type="color" id="journalCustomColor" value="#fff9f5" aria-label="Özel kâğıt rengi">
+            <button type="button" id="journalUseCustomColor">Bu rengi uygula ♡</button>
+          </div>
+          <div class="journal-sticker-workshop">
+            <div class="journal-sticker-top"><strong>🎀 Ajandamdaki stickerlar</strong><span>Beğendiğine dokun, sayfaya eklensin ✨</span></div>
+            <div id="journalStickerGallery" class="journal-sticker-gallery" aria-label="Günlük çıkartmaları"></div>
+            <button type="button" id="journalStickerMore" class="journal-sticker-more" aria-expanded="false">♡ Daha fazla sticker göster</button>
+            <div class="journal-decor-controls">
+              <label for="journalStickerSize">Seçili stickerın boyutu <output id="journalStickerSizeValue">Sticker seç ♡</output></label>
+              <input type="range" id="journalStickerSize" min="28" max="140" value="70" step="2" disabled aria-label="Seçili stickerın boyutunu değiştir">
+              <button type="button" id="journalGlitterToggle" aria-pressed="false">✨ Simli fırçayı aç</button>
+              <button type="button" id="journalGlitterUndo" title="Son sim çizgisini kaldır">↶ Son simi geri al</button>
+              <button type="button" id="journalGlitterEraser" aria-pressed="false" title="Sayfadaki sim çizimlerini sürterek sil">⌫ Sim silgisi</button>
+            </div>
+            <p>Stickerı sayfada seçip boyut çubuğunu hareket ettirerek sonradan da büyütüp küçültebilirsin. Sim silgisini açıp çizimin üzerinden geçirerek silebilirsin.</p>
+          </div>
+        </div>
+        <div class="journal-status"><span id="journalSaveStatus" role="status" aria-live="polite">♡ Günlüğün hazırlanıyor...</span><span>✿ Kendi küçük dünyan ✿</span></div>
+      </section>
+
+      <aside class="journal-memories" aria-labelledby="memoriesHeading">
+        <div class="memory-panel retro-box">
+          <div class="retro-title compact"><h2 id="memoriesHeading">📸 Fotoğraflar ♡</h2><span class="window-controls" aria-hidden="true">▱ ▣ ×</span></div>
+          <label class="media-drop" data-media-drop="image"><span>▣</span><b>Fotoğraf ekle</b><input type="file" id="journalImages" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+          <div class="memory-grid" id="journalImageList"></div>
+          <img class="memory-side-sticker" src="./assets/stickers/vintage-pembe-icecek.webp" alt="" loading="lazy">
+        </div>
+        <div class="memory-panel retro-box">
+          <div class="retro-title compact"><h2>🎬 Videolar ♡</h2><span class="window-controls" aria-hidden="true">▱ ▣ ×</span></div>
+          <label class="media-drop" data-media-drop="video"><span>▹</span><b>Video ekle</b><input type="file" id="journalVideos" accept="video/mp4,video/webm,video/quicktime" multiple hidden></label>
+          <div class="memory-grid" id="journalVideoList"></div>
+        </div>
+        <div class="memory-panel retro-box">
+          <div class="retro-title compact"><h2>🎙️ Ses kayıtları ♡</h2><span class="window-controls" aria-hidden="true">▱ ▣ ×</span></div>
+          <label class="media-drop" data-media-drop="audio"><span>♫</span><b>Ses kaydı ekle</b><input type="file" id="journalAudio" accept="audio/*" multiple hidden></label>
+          <div class="memory-grid" id="journalAudioList"></div>
+        </div>
+        <div class="journal-actions"><button type="button" id="journalExport" class="journal-backup">⬇ Yedeği indir</button><button type="button" id="journalSaveNow" class="journal-save">💾 Kaydet ✦</button></div>
+        <input id="journalImport" type="file" accept="application/json,.json" hidden aria-label="Günlük yedeği yükle">
+        <p class="journal-media-hint">Fotoğraf, video ve sesler şimdilik yalnızca bu cihazda saklanır. Önemli anılarını “Yedeği indir” ile yedekle.</p>
+        <div class="journal-note">🐰 Güzel anılar burada birikir... ♡</div>
+      </aside>
+    </main>
+    <button type="button" class="journal-back-to-top" id="journalBackToTop" aria-label="Sayfanın başına dön">✦ ↑ Başa dön</button>
+    <footer class="journal-site-footer">My Sweet Ajanda • made with ♡ • anılar seninle güzel</footer>
+  </div>
+  <div id="journalGate" class="journal-login-gate" role="status" aria-live="polite">Günlüğün hazırlanıyor...</div>
+  <script src="./firebase-config.js?v=12"></script>
+  <script type="module" src="./journal.js?v=31"></script>
+</body>
+</html>
