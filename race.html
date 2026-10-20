@@ -11,9 +11,14 @@
 <link href="./account.css?v=15" rel="stylesheet"/>
 <title>My Sweet Ajanda ♡</title>
 <link href="./club.css?v=31" rel="stylesheet"/>
-<link href="./race-glam.css?v=30chat" rel="stylesheet"/>
+<link href="./race-glam.css?v=32-base" rel="stylesheet"/>
+<link href="./race-polish-v32.css?v=32-c3" rel="stylesheet"/>
+<link href="./race-track-v33.css?v=33-pist1" rel="stylesheet"/>
+<link href="./race-pretty-v34.css?v=34-1" rel="stylesheet"/>
+<link href="./race-finish-v35.css?v=35-1" rel="stylesheet"/>
+<link href="./race-display-v36.css?v=36-1" rel="stylesheet"/>
 </head>
-<body class="club-race-page glam-race" data-club-page="race">
+<body class="club-race-page glam-race race-v34-theme race-v35-theme race-v36-theme" data-club-page="race">
 <section class="account-gate" id="accountGate">
 <div class="account-card">
 <div class="account-logo">🏁🎀</div>
@@ -114,7 +119,7 @@
 <span aria-hidden="true" class="club-hero-decor club-hero-decor-top">✦ ✳ ♡ ✦</span>
 <span aria-hidden="true" class="club-hero-decor club-hero-decor-bottom">✿ ✧ ★</span>
 <div class="club-hero-grid">
-<div class="club-hero-left"><span class="race-v29-title-glint" aria-hidden="true">✧</span>
+<div class="club-hero-left"><div class="race-v36-title-frame"><img class="race-v34-title-art" alt="" src="./assets/branding/race-title-v34.webp" width="922" height="300" decoding="async" fetchpriority="high"/></div><span class="race-v29-title-glint" aria-hidden="true">✧</span>
 <span class="club-kicker">
             ✦ MY SWEET AJANDA ✦
           </span>
@@ -166,7 +171,7 @@
 <div id="clubMount"></div>
 <div class="race-v29-road-art" aria-hidden="true">
 <img class="race-v29-road-lily" src="./assets/stickers/race-pink-lily-v29.webp" loading="lazy" decoding="async" alt="" />
-<img class="race-v29-road-bunny" src="./assets/stickers/race-bunny-v29.webp" loading="lazy" decoding="async" alt="" />
+<img class="race-v35-bunny-sign" src="./assets/branding/race-bunny-sign-v35.png" loading="lazy" decoding="async" width="340" height="306" alt="" aria-hidden="true" />
 <div class="race-v29-cheer-bubble">Her adım<br/>daha iyi bir sen<br/>için! ♡</div>
 <div class="race-v29-corner-note">Bigger<br/>Stronger<br/>Bitchier ♡</div>
 </div>
@@ -186,10 +191,10 @@
 <div class="race-v29-clock-display">
 <div class="race-v29-watch" aria-label="Kronometre ekranı">
 <span class="race-v29-watch-crown" aria-hidden="true"></span><span class="race-v29-watch-bow" aria-hidden="true">🎀</span>
-<div class="glam-clock" id="glamClock" role="timer">00:00:00:00</div>
-<div aria-hidden="true" class="race-v30-clock-labels"><span>Saat</span><span>Dakika</span><span>Saniye</span><span>Salise</span></div>
+<div class="glam-clock" id="glamClock" role="timer">00:00:00</div>
+
 </div>
-<div class="race-v29-clock-copy"><strong>Şu anki çalışma süren</strong><span>Biraz daha, yapabilirsin! ♡</span><span class="race-v29-clock-stars" aria-hidden="true">✧ ♡</span></div>
+<div class="race-v29-clock-copy"><strong>Şu anki çalışma süren</strong><b class="race-v34-live-hours" id="raceV34LiveHours" aria-live="off">0 saat</b><span>Biraz daha, yapabilirsin! ♡</span><span class="race-v29-clock-stars" aria-hidden="true">✧ ♡</span></div>
 </div>
 <div class="glam-clock-actions">
 <button class="glam-round" id="glamReset" title="Kaydı sıfırla" type="button">↺</button>
@@ -245,6 +250,6 @@
 </div>
 </div>
 <script src="./firebase-config.js?v=11"></script>
-<script src="./app.js?v=30chat" type="module"></script>
+<script src="./app.js?v=36-1" type="module"></script>
 </body>
 </html>

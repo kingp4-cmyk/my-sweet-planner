@@ -1,0 +1,256 @@
+@charset "UTF-8";
+/* My Sweet Ajanda — v35: sadece tavsan tabelasi + kronometre gorunumu.
+   Yuklenen kullanici PNG'si oldugu gibi kullanilir.
+   JS, Firebase, pist, araba konumu ve sohbet tasarimi DEGISTIRILMEZ.
+   En son CSS olarak race.html tarafindan yuklenir. */
+
+/* A. Kullanici gorselindeki tavsan + tabela; eskisinin yerine tek parca. */
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-road-bunny,
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-corner-note {
+  display: none !important;
+}
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-road-art {
+  z-index: 4;
+  overflow: visible;
+  pointer-events: none;
+}
+.glam-race.race-v35-theme .race-v29-track-stage .race-v35-bunny-sign {
+  position: absolute;
+  display: block;
+  width: clamp(132px, 21%, 205px);
+  height: auto;
+  max-height: 93%;
+  right: 0;
+  bottom: -8px;
+  object-fit: contain;
+  object-position: bottom right;
+  z-index: 4;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 54% 54%, #000 58%, rgba(0,0,0,.96) 68%, transparent 98%);
+  mask-image: radial-gradient(ellipse 70% 70% at 54% 54%, #000 58%, rgba(0,0,0,.96) 68%, transparent 98%);
+  filter: drop-shadow(0 5px 5px rgba(149,50,108,.20));
+}
+/* Gercek yariscilar yeni resmin onunde kalir. */
+.glam-race.race-v35-theme .race-v27-left .club-runner {z-index: 5 !important;}
+
+/* B. Kronometre karti: referans gibi pembe cam/porselen panel. */
+.glam-race.race-v35-theme .race-v27-controls {
+  gap: 12px;
+  align-items: stretch;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding: 16px 15px 12px;
+  gap: 6px 9px;
+  border: 2px solid #fff9fd;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 13% 100%, rgba(255,182,211,.30) 0%,transparent 58%),
+    radial-gradient(ellipse at 96% 0%, rgba(255,255,255,.95) 0%, transparent 40%),
+    linear-gradient(123deg,#ffebf6 0%,#fff9fd 45%,#ffe3f0 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(241,163,205,.70),
+    inset 0 3px 0 rgba(255,255,255,.94),
+    0 7px 18px rgba(167,83,133,.20);
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card::before {
+  content: "✧";
+  display: block;
+  position: absolute;
+  top: 125px;
+  left: 9px;
+  font: 33px/1 Georgia,serif;
+  color: #f079b9;
+  text-shadow: 0 2px 0 #fff, 0 0 9px #ffb4dc;
+  pointer-events: none;
+  opacity: .92;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card::after {
+  content: "♡  ✧";
+  display: block;
+  position: absolute;
+  top: 104px;
+  right: 10px;
+  font: 22px/1 Georgia,serif;
+  color: #f285c0;
+  text-shadow: 0 1px 0 #fff;
+  pointer-events: none;
+}
+.glam-race.race-v35-theme .race-v27-controls #glamTimerTitle {
+  justify-self: start;
+  border: 2px solid #f4b2d2;
+  border-radius: 999px;
+  padding: 8px 17px;
+  background: linear-gradient(#fffefa,#fff2f9);
+  color: #a82f75;
+  box-shadow: 0 2px 5px #cd84ad24, inset 0 1px 0 white;
+  font-size: clamp(16px, 1.5vw, 19px) !important;
+  letter-spacing: .01em;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch {
+  box-sizing: border-box;
+  width: min(100%, 240px);
+  height: 169px;
+  max-width: 240px;
+  margin: 20px auto 12px;
+  border: 10px solid #ef72ad;
+  border-radius: 51% 51% 49% 49% / 52% 52% 48% 48%;
+  background:
+    radial-gradient(ellipse at 26% 16%, #fffdfd 0%, #fff1f9 50%, #ffd5e7 100%);
+  box-shadow:
+    inset 0 0 0 5px #ffcae2,
+    inset 0 0 0 11px rgba(255,255,255,.67),
+    inset 0 -10px 14px rgba(232,95,153,.20),
+    0 5px 0 #d95199,
+    0 10px 11px rgba(176,58,119,.38),
+    0 15px 18px rgba(205,105,154,.20);
+  transform: rotate(-2deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch-crown {
+  top: -34px;
+  left: calc(50% - 23px);
+  height: 26px;
+  width: 46px;
+  background: linear-gradient(#fff2fa 0%,#fda5cb 38%,#e75a9c 100%);
+  border: 4px solid #f68abe;
+  box-shadow: inset 0 2px 0 #fff9, 0 3px 3px #ba629154;
+  border-radius: 10px 10px 4px 4px;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch-bow {
+  top: -28px;
+  right: -18px;
+  font-size: 43px;
+  transform: rotate(9deg);
+  filter: drop-shadow(0 3px 2px #ad4e7950);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch::after {
+  content: "♡";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font: bold 26px/1 Georgia,serif;
+  color: #d83983;
+  text-shadow: 0 1px #fff;
+  pointer-events: none;
+}
+/* SADECE uc alan: saat:dakika:saniye. Salise etiketi yoktur. */
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-display .glam-clock {
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  width: calc(100% - 14px);
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 9px 2px 8px;
+  border: 3px solid #efbbd5;
+  border-radius: 13px;
+  background: #fffafd !important;
+  box-shadow: inset 0 3px 6px #c18ca44f, 0 1px 0 #fff;
+  color: #292329;
+  font: 900 clamp(21px,2.3vw,34px)/1.1 'Courier New',monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1.5px;
+  text-align: center;
+  white-space: nowrap;
+  transform: rotate(2deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v30-clock-labels {display:none !important;}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy {
+  justify-content: center;
+  gap: 6px;
+  z-index: 2;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy strong {
+  color: #a63b74;
+  font-size: clamp(13px,1.35vw,19px);
+  line-height: 1.25;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v34-live-hours {
+  color: #b21e6e;
+  font-size: clamp(28px,2.5vw,40px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy > span:not(.race-v29-clock-stars) {
+  color: #c04783;
+  font: italic 700 clamp(12px,1.35vw,17px)/1.3 Georgia,serif;
+  transform: rotate(-3deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 7px 0 6px;
+  padding: 0;
+  z-index: 5;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions .glam-round {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #f4a0c7;
+  background: #fff0f8;
+  color: #d8448d;
+  box-shadow: inset 0 2px 0 #fff, 0 3px 6px #b85c8a2c;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions .glam-play {
+  flex: 0 0 65px;
+  width: 65px;
+  height: 65px;
+  border: 3px solid #ffb8d9;
+  border-radius: 50%;
+  background: linear-gradient(140deg,#fc93c3 0%,#ef68ae 47%,#d72d86 100%);
+  color: #fff;
+  font-size: 28px;
+  box-shadow: inset 0 2px 0 #fff8, 0 4px 0 #c9478a, 0 7px 12px #b6558654;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card .glam-note,
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card .glam-today {
+  border: 1px solid #f4d4e3;
+  background: #fffafde8;
+  border-radius: 13px;
+  color: #ae5685;
+  font-size: 11px;
+  padding: 8px 10px !important;
+}
+/* Komşu formun buton ve cicekli karti da ayni tasarim ailesinden. */
+.glam-race.race-v35-theme .race-v27-controls .glam-assign-card {
+  position: relative;
+  background: linear-gradient(135deg,#fffafb,#ffe7f3 75%,#fff5fc);
+  border: 2px solid white;
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 2px #f2c8df, 0 6px 18px #b976a02b;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-assign-card .glam-assign-btn {
+  border: 2px solid #ffd0e6;
+  border-radius: 22px;
+  background: linear-gradient(150deg,#fbb0d2,#ea6eab,#dd4d94);
+  color: white;
+  text-shadow: 0 1px 1px #aa5783;
+  box-shadow: 0 4px 10px #c371a23a, inset 0 2px 0 #ffebf5;
+}
+/* Dar ekranda buton/saat tasmasin, mesaj ve pist korunur. */
+@media (max-width: 1380px) {
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-watch {
+    width: min(100%,220px);
+    height: 160px;
+    margin: 20px auto 10px;
+  }
+  .glam-race.race-v35-theme .race-v27-controls .glam-clock-actions {
+    justify-content: center;
+  }
+}
+@media (max-width: 620px) {
+  .glam-race.race-v35-theme .race-v27-controls .glam-timer-card {padding: 13px 10px;}
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-watch {width: 210px;}
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-clock-display .glam-clock {font-size: 26px;}
+  .glam-race.race-v35-theme .race-v29-track-stage .race-v35-bunny-sign {width: 145px;right: -2px;bottom: -2px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .glam-race.race-v35-theme .race-v27-controls button {transition:none;}
+}

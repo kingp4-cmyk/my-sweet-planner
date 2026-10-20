@@ -21,15 +21,15 @@ const uuid = () =>
   crypto.randomUUID?.() ||
   `timer-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
+// Yalnizca SAAT:DAKIKA:SANIYE gosterilir. Salise yoktur.
+// Kayıtlı süre (saniye) ve Firebase senkronizasyon mantığı değişmez.
 const time = totalSeconds => {
-  const totalCentiseconds = Math.max(0, Math.floor(totalSeconds * 100));
-  const hours = Math.floor(totalCentiseconds / 360000);
-  const minutes = Math.floor(totalCentiseconds % 360000 / 6000);
-  const seconds = Math.floor(totalCentiseconds % 6000 / 100);
-  const centiseconds = totalCentiseconds % 100;
-
-  return [hours, minutes, seconds, centiseconds]
-    .map(x => String(x).padStart(2, '0'))
+  const wholeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+  const hours = Math.floor(wholeSeconds / 3600);
+  const minutes = Math.floor((wholeSeconds % 3600) / 60);
+  const seconds = wholeSeconds % 60;
+  return [hours, minutes, seconds]
+    .map(value => String(value).padStart(2, '0'))
     .join(':');
 };
 
@@ -191,6 +191,13 @@ export function initRaceTimer({ user, hoursReady, syncHours }) {
 
   const tick = () => {
     $('glamClock').textContent = time(current());
+    // Yalnizca gorsel sure gostergesi; Firebase/veri kaydi hesaplari degismez.
+    const liveHours = $('raceV34LiveHours');
+    if (liveHours) {
+      const value = current() / 3600;
+      liveHours.textContent = value < 0.01 ? '0 saat' :
+        `${value.toLocaleString('tr-TR', { maximumFractionDigits: 2 })} saat`;
+    }
     $('glamToggle').textContent = timer.startedAt ? 'Ⅱ' : '▶';
     $('glamToggle').title =
       timer.startedAt ? 'Duraklat' : 'Başlat';
@@ -361,7 +368,7 @@ export function initRaceTimer({ user, hoursReady, syncHours }) {
   });
 
   tick();
-  setInterval(tick, 50);
+  setInterval(tick, 250);
   window.addEventListener('pagehide', saveTimer);
 
   return {

@@ -394,7 +394,7 @@ async function start(user) {
       cloudStatus('✓ Ajandanın bu cihazdaki yedeği indirildi.');
     });
 
-    import('./club.js?v=30chat').catch(error => {
+    import('./club.js?v=36-1').catch(error => {
       console.error('[My Sweet Ajanda] Yarış yüklenemedi:', error);
       cloudStatus('⚠ Yarış bileşeni yüklenemedi. Sayfayı yenile.');
     });

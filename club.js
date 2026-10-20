@@ -1237,7 +1237,7 @@ async function initialize() {
 void initialize();
 
 if (IS_RACE) {
-  import('./race-timer.js?v=30chat')
+  import('./race-timer.js?v=36-1')
     .then(m => {
       window.MSP.activeTimer = m.initRaceTimer({
         user,
