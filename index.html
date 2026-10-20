@@ -31,9 +31,9 @@
 
   <title>My Sweet Ajanda | Pembe Dijital Ajanda</title>
 
-  <link rel="stylesheet" href="./style.css?v=31">
+  <link rel="stylesheet" href="./style.css?v=mobile13">
   <link rel="stylesheet" href="./club.css?v=31">
-  <link rel="stylesheet" href="./account.css?v=13">
+  <link rel="stylesheet" href="./account.css?v=15">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=12">
 </head>
 
@@ -91,6 +91,8 @@
           required
           autocomplete="current-password"
           placeholder="En az 6 karakter">
+
+        <label class="account-remember"><input id="accountRemember" type="checkbox" checked> <span>Beni hatırla ♡ <small>(Bu cihazda oturum açık kalsın)</small></span></label>
 
         <button
           class="account-action"
@@ -192,9 +194,9 @@
       <a
         class="btn invite-btn"
         id="clubRaceLink"
-        href="./race.html">
+        href="./race.html?v=30chat">
 
-        <img class="y2k-nav-logo" src="./assets/branding/running-logo.webp" alt=""> Koşu
+        <img class="y2k-nav-logo" src="./assets/branding/race-flags-v29.webp" alt=""> Koşu
       </a>
 
       <span
@@ -212,6 +214,8 @@
         ☁ Bulut hazırlanıyor…
       </span>
 
+      <button class="btn" id="plannerDownloadBackup" type="button" title="Ajandamın bu cihazdaki yedeğini indir">⬇ Ajandamın yedeği</button>
+
       <button
         class="btn"
         id="logoutBtn"
@@ -228,6 +232,17 @@
       </button>
     </div>
   </header>
+
+  <!-- Yalnızca dik telefon ekranında görünen hafif araç çekmecesi -->
+  <button type="button" id="mobileToolsToggle" class="mobile-tools-toggle"
+          aria-controls="mobileToolsPanel" aria-expanded="false"
+          aria-label="Sticker, renk ve tekrar eden görev araçlarını aç">
+    🎀 <span>Araçlar</span>
+  </button>
+  <div id="mobilePlacementHint" class="mobile-placement-hint" role="status" hidden>
+    <span id="mobilePlacementText">Ajandadaki istediğin noktaya dokun ♡</span>
+    <button type="button" id="mobilePlacementCancel">Vazgeç ✕</button>
+  </div>
 
   <div class="shell">
     <main class="main-column">
@@ -434,7 +449,17 @@
 
     <aside
       class="side-panel"
+      id="mobileToolsPanel"
       data-paint="site:sidebar">
+      <div class="mobile-tools-drawer-heading">
+        <strong>🎀 Tatlı araç kutum</strong>
+        <button type="button" id="mobileToolsClose" aria-label="Araç kutusunu kapat">✕</button>
+      </div>
+      <nav class="mobile-tools-shortcuts" aria-label="Araç kutusu bölümleri">
+        <a href="#repeatTitle">🗓️ Görev</a>
+        <a href="#imagePalette">🎀 Sticker</a>
+        <a href="#colorPalette">🎨 Renk</a>
+      </nav>
 
       <!-- TEKRAR EDEN GÖREVLER -->
       <section class="repeat-card" aria-labelledby="repeatTitle">
@@ -664,7 +689,7 @@
 
 <script src="./firebase-config.js?v=12"></script>
 <script src="./glitter.js?v=28" defer></script>
-<script type="module" src="./app.js?v=28"></script>
+<script type="module" src="./app.js?v=30chat"></script>
 
 </body>
 </html>

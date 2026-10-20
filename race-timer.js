@@ -21,13 +21,16 @@ const uuid = () =>
   crypto.randomUUID?.() ||
   `timer-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-const time = s => {
-  s = Math.floor(s);
-  return [
-    Math.floor(s / 3600),
-    Math.floor(s % 3600 / 60),
-    s % 60
-  ].map(x => String(x).padStart(2, '0')).join(':');
+const time = totalSeconds => {
+  const totalCentiseconds = Math.max(0, Math.floor(totalSeconds * 100));
+  const hours = Math.floor(totalCentiseconds / 360000);
+  const minutes = Math.floor(totalCentiseconds % 360000 / 6000);
+  const seconds = Math.floor(totalCentiseconds % 6000 / 100);
+  const centiseconds = totalCentiseconds % 100;
+
+  return [hours, minutes, seconds, centiseconds]
+    .map(x => String(x).padStart(2, '0'))
+    .join(':');
 };
 
 const fmt = s =>
@@ -358,7 +361,7 @@ export function initRaceTimer({ user, hoursReady, syncHours }) {
   });
 
   tick();
-  setInterval(tick, 1000);
+  setInterval(tick, 50);
   window.addEventListener('pagehide', saveTimer);
 
   return {

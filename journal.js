@@ -1,8 +1,9 @@
 'use strict';
 /* Journal is loaded ONLY on journal.html, never on the 31-day planner. */
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { createJournalMediaCloud } from './journal-media-cloud.js?v=26-delete-save';
 
 const $ = id => document.getElementById(id);
 const colors = [
@@ -71,60 +72,115 @@ let selectedStickerId = null;
 let eraserActive = false;
 let eraserPointerId = null;
 
+// v22: Keep existing localStorage keys and Firestore document paths unchanged.
 const localKey = date => `msp-journal-v1:${user.uid}:${date}`;
+const serialized = data => JSON.stringify(normalize(data));
+let flushingJournal = false;
+const conflictDates = new Set();
 function say(message) { $('journalSaveStatus').textContent = message; }
 function cached(date) {
   try { const raw = JSON.parse(localStorage.getItem(localKey(date))); return raw && typeof raw === 'object' ? raw : null; }
   catch { return null; }
 }
-function cache(date, data, dirty) {
-  try { localStorage.setItem(localKey(date), JSON.stringify({data,dirty, savedAt:Date.now()})); return true; }
-  catch (e) { console.warn('Local cache failed', e); say('⚠ Tarayıcı belleği dolu. Yedeğini indir!'); return false; }
+function cache(date, data, dirty, remoteBase) {
+  try {
+    const old = cached(date);
+    // Keep the last known cloud version while offline or on rapid edits.
+    const base = remoteBase === undefined ? (old?.remoteBase ?? null) : remoteBase;
+    localStorage.setItem(localKey(date), JSON.stringify({data, dirty, savedAt:Date.now(), remoteBase:base}));
+    return true;
+  } catch (e) { console.warn('Local cache failed', e); say('⚠ Tarayıcı alanı dolu. Yedeği indir!'); return false; }
 }
 function snapshot() { return normalize(entry); }
 function localSave() {
   if (!user || !isReady) return;
-  cache(activeDate, snapshot(), true);
-  say('♡ Cihazına kaydedildi; bulut bekliyor…');
+  if (!cache(activeDate, snapshot(), true)) return;
+  say('♡ Cihaza kaydedildi · Bulut bekleniyor…');
 }
 function changed() {
   localSave();
   $('journalCharacters').textContent = `${entry.content.length} / 25000`;
   clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(() => void push(activeDate,snapshot()), 1000);
+  cloudTimer = setTimeout(() => void push(activeDate, snapshot()), 1100);
 }
 function push(date, data) {
   if (!user) return Promise.resolve();
-  // Serialize cloud writes per day: an old request must never finish after a newer one.
+  const uid = user.uid;
   const previous = cloudQueue.get(date) || Promise.resolve();
-  const pending = previous.then(() => writeEntry(date,data));
-  cloudQueue.set(date,pending);
-  void pending.then(() => {
+  const pending = previous.catch(()=>{}).then(() => writeEntry(uid, date, data));
+  cloudQueue.set(date, pending);
+  void pending.finally(() => {
     if (cloudQueue.get(date) === pending) cloudQueue.delete(date);
   });
   return pending;
 }
-async function writeEntry(date,data) {
-  const sequence = ++saveSerial;
-  const ref = doc(db, 'plannerUsers', user.uid, 'journal', date);
+async function writeEntry(uid, date, data) {
+  if (!user || user.uid !== uid) return;
+  const ref = doc(db, 'plannerUsers', uid, 'journal', date);
+  const localBefore = cached(date);
+  if (!localBefore?.dirty) return;
+  const base = localBefore.remoteBase;
+  const candidate = serialized(data);
   try {
-    await setDoc(ref,{data,version:1,updatedAt:serverTimestamp()});
-    const local = cached(date);
-    // Only mark clean if the browser has not made newer edits.
-    if (local && JSON.stringify(normalize(local.data)) === JSON.stringify(data)) {
-      cache(date,data,false);
-      if (activeDate === date && sequence === saveSerial) say('☁ Günlüğün buluta kaydedildi ✓');
-    } else if (local?.dirty) {
-      // Include edits made during this request, even if the user changed dates.
-      void push(date,normalize(local.data));
+    // Firestore transaction compares the server version before overwriting it.
+    // If another device changed this date, preserve both copies: do not overwrite cloud.
+    await runTransaction(db, async transaction => {
+      const snap = await transaction.get(ref);
+      const remote = snap.exists() ? serialized(snap.data().data) : null;
+      if (remote !== null && remote !== candidate && remote !== base) {
+        throw new Error('journal-cloud-conflict');
+      }
+      if (remote === null && base !== null && base !== undefined) {
+        throw new Error('journal-cloud-conflict');
+      }
+      transaction.set(ref, {data,version:1,updatedAt:serverTimestamp()});
+    });
+    if (!user || user.uid !== uid) return;
+    conflictDates.delete(date);
+    const latest = cached(date);
+    if (!latest) return;
+    // Do not mark a newer local edit as synced by an older network request.
+    if (serialized(latest.data) === candidate) {
+      cache(date, data, false, candidate);
+      if (activeDate === date) say('☁ Günlüğün buluta kaydedildi ✓');
+    } else if (latest.dirty) {
+      cache(date, latest.data, true, candidate);
+      void push(date, normalize(latest.data));
     }
-  } catch (e) {
-    console.warn('[Journal] Cloud save failed', e);
-    if (activeDate === date) say(e?.code === 'permission-denied'
-      ? '♡ Taslak yalnızca bu cihazda kaydedildi · Bulut eşitlemesi kapalı'
-      : '♡ Taslak bu cihazda kaydedildi · Bulut bağlantısı bekleniyor');
+  } catch (error) {
+    console.warn('[Journal] Cloud sync waiting', error);
+    if (error?.message === 'journal-cloud-conflict') {
+      conflictDates.add(date);
+      if (activeDate === date) say('⚠ İki cihazda farklı yazılar var. Bu cihazdaki yazı silinmedi; önce yedek indir.');
+    } else if (activeDate === date) {
+      say(error?.code === 'permission-denied'
+        ? '⚠ Bulut izni eksik · Yazın bu cihazda bekliyor; yedeğini indir.'
+        : '♡ Yazın cihazda korundu · İnternet gelince yeniden denenecek.');
+    }
   }
 }
+async function retryDirtyJournal() {
+  if (!user || !isReady || flushingJournal || !navigator.onLine) return;
+  flushingJournal = true;
+  try {
+    const prefix = `msp-journal-v1:${user.uid}:`;
+    const days = [];
+    for (let i=0; i<localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(prefix)) days.push(k.slice(prefix.length));
+    }
+    // One by one avoids bursts of Firestore reads/writes on slow phones.
+    for (const date of days.sort()) {
+      if (!user || !isReady) break;
+      const record = cached(date);
+      if (record?.dirty && !conflictDates.has(date)) await push(date, normalize(record.data));
+    }
+  } catch (e) { console.warn('[Journal] Retry paused',e); }
+  finally { flushingJournal = false; }
+}
+window.addEventListener('online', () => void retryDirtyJournal());
+// Retry only while the page is available, not in a background worker.
+setInterval(() => { if (!document.hidden) void retryDirtyJournal(); }, 60000);
 /* All decorations are small references to built-in static assets. No image data is
    written to Firestore, and the existing daily record schema is preserved. */
 function resizeWriting() {
@@ -312,7 +368,7 @@ async function loadDate(date) {
     entry = normalize(local.data); // Never clobber unsynced local text with an older remote copy.
   } else if (remote) {
     entry = remote;
-    cache(date, entry, false);
+    cache(date, entry, false, serialized(remote));
   } else if (local) entry = normalize(local.data);
   else entry=emptyEntry();
   paint();
@@ -322,6 +378,11 @@ async function loadDate(date) {
   else if (remote) say('☁ Buluttan yüklendi ✓');
   else if (!local && !cloudLoadFailed) say('♡ Yeni bir sayfa, yeni bir hikâye...');
   await renderMedia(token);
+  // Signed Firebase identity -> private Supabase media synchronization.
+  // It never deletes local IndexedDB files.
+  void cloudMedia.loadDay(date);
+  // Also retry older days that were saved offline.
+  void retryDirtyJournal();
 }
 
 /* IndexedDB: media remains on this browser only. Do not place blobs into
@@ -355,6 +416,12 @@ const mediaKey = date => `${user.uid}:${date}`;
 const getMedia = date => mediaTransaction('readonly',store=>store.index('userDay').getAll(mediaKey(date)));
 const saveMedia = item => mediaTransaction('readwrite',store=>store.put(item));
 const removeMedia = id => mediaTransaction('readwrite',store=>store.delete(id));
+const getAllLocalMedia = () => mediaTransaction('readonly',store=>store.getAll());
+const cloudMedia = createJournalMediaCloud({
+  getUser:()=>user, getActiveDate:()=>activeDate, getMedia, saveMedia, removeMedia,
+  refreshMedia:()=>{if(isReady)void renderMedia(loadingSerial);},
+  status:$('journalMediaCloudStatus')
+});
 function revokeMedia() {for(const url of liveURLs) URL.revokeObjectURL(url);liveURLs=[];}
 async function optimizedImage(file) {
   if (!file.type.startsWith('image/') || file.type==='image/gif') return file;
@@ -388,10 +455,13 @@ async function addFiles(files,type) {
       if (blob.size > 12*1024*1024) {say('⚠ Dosya 12 MB sınırını aşıyor.'); continue;}
       const id=crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       await saveMedia({id,userDay:mediaKey(date),type,name:file.name.slice(0,120),mime:blob.type || file.type,blob,createdAt:Date.now()});
-      say('♡ Medyan bu tarayıcıya eklendi. Yedeğini indirmeyi unutma.');
+      $('journalMediaCloudStatus').textContent='⌛ Dosyan cihazda saklandı · Bulut yüklemesi bekleniyor…';
     } catch(e) {console.error(e);say('⚠ Cihazda yer yetersiz olabilir. Medya eklenemedi; yedeğini kontrol et.');}
   }
-  if (date===activeDate) await renderMedia(loadingSerial);
+  if (date===activeDate) {
+    await renderMedia(loadingSerial);
+    void cloudMedia.syncCurrentDay();
+  }
 }
 async function renderMedia(token) {
   revokeMedia();
@@ -403,6 +473,7 @@ async function renderMedia(token) {
   try {all=await getMedia(activeDate);}catch(e){console.warn(e);say('⚠ Medya depolama alanı açılamadı.');return;}
   if (token!==loadingSerial) return;
   const selectedDate=activeDate;
+  const localIds=new Set(all.map(x=>x.id));
   for (const item of all.sort((a,b)=>a.createdAt-b.createdAt)) {
     const wrap=document.createElement('div');wrap.className='memory-item';
     const src=URL.createObjectURL(item.blob);liveURLs.push(src);
@@ -411,16 +482,22 @@ async function renderMedia(token) {
     if(item.type==='image') {media.alt=item.name;media.loading='lazy';media.decoding='async';}
     else {media.controls=true;media.preload='none';}
     const foot=document.createElement('div');foot.className='memory-item-footer';
-    const name=document.createElement('span');name.textContent=item.name;
+    const name=document.createElement('span');
+    name.textContent=`${item.name} · ${cloudMedia.localStatus(selectedDate,item)}`;
+    name.title=name.textContent;
     const del=document.createElement('button');del.type='button';del.textContent='×';del.title='Bu anıyı sil';del.className='memory-remove';del.setAttribute('aria-label',`${item.name} dosyasını kaldır`);
     del.addEventListener('click',async()=>{
-      if(!confirm('Bu dosyayı bu cihazdaki günlüğünden silmek istiyor musun?'))return;
-      try{await removeMedia(item.id); if(activeDate===selectedDate) await renderMedia(loadingSerial);}
-      catch{say('⚠ Dosya silinemedi.');}
+      if (!confirm('Bu anıyı günlüğünden ve buluttan kalıcı olarak silmek istiyor musun?'))return;
+      del.disabled=true;del.textContent='…';
+      const done=await cloudMedia.deleteMedia(selectedDate,item);
+      if (!done){del.disabled=false;del.textContent='×';}
     });
     foot.append(name);wrap.append(media,foot,del);
     $({image:'journalImageList',video:'journalVideoList',audio:'journalAudioList'}[item.type]).append(wrap);
   }
+  if (token===loadingSerial) cloudMedia.showRemote(selectedDate,token,localIds,()=>loadingSerial,{
+    image:$('journalImageList'),video:$('journalVideoList'),audio:$('journalAudioList')
+  });
 }
 function appendAtCursor(value) {
   const textarea=$('journalText');
@@ -430,9 +507,58 @@ function appendAtCursor(value) {
 const readDataURL = blob => new Promise((resolve,reject) => {
   const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(blob);
 });
+// Portable backup of ALL text entries currently cached on this device.
+// For media, continue to use the per-day backup button (blobs live in IndexedDB).
+function exportLocalJournalTexts() {
+  if (!user) return;
+  // Ensure the current day's latest keystrokes are included.
+  if (isReady && cached(activeDate)?.dirty) localSave();
+  const prefix = `msp-journal-v1:${user.uid}:`;
+  const entries = {};
+  try {
+    for (let i=0;i<localStorage.length;i++) {
+      const key=localStorage.key(i);
+      if (!key?.startsWith(prefix)) continue;
+      const date=key.slice(prefix.length);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      const record=cached(date);
+      if (record?.data) entries[date]=normalize(record.data);
+    }
+    if (!Object.keys(entries).length) {say('♡ Bu cihazda yedeklenecek günlük yazısı yok.');return;}
+    const blob=new Blob([JSON.stringify({format:'my-sweet-journal-texts-v1',exportedAt:new Date().toISOString(),entries},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url;a.download=`my-sweet-gunluk-yazilarim-${today()}.json`;a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),12000);
+    say(`✓ Bu cihazdaki ${Object.keys(entries).length} günün yazısı yedeklendi (medya hariç).`);
+  } catch(e) {console.warn(e);say('⚠ Tüm yazılar yedeklenemedi.');}
+}
+// Import local text backups conservatively: never replace an existing dated entry.
+async function importLocalJournalTexts(file) {
+  if (!user || !file) return;
+  if (file.size > 15*1024*1024) {say('⚠ Yazı yedeği çok büyük.'); return;}
+  try {
+    const data = JSON.parse(await file.text());
+    if (data?.format !== 'my-sweet-journal-texts-v1' || !data.entries || typeof data.entries !== 'object' || Array.isArray(data.entries)) {
+      say('⚠ Bu dosya tüm günlük yazıları yedeği değil.');return;
+    }
+    const dates = Object.entries(data.entries).filter(([date,item]) => /^\d{4}-\d{2}-\d{2}$/.test(date) && item && typeof item==='object');
+    if (!dates.length) {say('⚠ Yedekte geçerli günlük tarihi yok.');return;}
+    if (!confirm(`${dates.length} günlük yazısı kontrol edilecek. Var olan yazılar ASLA silinmez veya üzerine yazılmaz. Boş günler geri yüklensin mi?`)) return;
+    let imported=0, skipped=0;
+    for (const [date, raw] of dates) {
+      const old = cached(date);
+      // Never overwrite even an apparently blank draft: the user may have just edited it.
+      if (old) {skipped++;continue;}
+      if (cache(date, normalize(raw), true, null)) imported++;
+    }
+    if(imported && dates.some(([date])=>date===activeDate)) await loadDate(activeDate);
+    void retryDirtyJournal();
+    say(`✓ ${imported} gün cihaza eklendi; ${skipped} mevcut gün değiştirilmedi. Bulut eşitlemesi bekliyor.`);
+  } catch(e) {console.warn(e);say('⚠ Yazı yedeği yüklenemedi. Dosyayı kontrol et.');}
+}
 async function exportDay() {
   if(!user)return;
-  localSave();
+  if (cached(activeDate)?.dirty) localSave();
   $('journalExport').disabled=true;
   say('♡ Anıların yedekleniyor…');
   try {
@@ -469,7 +595,7 @@ async function importDay(file) {
       const id=crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       await saveMedia({id,userDay:mediaKey(date),type,name:String(item.name||'Anı').slice(0,120),mime:blob.type,blob,createdAt:Date.now()});
     }
-    if(activeDate===date){entry=next;paint();changed();await renderMedia(loadingSerial);say('♡ Yedek geri yüklendi; bulut kaydı hazırlanıyor.');}
+    if(activeDate===date){entry=next;paint();changed();await renderMedia(loadingSerial);say('♡ Yedek geri yüklendi; bulut kaydı hazırlanıyor.');void cloudMedia.syncCurrentDay();}
   }catch(e){console.error(e);say('⚠ Yedeğin bir bölümü içe aktarılamadı.');}
 }
 
@@ -586,8 +712,50 @@ $('journalDate').addEventListener('change',e=>{if(e.target.value)changeDate(e.ta
 function dateShift(days) {const d=new Date(`${activeDate}T12:00:00`);d.setDate(d.getDate()+days);changeDate(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);}
 $('journalPrevDay').addEventListener('click',()=>dateShift(-1));
 $('journalNextDay').addEventListener('click',()=>dateShift(1));
-$('journalSaveNow').addEventListener('click',()=>{if(!user)return;localSave();clearTimeout(cloudTimer);void push(activeDate,snapshot());});
+const saveButton=$('journalSaveNow');
+const originalSaveText=saveButton.textContent;
+let saveFeedbackTimer=null;
+saveButton.addEventListener('click',async()=>{
+  if (!user || !isReady || saveButton.disabled)return;
+  const date=activeDate;
+  const uid=user.uid;
+  clearTimeout(saveFeedbackTimer);
+  saveButton.classList.remove('is-pressed','is-saved','is-pending');
+  void saveButton.offsetWidth; // restart tactile press animation
+  saveButton.classList.add('is-pressed','is-saving');
+  saveButton.textContent='⏳ Kaydediliyor…';
+  saveButton.disabled=true;
+  saveButton.setAttribute('aria-busy','true');
+  localSave();
+  clearTimeout(cloudTimer);
+  try {
+    await push(date,snapshot());
+    if (uid===user?.uid && date===activeDate && cached(date)?.dirty===false) {
+      saveButton.classList.add('is-saved');
+      saveButton.textContent='✓ Kaydedildi! ♡';
+    } else {
+      saveButton.classList.add('is-pending');
+      saveButton.textContent='⌛ Kayıt bekliyor';
+    }
+  } catch {
+    saveButton.classList.add('is-pending');
+    saveButton.textContent='⌛ Kayıt bekliyor';
+  } finally {
+    saveButton.classList.remove('is-saving');
+    saveButton.removeAttribute('aria-busy');
+    saveFeedbackTimer=setTimeout(()=>{
+      saveButton.classList.remove('is-pressed','is-saved','is-pending');
+      saveButton.textContent=originalSaveText;
+      saveButton.disabled=false;
+    },1650);
+  }
+});
 $('journalExport').addEventListener('click',()=>void exportDay());
+$('journalExportAllTexts').addEventListener('click',exportLocalJournalTexts);
+$('journalImportAllTextsButton').addEventListener('click',()=> $('journalImportAllTexts').click());
+$('journalImportAllTexts').addEventListener('change', e=>{void importLocalJournalTexts(e.target.files?.[0]);e.target.value='';});
+$('journalMigrateMedia').addEventListener('click',()=>void cloudMedia.migrateOld(getAllLocalMedia));
+$('journalImportDayButton').addEventListener('click',()=> $('journalImport').click());
 $('journalImport').addEventListener('change',e=>{void importDay(e.target.files?.[0]);e.target.value='';});
 $('journalFocus').addEventListener('click',()=>$('journalText').focus());
 $('journalThemeNext').addEventListener('click',()=>{entry.paper=colors[(colors.findIndex(x=>x[0]===entry.paper)+1)%colors.length][0];paint();changed();});
@@ -601,7 +769,7 @@ for(const [type,id] of [['image','journalImages'],['video','journalVideos'],['au
   panel.addEventListener('drop',e=>{e.preventDefault();panel.classList.remove('drag-over');void addFiles(e.dataTransfer.files,type);});
 }
 window.addEventListener('pagehide',()=>{if(user && isReady && cached(activeDate)?.dirty)cache(activeDate,snapshot(),true);revokeMedia();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden && user && isReady && cached(activeDate)?.dirty)localSave();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden && user && isReady && cached(activeDate)?.dirty)localSave();else if(!document.hidden)void retryDirtyJournal();});
 $('journalDate').max='2099-12-31';$('journalDate').min='1900-01-01';
 const backToTop=$('journalBackToTop');
 function refreshBackToTop(){backToTop.classList.toggle('is-visible',window.scrollY>180);}
@@ -609,19 +777,97 @@ window.addEventListener('scroll',refreshBackToTop,{passive:true});
 backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
 refreshBackToTop();
 
-onAuthStateChanged(auth, async nextUser => {
-  if (!nextUser || nextUser.isAnonymous || !nextUser.emailVerified) {
-    clearTimeout(cloudTimer);
-    user=null;isReady=false;entry=emptyEntry();
-    $('journalText').readOnly=true;
-    $('journalGate').innerHTML='🔒 Günlüğün yalnızca sana özel.<div><a href="./index.html">Ajandama dön ve giriş yap ♡</a></div>';
-    $('journalGate').hidden=false;
-    $('journalRoot').hidden=true;return;
+// v16 — Dört haneli, hesap başına ve yalnızca bu tarayıcıya özgü günlük PIN'i.
+// ÖNEMLİ: Bu erişim ekranı / salted PBKDF2 kontrolü veriyi şifrelemez.
+// Firestore'daki kayıtlar için hâlâ sunucu güvenlik kuralları gerekir.
+const PIN_ITERATIONS = 180000;
+let journalLockUser = null;
+let journalUnlocking = false;
+let journalMode = 'unlock';
+let pinFailures = 0;
+let blockedUntil = 0;
+let currentPinRecord = null;
+function journalLockMessage(message) { $('journalLockStatus').textContent = message; }
+function journalPinKey(uid) { return `msp-journal-ui-pin-v1:${uid}`; }
+function journalPinRecord(uid) {
+  try {
+    const raw = localStorage.getItem(journalPinKey(uid));
+    if (!raw) return null;
+    const r = JSON.parse(raw);
+    return r && r.version === 1 && r.iterations >= 100000 && r.iterations <= 500000
+      && typeof r.salt === 'string' && typeof r.hash === 'string' ? r : 'invalid';
+  } catch { return 'invalid'; }
+}
+function toBase64(bytes) { return btoa(String.fromCharCode(...bytes)); }
+function fromBase64(text) {
+  return Uint8Array.from(atob(text), c => c.charCodeAt(0));
+}
+async function hashJournalPin(pin, saltB64, iterations) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(`my-sweet-journal-pin:v1:${pin}`),
+    'PBKDF2', false, ['deriveBits']);
+  const digest = await crypto.subtle.deriveBits({name:'PBKDF2',salt:fromBase64(saltB64),iterations,hash:'SHA-256'},key,256);
+  return toBase64(new Uint8Array(digest));
+}
+function sameHash(a,b) {
+  if (a.length !== b.length) return false;
+  let diff=0;
+  for (let i=0;i<a.length;i++) diff |= a.charCodeAt(i)^b.charCodeAt(i);
+  return diff===0;
+}
+function setPinMode(mode) {
+  journalMode = mode;
+  $('journalUnlockForm').hidden = mode==='recover';
+  $('journalPinRecoveryForm').hidden = mode!=='recover';
+  $('journalPinConfirmWrap').hidden = mode!=='setup';
+  $('journalSetupAuthWrap').hidden = mode!=='setup';
+  $('journalSetupAccountPassword').required = mode==='setup';
+  $('journalPinConfirm').required = mode==='setup';
+  $('journalForgotPin').hidden = mode!=='unlock';
+  $('journalForgotPassword').hidden = !(mode==='recover'||mode==='setup');
+  $('journalPinDescription').textContent = mode==='setup'
+    ? 'Günlüğün için sana özel 4 haneli PIN oluştur ♡'
+    : mode==='recover' ? 'PIN sıfırlama için hesap şifrenle kimliğini doğrula.'
+    : 'Günlüğünü açmak için 4 haneli PIN’ini gir ♡';
+  $('journalPinLabel').textContent = mode==='setup' ? 'Yeni 4 haneli PIN' : 'Günlük PIN’in';
+  $('journalUnlockButton').textContent = mode==='setup' ? 'PIN oluştur ve günlüğü aç ♡' : 'Günlüğümü aç ♡';
+  $('journalUnlockPassword').value='';
+  $('journalPinConfirm').value='';
+  $('journalSetupAccountPassword').value='';
+  $('journalRecoveryPassword').value='';
+  journalLockMessage('');
+  $('journalPinNote').textContent = mode==='setup'
+    ? 'PIN oluştururken hesap şifren bir kez doğrulanır. PIN bu cihaza özeldir, günlüğünü şifrelemez.'
+    : mode==='recover' ? 'PIN sıfırlamak günlüğünü silmez. Hesap şifren unutulduysa e-postayla sıfırlayabilirsin.'
+    : 'Bu PIN bu cihazdaki giriş ekranını kilitler; günlük kayıtlarını şifrelemez.';
+}
+function showJournalLock(nextUser) {
+  journalLockUser=nextUser;
+  user=null;
+  isReady=false;
+  $('journalText').readOnly=true;
+  $('journalRoot').hidden=true;
+  $('journalGate').hidden=false;
+  $('journalGateLoading').hidden=true;
+  $('journalLockCard').hidden=false;
+  currentPinRecord=journalPinRecord(nextUser.uid);
+  const supported=!!globalThis.crypto?.subtle && !!globalThis.crypto?.getRandomValues;
+  setPinMode(currentPinRecord ? 'unlock' : 'setup');
+  if (currentPinRecord==='invalid') {
+    $('journalUnlockButton').disabled=true;
+    journalLockMessage('PIN kaydı okunamıyor. Hesap şifrenle PIN’i sıfırlayabilirsin.');
+    $('journalForgotPin').hidden=false;
+  } else if (!supported) {
+    $('journalUnlockButton').disabled=true;
+    journalLockMessage('Güvenli PIN işlemi bu bağlantıda desteklenmiyor. Siteyi HTTPS veya localhost üzerinden aç.');
+  } else {
+    $('journalUnlockButton').disabled=false;
   }
-  user=nextUser;
-  const avatarImg=$('journalAvatarImage');
-  const avatarName=$('journalAvatarName');
-  avatarName.textContent=(nextUser.displayName || nextUser.email?.split('@')[0] || 'Profilim').slice(0,22);
+}
+async function openJournal(nextUser) {
+  user = nextUser;
+  const avatarImg = $('journalAvatarImage');
+  const avatarName = $('journalAvatarName');
+  avatarName.textContent = (nextUser.displayName || nextUser.email?.split('@')[0] || 'Profilim').slice(0,22);
   void getDoc(doc(db,'raceProfiles',user.uid)).then(snap=>{
     if(!snap.exists())return;
     const profile=snap.data();
@@ -635,4 +881,125 @@ onAuthStateChanged(auth, async nextUser => {
   $('journalGate').hidden=true;
   $('journalRoot').hidden=false;
   await loadDate(today());
-},e=>{$('journalGate').textContent=`⚠ Günlük açılamadı: ${e.message}`;});
+}
+for (const id of ['journalUnlockPassword','journalPinConfirm']) {
+  $(id).addEventListener('input',()=>{$(id).value=$(id).value.replace(/\D/g,'').slice(0,4);});
+}
+$('journalUnlockForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (journalUnlocking || !journalLockUser || !crypto?.subtle || currentPinRecord==='invalid') return;
+  const pin=$('journalUnlockPassword').value;
+  if (!/^[0-9]{4}$/.test(pin)) { journalLockMessage('Lütfen tam 4 rakam gir ♡');return; }
+  if (journalMode==='setup' && $('journalPinConfirm').value !== pin) {
+    journalLockMessage('İki PIN aynı değil. Tekrar dene ♡');return;
+  }
+  if (journalMode==='unlock' && Date.now()<blockedUntil) {
+    journalLockMessage('Çok fazla yanlış deneme. Biraz bekleyip tekrar dene.');return;
+  }
+  journalUnlocking=true;
+  $('journalUnlockButton').disabled=true;
+  journalLockMessage(journalMode==='setup' ? 'PIN’in kaydediliyor…' : 'PIN kontrol ediliyor…');
+  try {
+    const currentUser=journalLockUser;
+    if (journalMode==='setup') {
+      if (!currentUser.email) throw new Error('Bu hesap e-posta şifresiyle PIN oluşturmayı desteklemiyor.');
+      const setupPassword=$('journalSetupAccountPassword').value;
+      $('journalSetupAccountPassword').value='';
+      await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email,setupPassword));
+      if (journalLockUser?.uid!==currentUser.uid) return;
+      const salt=toBase64(crypto.getRandomValues(new Uint8Array(16)));
+      const record={version:1,salt,iterations:PIN_ITERATIONS,hash:await hashJournalPin(pin,salt,PIN_ITERATIONS)};
+      if (journalLockUser?.uid!==currentUser.uid) return;
+      localStorage.setItem(journalPinKey(currentUser.uid),JSON.stringify(record));
+      currentPinRecord=record;
+    } else if (journalMode==='unlock') {
+      const candidate=await hashJournalPin(pin,currentPinRecord.salt,currentPinRecord.iterations);
+      if (journalLockUser?.uid!==currentUser.uid) return;
+      if (!sameHash(candidate,currentPinRecord.hash)) {
+        pinFailures++;
+        if (pinFailures>=5) { blockedUntil=Date.now()+60000; pinFailures=0; }
+        journalLockMessage(blockedUntil>Date.now() ? '5 yanlış deneme yapıldı. 1 dakika bekle ♡' : 'PIN yanlış. Tekrar dene ♡');
+        $('journalUnlockPassword').value='';
+        return;
+      }
+      pinFailures=0;blockedUntil=0;
+    } else return;
+    $('journalUnlockPassword').value='';
+    $('journalPinConfirm').value='';
+    journalLockMessage('Günlüğün açılıyor…');
+    await openJournal(currentUser);
+  } catch (error) {
+    console.warn('[Journal] PIN error',error);
+    journalLockMessage(error?.name==='QuotaExceededError'
+      ? 'Tarayıcı depolaması dolu, PIN kaydedilemedi.'
+      : (error?.code==='auth/invalid-credential'||error?.code==='auth/wrong-password')
+      ? 'Hesap şifren yanlış. Tekrar dene ya da e-postayla sıfırla.'
+      : 'PIN işlemi tamamlanamadı. Tekrar dene.');
+    $('journalRoot').hidden=true;
+    $('journalGate').hidden=false;
+  } finally { journalUnlocking=false;$('journalUnlockButton').disabled=false; }
+});
+$('journalForgotPin').addEventListener('click',()=>{
+  if (!journalLockUser) return;
+  setPinMode('recover');
+});
+$('journalRecoveryCancel').addEventListener('click',()=>{
+  setPinMode(currentPinRecord ? 'unlock' : 'setup');
+  if (currentPinRecord==='invalid') {
+    $('journalUnlockButton').disabled=true;
+    $('journalForgotPin').hidden=false;
+    journalLockMessage('PIN kaydı okunamıyor. Hesap şifrenle sıfırla.');
+  }
+});
+$('journalPinRecoveryForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(journalUnlocking || !journalLockUser?.email)return;
+  journalUnlocking=true;
+  $('journalRecoveryButton').disabled=true;
+  const recoveryUser=journalLockUser;
+  const password=$('journalRecoveryPassword').value;
+  $('journalRecoveryPassword').value='';
+  journalLockMessage('Hesabın doğrulanıyor…');
+  try {
+    const credential=EmailAuthProvider.credential(recoveryUser.email,password);
+    await reauthenticateWithCredential(recoveryUser,credential);
+    if (journalLockUser?.uid!==recoveryUser.uid) return;
+    localStorage.removeItem(journalPinKey(recoveryUser.uid));
+    currentPinRecord=null;pinFailures=0;blockedUntil=0;
+    setPinMode('setup');
+    journalLockMessage('PIN sıfırlandı. Şimdi yeni 4 haneli PIN belirle ♡');
+  } catch(error) {
+    journalLockMessage(error.code==='auth/invalid-credential'||error.code==='auth/wrong-password'
+      ? 'Hesap şifren yanlış. Tekrar dene ya da e-postayla sıfırla.'
+      : error.code==='auth/too-many-requests' ? 'Çok fazla deneme oldu. Biraz bekle.'
+      : 'Hesap doğrulanamadı. Bağlantını kontrol et.');
+  } finally {journalUnlocking=false;$('journalRecoveryButton').disabled=false;}
+});
+$('journalForgotPassword').addEventListener('click', async () => {
+  if (!journalLockUser?.email) return;
+  $('journalForgotPassword').disabled = true;
+  try {
+    await sendPasswordResetEmail(auth, journalLockUser.email);
+    journalLockMessage('E-posta gönderildiyse gelen kutuna ulaşacaktır. Hesap şifreni yeniledikten sonra bu ekrana dönerek PIN’i sıfırlayabilirsin.');
+  } catch (error) {
+    journalLockMessage(error.code === 'auth/too-many-requests' ? 'Bir süre bekleyip tekrar dene.' : 'E-posta gönderilemedi. İnternet bağlantını kontrol et.');
+  } finally { $('journalForgotPassword').disabled = false; }
+});
+onAuthStateChanged(auth, nextUser => {
+  if (!nextUser || nextUser.isAnonymous || !nextUser.emailVerified) {
+    clearTimeout(cloudTimer);
+    cloudMedia.clear();
+    user=null;isReady=false;entry=emptyEntry();journalLockUser=null;currentPinRecord=null;
+    $('journalText').readOnly=true;
+    $('journalGateLoading').textContent='🔒 Günlüğün yalnızca sana özel. Önce ajandandan giriş yap.';
+    $('journalGateLoading').hidden=false;
+    $('journalLockCard').hidden=true;
+    $('journalGate').hidden=false;
+    $('journalRoot').hidden=true;
+    return;
+  }
+  // Aynı sayfa içindeki yeniden doğrulama tekrar kilide döndürmesin.
+  if(journalLockUser?.uid===nextUser.uid && !$('journalLockCard').hidden) return;
+  if(isReady && user?.uid===nextUser.uid)return;
+  showJournalLock(nextUser);
+}, e=>{ $('journalGateLoading').textContent='Günlük açılamadı. Bağlantını kontrol et.'; });

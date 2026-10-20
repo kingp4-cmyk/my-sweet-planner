@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#f6c4e6">
   <title>Günlüğüm ♡ | My Sweet Ajanda</title>
-  <link rel="stylesheet" href="./journal.css?v=31">
+  <link rel="stylesheet" href="./journal.css?v=26-delete-save">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 </head>
 <body class="journal-app">
@@ -16,7 +16,7 @@
       <nav class="journal-navigation" aria-label="Sayfa menüsü">
         <a href="./index.html#dayGrid"><img class="nav-picture" src="./assets/branding/planner-logo.webp" alt=""> Ajandam</a>
         <span class="active" aria-current="page"><img class="nav-picture" src="./assets/branding/journal-logo.webp" alt=""> Günlüğüm</span>
-        <a href="./race.html"><img class="nav-picture" src="./assets/branding/running-logo.webp" alt=""> Koşu</a>
+        <a href="./race.html?v=30chat"><img class="nav-picture" src="./assets/branding/race-flags-v29.webp" alt=""> Koşu</a>
       </nav>
       <a class="journal-avatar" href="./index.html" title="Profilime ve ajandama dön" aria-label="Profilime ve ajandama dön"><img id="journalAvatarImage" src="./assets/stickers/vintage-tatli-kedi.webp" alt=""><span id="journalAvatarName">Profilim</span></a>
     </header>
@@ -160,17 +160,61 @@
           <label class="media-drop" data-media-drop="audio"><span>♫</span><b>Ses kaydı ekle</b><input type="file" id="journalAudio" accept="audio/*" multiple hidden></label>
           <div class="memory-grid" id="journalAudioList"></div>
         </div>
-        <div class="journal-actions"><button type="button" id="journalExport" class="journal-backup">⬇ Yedeği indir</button><button type="button" id="journalSaveNow" class="journal-save">💾 Kaydet ✦</button></div>
-        <input id="journalImport" type="file" accept="application/json,.json" hidden aria-label="Günlük yedeği yükle">
-        <p class="journal-media-hint">Fotoğraf, video ve sesler şimdilik yalnızca bu cihazda saklanır. Önemli anılarını “Yedeği indir” ile yedekle.</p>
+        <div class="journal-actions journal-v25-actions">
+          <button type="button" id="journalSaveNow" class="journal-save">💾 Günlüğümü kaydet ✦</button>
+          <button type="button" id="journalMigrateMedia" class="journal-cloud-migrate">☁ Eski anılarımı da buluta aktar</button>
+        </div>
+        <p id="journalMediaCloudStatus" class="journal-media-cloud-status" role="status" aria-live="polite">☁ Medya bulut bağlantısı hazırlanıyor…</p>
+        <details class="journal-optional-backups">
+          <summary>♡ İsteğe bağlı yedekleme ve geri yükleme</summary>
+          <div class="journal-actions">
+            <button type="button" id="journalExport" class="journal-backup">⬇ Bu günün yedeği (medyayla)</button>
+            <button type="button" id="journalExportAllTexts" class="journal-backup journal-backup-all">⬇ Bu cihazdaki tüm günlük yazılarım</button>
+            <button type="button" id="journalImportDayButton" class="journal-backup">⬆ Bu günün yedeğini yükle</button>
+            <button type="button" id="journalImportAllTextsButton" class="journal-backup">⬆ Tüm yazı yedeğimi yükle</button>
+          </div>
+        </details>
+        <input id="journalImport" type="file" accept="application/json,.json" hidden aria-label="Günlük yedeği yükle"><input id="journalImportAllTexts" type="file" accept="application/json,.json" hidden aria-label="Tüm günlük yazılarını geri yükle">
+        <p class="journal-media-hint">💗 Fotoğrafların, videoların ve seslerin otomatik kaydedilir. Başka bir cihazdan hesabına girdiğinde anılarını da görebilirsin. Bir anıyı silmek istersen üzerindeki × işaretine dokun. ♡</p>
         <div class="journal-note">🐰 Güzel anılar burada birikir... ♡</div>
       </aside>
     </main>
     <button type="button" class="journal-back-to-top" id="journalBackToTop" aria-label="Sayfanın başına dön">✦ ↑ Başa dön</button>
     <footer class="journal-site-footer">My Sweet Ajanda • made with ♡ • anılar seninle güzel</footer>
   </div>
-  <div id="journalGate" class="journal-login-gate" role="status" aria-live="polite">Günlüğün hazırlanıyor...</div>
+  <section id="journalGate" class="journal-login-gate" role="region" aria-labelledby="journalUnlockTitle">
+    <div class="journal-lock-card" id="journalLockCard" hidden>
+      <div class="journal-lock-icon" aria-hidden="true">🔐🎀</div>
+      <h1 id="journalUnlockTitle">Benim gizli günlüğüm ♡</h1>
+      <p id="journalPinDescription">4 haneli günlük PIN'ini girerek devam et.</p>
+      <form id="journalUnlockForm">
+        <label for="journalUnlockPassword" id="journalPinLabel">Günlük PIN'in</label>
+        <input id="journalUnlockPassword" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off" required placeholder="••••" aria-label="4 haneli günlük PIN'i">
+        <div id="journalPinConfirmWrap" hidden>
+          <label for="journalPinConfirm">PIN'ini tekrar gir</label>
+          <input id="journalPinConfirm" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off" placeholder="••••" aria-label="PIN tekrar">
+        </div>
+        <div id="journalSetupAuthWrap" hidden>
+          <label for="journalSetupAccountPassword">PIN oluştururken bir kez hesap şifreni doğrula</label>
+          <input id="journalSetupAccountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Hesap şifren">
+        </div>
+        <button type="submit" id="journalUnlockButton">Günlüğümü aç ♡</button>
+      </form>
+      <button type="button" id="journalForgotPin" class="journal-forgot" hidden>PIN'imi unuttum ♡</button>
+      <form id="journalPinRecoveryForm" hidden>
+        <label for="journalRecoveryPassword">PIN sıfırlamak için hesap şifren</label>
+        <input id="journalRecoveryPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Hesap şifren" required>
+        <button type="submit" id="journalRecoveryButton">PIN'imi sıfırla</button>
+        <button type="button" id="journalRecoveryCancel" class="journal-pin-cancel">← PIN ekranına dön</button>
+      </form>
+      <button type="button" id="journalForgotPassword" class="journal-forgot" hidden>Hesap şifremi unuttum · E-postama bağlantı gönder</button>
+      <p class="journal-lock-note" id="journalPinNote">Bu PIN bu cihazdaki günlük giriş ekranı içindir; günlük kayıtlarını şifrelemez.</p>
+      <p id="journalLockStatus" role="status" aria-live="polite"></p>
+      <a href="./index.html" class="journal-lock-home">← Ajandama dön</a>
+    </div>
+    <p id="journalGateLoading">Günlüğün hazırlanıyor...</p>
+  </section>
   <script src="./firebase-config.js?v=12"></script>
-  <script type="module" src="./journal.js?v=31"></script>
+  <script type="module" src="./journal.js?v=26-delete-save"></script>
 </body>
 </html>

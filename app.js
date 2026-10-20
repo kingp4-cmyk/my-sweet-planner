@@ -11,6 +11,9 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
   signOut,
   reload,
   EmailAuthProvider,
@@ -21,6 +24,7 @@ import {
   getFirestore,
   doc,
   getDoc,
+  runTransaction,
   setDoc,
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
@@ -171,14 +175,17 @@ async function push() {
   cloudStatus('☁ Buluta kaydediliyor…');
 
   try {
-    await setDoc(
-      doc(db, 'plannerUsers', currentUser.uid, 'data', 'main'),
-      {
-        payload,
-        schemaVersion: 1,
-        updatedAt: serverTimestamp()
+    // Atomic compare-and-write: don't silently overwrite edits from another device.
+    const expectedCloud = lastUploaded;
+    const ref = doc(db, 'plannerUsers', currentUser.uid, 'data', 'main');
+    await runTransaction(db, async tx => {
+      const existing = await tx.get(ref);
+      const cloud = existing.exists() ? existing.data().payload : '';
+      if (cloud !== expectedCloud && cloud !== payload) {
+        throw new Error('planner-cloud-conflict');
       }
-    );
+      tx.set(ref, {payload, schemaVersion:1, updatedAt:serverTimestamp()});
+    });
 
     lastUploaded = payload;
     uploadedSuccessfully = true;
@@ -204,7 +211,9 @@ async function push() {
     );
 
     cloudStatus(
-      `⚠ Bulut kaydı başarısız (${error.code || 'bağlantı'}). Yerel yedek saklandı.`
+      error?.message === 'planner-cloud-conflict'
+        ? '⚠ Başka cihazda yeni ajanda kaydı var. Buradaki kayıt korunuyor; yedeğini indir.'
+        : `⚠ Bulut kaydı başarısız (${error.code || 'bağlantı'}). Yerel yedek saklandı.`
     );
   } finally {
     writing = false;
@@ -344,7 +353,7 @@ async function loadLegacyPlannerScript() {
   await new Promise((resolve, reject) => {
     const s = document.createElement('script');
 
-    s.src = './script.js?v=28';
+    s.src = './script.js?v=mobile13';
     s.onload = resolve;
 
     s.onerror = () => {
@@ -374,8 +383,18 @@ async function start(user) {
     $('siteRoot').hidden = false;
 
     $('logoutBtn')?.addEventListener('click', logout);
+    $('plannerDownloadBackup')?.addEventListener('click', () => {
+      const payload = localStorage.getItem(KEY);
+      if (!payload || !validPlanner(payload)) { cloudStatus('⚠ Yedeklenecek geçerli ajanda bulunamadı.'); return; }
+      const blob = new Blob([payload], {type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;link.download=`my-sweet-ajandam-${new Date().toISOString().slice(0,10)}.json`;link.click();
+      setTimeout(()=>URL.revokeObjectURL(url),12000);
+      cloudStatus('✓ Ajandanın bu cihazdaki yedeği indirildi.');
+    });
 
-    import('./club.js?v=28').catch(error => {
+    import('./club.js?v=30chat').catch(error => {
       console.error('[My Sweet Ajanda] Yarış yüklenemedi:', error);
       cloudStatus('⚠ Yarış bileşeni yüklenemedi. Sayfayı yenile.');
     });
@@ -383,6 +402,8 @@ async function start(user) {
     if (!IS_RACE) {
       window.addEventListener('msp:planner-saved', detectPlannerChange);
       window.addEventListener('pagehide', cacheBeforeLeaving);
+      window.addEventListener('online', () => { detectPlannerChange(); void push(); });
+      setInterval(() => { if (!document.hidden) void push(); }, 60000);
 
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
@@ -458,6 +479,8 @@ async function submitAccount(event) {
   msg('İşlem yapılıyor…');
 
   try {
+    await setPersistence(auth, $('accountRemember')?.checked ? browserLocalPersistence : browserSessionPersistence);
+
     if (mode === 'signup') {
       let credential;
 

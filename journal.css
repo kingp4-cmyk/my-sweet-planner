@@ -147,3 +147,141 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-vis
 .journal-decor-controls input[type=range]:disabled{opacity:.45;cursor:not-allowed}
 .journal-decor-controls label{color:#9b5084}
 @media(max-width:640px){.journal-back-to-top{left:auto;right:12px;bottom:13px}.journal-avatar img{width:39px;height:39px}.journal-navigation a,.journal-navigation .active{min-height:45px}.journal-font-choices{max-height:240px}}
+
+/* v14 — YALNIZCA telefon yatay: kompakt medya kutuları, araç panelinden ayrı.
+   Masaüstü ve telefon dik düzenine müdahale edilmez. */
+@media (orientation: landscape) and (max-width: 1200px) and (max-height: 900px) and (pointer: coarse) {
+  .journal-layout {
+    grid-template-columns: 108px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+  }
+  .journal-tools {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    position: static; /* aşağı kayarken medya kartlarının üstüne sabitlenmesin */
+    min-width: 0;
+  }
+  .journal-editor {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+  .journal-memories {
+    grid-column: 2; /* araçların bulunduğu sütunu kaplamasın */
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 9px;
+    min-width: 0;
+    width: 100%;
+    position: static;
+  }
+  .journal-memories > .memory-panel { min-width: 0; padding-bottom: 3px; }
+  .journal-memories > .memory-panel:nth-child(3),
+  .journal-memories > .journal-actions,
+  .journal-memories > .journal-privacy,
+  .journal-memories > .journal-media-hint,
+  .journal-memories > .journal-note,
+  .journal-memories > .journal-restore {
+    grid-column: 1 / -1;
+  }
+  .journal-memories .memory-panel .retro-title {
+    min-height: 31px;
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  .journal-memories .memory-panel .retro-title h2 {
+    font-size: 12.5px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+  .journal-memories .window-controls {
+    padding: 0 2px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .journal-memories .media-drop {
+    width: calc(100% - 14px);
+    max-width: calc(100% - 14px);
+    min-width: 0;
+    min-height: 42px; /* parmakla dokunmaya uygun */
+    margin: 6px 7px 5px;
+    padding: 5px 8px;
+    gap: 6px;
+    border-radius: 9px;
+  }
+  .journal-memories .media-drop span { font-size: 16px; }
+  .journal-memories .media-drop b {
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .journal-memories .memory-grid {
+    padding: 0 7px 6px;
+    gap: 5px;
+  }
+  .journal-memories .memory-item img,
+  .journal-memories .memory-item video {
+    max-height: 110px;
+  }
+  .journal-memories .memory-side-sticker { width: 21px; height: 28px; }
+  .journal-memories .journal-actions { gap: 8px; }
+  .journal-memories .journal-actions button { min-height: 42px; padding: 7px; font-size: 12px; }
+  .journal-memories .journal-note { padding: 9px; font-size: 12px; }
+}
+
+/* Çok dar yatay telefonlarda araçlar/editor tek sütun, medya her zaman altında. */
+@media (orientation: landscape) and (max-width: 760px) and (max-height: 900px) and (pointer: coarse) {
+  .journal-layout { grid-template-columns: minmax(0, 1fr); }
+  .journal-tools { grid-column: 1; grid-row: 1; }
+  .journal-editor { grid-column: 1; grid-row: 2; }
+  .journal-memories { grid-column: 1; grid-row: 3; }
+  .tools-body { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* v15 — Firebase hesabıyla günlüğü açma ekranı */
+.journal-login-gate{min-height:100vh;display:grid;place-items:center;padding:20px;}
+.journal-lock-card{width:min(430px,100%);text-align:center;background:linear-gradient(145deg,#fff9ff,#ffe5f2);border:2px solid #ef9ccc;border-radius:23px;padding:25px 20px;box-shadow:0 11px 27px #ab71902e;color:#963b72;}
+.journal-lock-icon{font-size:36px}.journal-lock-card h1{font-size:clamp(19px,5vw,25px);margin:10px 0}.journal-lock-card p{line-height:1.6}.journal-lock-card form{display:grid;gap:10px;text-align:left;margin:20px auto 12px}.journal-lock-card input{width:100%;padding:13px;border:1px solid #e5a4c8;border-radius:12px;font:inherit;box-sizing:border-box}.journal-lock-card form button{background:#e986bb;color:#60173d;border:1px solid #fff;border-radius:12px;padding:12px;font-weight:800;cursor:pointer}.journal-forgot{background:transparent;border:0;text-decoration:underline;color:#9d3d78;cursor:pointer;font:inherit;padding:6px}.journal-lock-note{font-size:11px;color:#986d88}.journal-lock-home{display:inline-block;margin-top:12px;color:#903b6e}.journal-lock-card #journalLockStatus{font-weight:700;font-size:13px;min-height:22px}.journal-lock-card[hidden],#journalGateLoading[hidden]{display:none!important;}
+
+/* v16 — yalnızca Günlüğüm PIN giriş ekranı; ajanda ve telefon düzenleri aynı. */
+.journal-lock-card #journalPinConfirmWrap {display:grid;gap:8px;}
+.journal-lock-card input[inputmode="numeric"] {text-align:center;letter-spacing:.46em;font-size:25px;font-weight:800;color:#9e477a;min-height:52px;}
+.journal-lock-card #journalPinRecoveryForm {margin-top:9px;}
+.journal-lock-card .journal-pin-cancel {background:#fff7fc;border:1px solid #e8abc9;color:#8a3f6c;}
+.journal-lock-card #journalPinDescription {font-size:14px;font-weight:500;}
+.journal-lock-card .journal-lock-note {font-size:11px;line-height:1.5;}
+
+/* v22: Show the optional full-text backup without changing desktop/mobile cards. */
+.journal-actions .journal-backup-all{grid-column:1 / -1;min-height:42px}
+
+/* v25: automatic private cloud media status + optional, collapsed local backups. */
+.journal-v25-actions .journal-cloud-migrate{background:linear-gradient(135deg,#eae5ff,#fcdaf2);color:#8e4382;border:2px solid #fff;box-shadow:0 4px 0 #d47bab65;border-radius:15px;font-weight:900;cursor:pointer}
+.journal-media-cloud-status{grid-column:1/-1;background:#fff7ff;border:1px solid #ebc4dd;border-radius:12px;color:#905379;padding:11px 14px;margin:0;font-size:12px;line-height:1.5;font-weight:700;overflow-wrap:anywhere}
+.journal-media-cloud-status[data-kind="success"]{background:#f3fff9;border-color:#b9e3d1;color:#4f816d}
+.journal-media-cloud-status[data-kind="error"]{background:#fff5f6;border-color:#edb8c6;color:#a44c68}
+.journal-optional-backups{grid-column:1/-1;background:#fffafede;border:1px dashed #e9bfdc;border-radius:12px;padding:9px 11px;color:#95577c}
+.journal-optional-backups summary{font-size:12px;font-weight:900;cursor:pointer;padding:4px}
+.journal-optional-backups .journal-actions{margin-top:9px}
+.memory-cloud-only{min-height:72px;background:#fff9fe;border:1px dashed #d3afd6}
+.memory-cloud-only .memory-cloud-open{white-space:nowrap;background:linear-gradient(110deg,#ffe8f4,#eee0fc);border:1px solid #e5b2d0;border-radius:9px;color:#9a477c;font-size:11px;font-weight:900;min-height:35px;padding:6px 9px;cursor:pointer}
+.memory-cloud-only .memory-cloud-open[hidden]{display:none}
+.memory-cloud-only img[hidden],.memory-cloud-only video[hidden],.memory-cloud-only audio[hidden]{display:none}
+@media (max-width:740px){.journal-v25-actions{grid-template-columns:1fr}.journal-media-cloud-status,.journal-optional-backups{grid-column:1/-1}}
+
+
+/* v26: tactile, readable save button feedback (does not alter other controls). */
+.journal-save{cursor:pointer;transform:translateY(0) scale(1);transition:transform .15s ease,box-shadow .16s ease,filter .16s ease,background .16s ease;transform-origin:center;will-change:transform}
+.journal-save:active{transform:translateY(3px) scale(.94);box-shadow:0 1px 0 #d47bab65;filter:brightness(1.035)}
+.journal-save.is-pressed{animation:journalSaveTap .35s cubic-bezier(.2,.8,.3,1) both}
+@keyframes journalSaveTap{0%{transform:scale(1)}35%{transform:translateY(3px) scale(.92)}70%{transform:scale(1.045)}100%{transform:scale(1)}}
+.journal-save.is-saving{filter:saturate(.9)}
+.journal-save.is-saved{background:linear-gradient(135deg,#d7fff0,#aeeed6)!important;color:#326653!important;box-shadow:0 4px 0 #86cdb1!important}
+.journal-save.is-pending{background:linear-gradient(135deg,#fff2d3,#ffe0da)!important;color:#875c47!important}
+.journal-save:disabled{opacity:1;cursor:wait}
+.journal-save:focus-visible{outline:3px solid #a356bb;outline-offset:3px}
+.memory-remove:disabled{opacity:.7!important;cursor:wait}
+@media(prefers-reduced-motion:reduce){.journal-save.is-pressed{animation:none}.journal-save{transition:none}}

@@ -220,3 +220,8 @@
 
 /* v7 — Koşu hazırlığında minik bir pembe fiyonk. */
 .account-boot .race-boot-bow{display:inline-block;margin-right:6px;font-size:1.15em;vertical-align:-1px;filter:drop-shadow(0 1px 3px #d27bad55)}
+
+/* v15: Oturum hatırlama seçimi */
+.account-remember{display:flex!important;align-items:center;gap:9px;text-align:left;font-weight:700;color:#945078;font-size:13px;margin:10px 0 14px;}
+.account-remember input{width:18px;height:18px;flex:none;accent-color:#d66fa9;cursor:pointer;}
+.account-remember small{display:block;font-weight:400;font-size:11px;color:#a47495;}

@@ -1274,6 +1274,7 @@ for (const paletteId of ['imagePalette', 'emojiPalette']) {
     const button = event.target.closest('[data-sticker]');
 
     if (!button || event.button !== 0) return;
+    if (isMobilePlannerPortrait()) return; // Telefonda dokunarak seçim; kaydırmayı engelleme.
 
     event.preventDefault();
 
@@ -1542,6 +1543,7 @@ let draggingColor = null;
 function startColorDrag(event) {
   const button = event.target.closest('[data-color]');
   if (!button || event.button !== 0) return;
+  if (isMobilePlannerPortrait()) return; // Mobilde dokun-uygula.
 
   event.preventDefault();
 
@@ -1836,3 +1838,96 @@ $('repeatList').addEventListener('click', e => {
 
 renderStickerPalette();
 renderMonth();
+
+
+/* v13 — yalnızca dik telefon ekranı. Masaüstü sürükle/bırak aynen korunur. */
+const mobilePortraitQuery = window.matchMedia('(max-width: 760px) and (orientation: portrait)');
+function isMobilePlannerPortrait() { return mobilePortraitQuery.matches; }
+const mobileDrawer = $('mobileToolsPanel');
+const mobileToggle = $('mobileToolsToggle');
+const mobileClose = $('mobileToolsClose');
+const mobileHint = $('mobilePlacementHint');
+const mobileHintText = $('mobilePlacementText');
+let mobilePending = null;
+
+function setMobileDrawer(open) {
+  mobileDrawer.classList.toggle('mobile-drawer-open', Boolean(open) && isMobilePlannerPortrait());
+  mobileToggle.setAttribute('aria-expanded', String(Boolean(open) && isMobilePlannerPortrait()));
+  mobileToggle.setAttribute('aria-label', open ? 'Araç kutusunu kapat' : 'Sticker, renk ve tekrar eden görev araçlarını aç');
+}
+function clearMobilePending() {
+  mobilePending = null;
+  mobileHint.hidden = true;
+  stage.classList.remove('mobile-sticker-ready');
+  document.body.classList.remove('mobile-color-ready');
+}
+function armMobileChoice(kind, value) {
+  mobilePending = { kind, value };
+  mobileHintText.textContent = kind === 'sticker'
+    ? '🎀 Ajandaya dokun, stickerın yerleşsin ♡'
+    : '🎨 Boyamak istediğin karta dokun ♡';
+  mobileHint.hidden = false;
+  stage.classList.toggle('mobile-sticker-ready', kind === 'sticker');
+  document.body.classList.toggle('mobile-color-ready', kind === 'color');
+  setMobileDrawer(false);
+}
+mobileToggle?.addEventListener('click', () => {
+  setMobileDrawer(mobileToggle.getAttribute('aria-expanded') !== 'true');
+});
+mobileClose?.addEventListener('click', () => setMobileDrawer(false));
+$('mobilePlacementCancel')?.addEventListener('click', clearMobilePending);
+mobilePortraitQuery.addEventListener('change', () => {
+  setMobileDrawer(false);
+  clearMobilePending();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') { setMobileDrawer(false); clearMobilePending(); }
+});
+$('imagePalette').addEventListener('click', event => {
+  if (!isMobilePlannerPortrait()) return;
+  const button = event.target.closest('[data-sticker]');
+  if (!button) return;
+  event.preventDefault();
+  armMobileChoice('sticker', button.dataset.sticker);
+});
+function mobilePickColor(event) {
+  if (!isMobilePlannerPortrait()) return;
+  const button = event.target.closest('[data-color]');
+  if (!button) return;
+  event.preventDefault();
+  armMobileChoice('color', button.dataset.color);
+}
+$('colorPalette').addEventListener('click', mobilePickColor);
+$('customColorSwatch').addEventListener('click', mobilePickColor);
+
+// Ajanda alanına dokun: kaydetme için mevcut scheduleSave kullanılır.
+stage.addEventListener('click', event => {
+  if (!isMobilePlannerPortrait() || mobilePending?.kind !== 'sticker') return;
+  if (event.target.closest('input,textarea,button,select,a,[data-placed]')) return;
+  const rect = stage.getBoundingClientRect();
+  const size = clampStickerSize($('stickerSize').value);
+  const x = Math.max(0, Math.min(rect.width - size, event.clientX - rect.left - size / 2));
+  const y = Math.max(0, Math.min(rect.height - size, event.clientY - rect.top - size / 2));
+  if (!STICKER_BY_ID[mobilePending.value]) return;
+  currentStickers().push({
+    id: uid(), stickerId: mobilePending.value,
+    x: Math.round(x), y: Math.round(y), size,
+    rot: Math.floor(Math.random() * 15) - 7
+  });
+  clearMobilePending();
+  renderStickers();
+  scheduleSave();
+  toast('Sticker yerleştirildi! 🎀');
+}, true);
+// Renk için data-paint hedefine dokunma; form alanlarının normal işlevi korunur.
+document.addEventListener('click', event => {
+  if (!isMobilePlannerPortrait() || mobilePending?.kind !== 'color') return;
+  if (event.target.closest('input,textarea,button,select,a')) return;
+  const zone = event.target.closest('[data-paint]');
+  if (!zone || zone.closest('#mobileToolsPanel')) return;
+  state.colors[paintKey(zone.dataset.paint)] = mobilePending.value;
+  clearMobilePending();
+  applyPaint();
+  scheduleSave();
+  toast('Renk uygulandı! 🎨');
+}, true);

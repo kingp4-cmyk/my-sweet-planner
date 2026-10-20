@@ -2304,3 +2304,149 @@ body::before {
 /* v4 — All planner header actions match the larger profile avatar. */
 .top-actions .btn{min-height:46px;padding:9px 14px;display:inline-flex;align-items:center;justify-content:center}
 @media(max-width:650px){.top-actions{gap:6px}.top-actions .btn{min-height:44px;padding:8px 10px}}
+
+/* =====================================================
+   v13 — Dik telefonda açılır araç kutusu / hızlı seçim
+   Bilgisayar ve yatay telefon stillerine dokunmaz.
+   ===================================================== */
+.mobile-tools-toggle, .mobile-tools-drawer-heading,
+.mobile-tools-shortcuts, .mobile-placement-hint { display: none; }
+@media screen and (max-width: 760px) and (orientation: portrait) {
+  .shell { display: block; }
+  .shell > .main-column { width: 100%; min-width: 0; }
+  .side-panel {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: 0;
+    left: auto;
+    z-index: 1500;
+    order: initial;
+    width: min(80vw, 330px);
+    max-width: min(80vw, 330px);
+    max-height: none;
+    height: auto;
+    padding: 12px 11px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    border-radius: 21px 0 0 21px;
+    border-color: #f2bedb;
+    background: #fff9fdf7;
+    box-shadow: -7px 6px 25px #9749774a;
+    transform: translateX(105%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform .22s ease, visibility .22s ease;
+  }
+  .side-panel.mobile-drawer-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .mobile-tools-toggle {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    position: fixed;
+    right: 0;
+    top: 39%;
+    z-index: 1600;
+    min-height: 72px;
+    width: 55px;
+    padding: 7px 4px;
+    border: 2px solid #fff;
+    border-radius: 17px 0 0 17px;
+    color: #903d70;
+    background: linear-gradient(145deg,#ffd0eb,#e5ccff);
+    box-shadow: -3px 4px 12px #b96a9740;
+    font-size: 20px;
+    font-weight: 900;
+    transition: right .22s ease;
+  }
+  .mobile-tools-toggle span { font-size: 10px; }
+  .mobile-tools-toggle[aria-expanded="true"] { right: min(80vw,330px); }
+  .mobile-tools-drawer-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: -12px;
+    z-index: 3;
+    margin: -12px -11px 10px;
+    padding: 13px 12px 9px;
+    color: #923967;
+    background: #fff5fc;
+    border-bottom: 1px solid #f3c9e0;
+    font-size: 13px;
+  }
+  #mobileToolsClose {
+    min-width: 35px;
+    min-height: 35px;
+    padding: 3px;
+    background: white;
+    border: 1px solid #e8b3d1;
+    border-radius: 10px;
+    color: #9b4076;
+  }
+  .mobile-tools-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+  .mobile-tools-shortcuts a {
+    display: block;
+    border: 1px solid #eebbd8;
+    border-radius: 10px;
+    padding: 9px 2px;
+    font-size: 11px;
+    color: #9f507f;
+    text-align: center;
+    font-weight: 800;
+    text-decoration: none;
+    background: #fff;
+  }
+  .mobile-placement-hint:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 10px;
+    right: 10px;
+    z-index: 1700;
+    border: 2px solid #fff;
+    border-radius: 15px;
+    padding: 9px 10px;
+    background: #ffedf9fa;
+    box-shadow: 0 4px 20px #a3568944;
+    font-size: 12px;
+    font-weight: 900;
+    color: #96476e;
+  }
+  #mobilePlacementText { flex: 1; }
+  #mobilePlacementCancel {
+    flex: none;
+    min-height: 35px;
+    padding: 5px 9px;
+    border: 1px solid #e4afcb;
+    border-radius: 10px;
+    background: white;
+    font-size: 12px;
+    color: #9a3b77;
+  }
+  .side-panel .sticker-option, .side-panel .color-option { touch-action: manipulation; }
+  .planner-stage.mobile-sticker-ready { cursor: crosshair; }
+  .mobile-color-ready [data-paint] { cursor: crosshair; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .side-panel, .mobile-tools-toggle { transition: none !important; }
+}
+@media print {
+  .mobile-tools-toggle,.mobile-placement-hint { display: none !important; }
+}

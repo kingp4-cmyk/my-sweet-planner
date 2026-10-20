@@ -4,6 +4,7 @@
 import {
   doc,
   getDoc,
+  getDocs,
   setDoc,
   collection,
   query,
@@ -11,7 +12,8 @@ import {
   limit,
   onSnapshot,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 const { user, db, hoursReady } = window.MSP;
@@ -21,6 +23,7 @@ const $ = id => document.getElementById(id);
 const HOUR_KEY = 'my-sweet-daily-planner-2026-v1';
 const ROOM_KEY = 'msp-club-room-id-v1';
 const USER_ROOM = `msp-club-room-${user.uid}`;
+const LEGACY_ROOMS_KEY = `msp-race-old-rooms-${user.uid}`;
 
 const MONTH = new Date()
   .toLocaleDateString('sv-SE')
@@ -71,40 +74,40 @@ const validRoom = s =>
   typeof s === 'string' &&
   /^[a-zA-Z0-9_-]{16,64}$/.test(s);
 
-const makeRoom = () =>
-  Array.from(
-    crypto.getRandomValues(new Uint8Array(16)),
-    b => b.toString(16).padStart(2, '0')
-  ).join('');
+// v17: Yeni yarışlar r_ ile başlar; eski 32 haneli davet kodlarına dokunulmaz.
+const makeRoom = () => 'r_' + Array.from(
+  crypto.getRandomValues(new Uint8Array(16)),
+  b => b.toString(16).padStart(2, '0')
+).join('');
 
-const urlRoom =
-  new URLSearchParams(location.search).get('room');
+const urlRoom = new URLSearchParams(location.search).get('room');
+// Yeni odalar Firebase hesabına kaydedilir. Eski URL'ler korunur,
+// fakat kendiliğinden yeni oda oluşturulmaz.
+let roomId = null;
+let roomName = '';
+let profileReady = false;
+let allMyRooms = [];
+let roomActionBusy = false;
 
-const roomId = validRoom(urlRoom)
-  ? urlRoom
-  : (
-    validRoom(localStorage.getItem(USER_ROOM))
-      ? localStorage.getItem(USER_ROOM)
-      : (
-        validRoom(localStorage.getItem(ROOM_KEY))
-          ? localStorage.getItem(ROOM_KEY)
-          : makeRoom()
-      )
-  );
-
-localStorage.setItem(USER_ROOM, roomId);
-localStorage.setItem(ROOM_KEY, roomId);
-
-if (IS_RACE && !validRoom(urlRoom)) {
-  const url = new URL(location.href);
-  url.searchParams.set('room', roomId);
-  history.replaceState(null, '', url);
+function rememberRoom(id) {
+  localStorage.setItem(USER_ROOM, id);
+  localStorage.setItem(ROOM_KEY, id); // Sadece hızlı erişim, yetki kaynağı değildir.
+  if ($('clubRaceLink')) $('clubRaceLink').href = `./race.html?v=30chat&room=${encodeURIComponent(id)}`;
+  // Davet bağlantısını adres satırında tutma: kullanıcı tekrar sayfayı
+  // açtığında katılım alanının yeniden dolmasını önler.
+  if (IS_RACE) {
+    const url = new URL(location.href);
+    if (url.searchParams.has('room')) {
+      url.searchParams.delete('room');
+      history.replaceState(null, '', url);
+    }
+  }
 }
 
-if ($('clubRaceLink')) {
-  $('clubRaceLink').href =
-    `./race.html?room=${encodeURIComponent(roomId)}`;
-}
+const joinedRooms = () => collection(db, 'raceUserRooms', user.uid, 'rooms');
+const roomDoc = id => doc(db, 'raceRooms', id);
+const participantDoc = id => doc(db, 'raceRooms', id, 'participants', user.uid);
+const joinedDoc = id => doc(db, 'raceUserRooms', user.uid, 'rooms', id);
 
 let profile = null;
 let members = [];
@@ -141,8 +144,8 @@ const monthCollection = type =>
     type
   );
 
-const publicUrl = () =>
-  `https://kingp4-cmyk.github.io/my-sweet-planner/race.html?room=${encodeURIComponent(roomId)}`;
+const publicUrl = () => roomId ?
+  `https://kingp4-cmyk.github.io/my-sweet-planner/race.html?room=${encodeURIComponent(roomId)}` : '';
 
 function status(text) {
   if ($('clubStatus')) {
@@ -285,7 +288,7 @@ function getRunnerX(list, rankIndex, hours) {
 }
 
 function render() {
-  if (!profile || !$('clubMount')) return;
+  if (!profile || !roomId || !$('clubMount')) return;
 
   const list = sorted();
 
@@ -398,7 +401,7 @@ function render() {
           </h2>
 
           <a
-            href="./race.html?room=${encodeURIComponent(roomId)}"
+            href="./race.html?v=30chat&room=${encodeURIComponent(roomId)}"
             class="club-btn club-btn-soft"
             style="text-decoration:none">
             Yarışa git →
@@ -680,7 +683,7 @@ async function saveProfile(e) {
 }
 
 async function syncHours(force = false) {
-  if (!profile) return;
+  if (!profile || !roomId) return;
 
   if (writing) {
     queuedWrite = true;
@@ -742,7 +745,7 @@ async function syncHours(force = false) {
 }
 
 function syncSoon() {
-  if (!profile) return;
+  if (!profile || !roomId) return;
 
   clearTimeout(syncDebounce);
 
@@ -753,7 +756,7 @@ function syncSoon() {
 }
 
 function listenMembers() {
-  if (unsubscribeMembers || !profile) return;
+  if (unsubscribeMembers || !profile || !roomId) return;
 
   unsubscribeMembers = onSnapshot(
     monthCollection('members'),
@@ -801,8 +804,15 @@ function listenChat() {
       target.innerHTML = rows.length
         ? rows.map(m => `
           <div class="club-chat-message ${m.uid === user.uid ? 'mine' : ''}">
-            <strong>${esc(m.name)}</strong>
-            <p>${esc(m.text)}</p>
+            <span class="race-v27-chat-avatar">${avatarHTML(m.avatar)}</span>
+            <div class="race-v27-chat-body">
+              <div class="race-v27-chat-meta">
+                <strong>${esc(m.name)}</strong>
+                ${m.uid === user.uid ? '<span class="race-v27-chat-you">Sen</span>' : ''}
+                <time>${m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}) : ''}</time>
+              </div>
+              <p>${esc(m.text)}</p>
+            </div>
           </div>
         `).join('')
         : `
@@ -825,7 +835,7 @@ function listenChat() {
 async function sendMessage(e) {
   e.preventDefault();
 
-  if (!profile) return;
+  if (!profile || !roomId) return;
 
   const input = $('clubChatInput');
   const text = input.value.trim().slice(0, 300);
@@ -857,6 +867,7 @@ async function sendMessage(e) {
 
 async function copyInvite() {
   const button = $('clubCopyBtn');
+  if (!roomId) return roomNotice('Önce bir yarış seçmelisin.');
 
   try {
     await navigator.clipboard.writeText(publicUrl());
@@ -872,6 +883,7 @@ async function copyInvite() {
 }
 
 async function shareInvite() {
+  if (!roomId) return roomNotice('Önce bir yarış seçmelisin.');
   const link = publicUrl();
 
   if (navigator.share) {
@@ -891,128 +903,341 @@ async function shareInvite() {
   }
 }
 
-async function initialize() {
-  profileButton();
-
-  if (IS_RACE) {
-    $('clubMonthName').textContent =
-      new Date().toLocaleDateString('tr-TR', {
-        month: 'long',
-        year: 'numeric'
-      });
-
-    $('clubInviteAnchor').href = publicUrl();
-    $('clubInviteAnchor').textContent = publicUrl();
-
-    $('clubCopyBtn').addEventListener(
-      'click',
-      copyInvite
-    );
-
-    $('clubShareBtn').addEventListener(
-      'click',
-      shareInvite
-    );
-
-    $('clubSyncBtn').addEventListener(
-      'click',
-      () => void syncHours(true)
-    );
-
-    $('clubChatForm').addEventListener(
-      'submit',
-      sendMessage
-    );
-  }
-
+// Hesaptaki yarışlar bütün cihazlarda görünür. Eski sürümdeki odaların
+// Firestore üyelik kaydı yoktu: varsa sadece bu cihazdaki kısa yol korunur.
+function getLegacyRooms() {
   try {
-    const p = await getDoc(profileRef());
+    const list = JSON.parse(localStorage.getItem(LEGACY_ROOMS_KEY) || '[]');
+    return Array.isArray(list)
+      ? [...new Set(list.filter(id => validRoom(id) && !id.startsWith('r_')))]
+      : [];
+  } catch { return []; }
+}
+function saveLegacyRooms(list) {
+  localStorage.setItem(LEGACY_ROOMS_KEY, JSON.stringify(list));
+}
+function rememberLegacyRoom(id) {
+  if (!validRoom(id) || id.startsWith('r_')) return;
+  saveLegacyRooms([...new Set([...getLegacyRooms(), id])]);
+}
+async function loadMyRooms() {
+  const snap = await getDocs(joinedRooms());
+  const cloud = snap.docs.map(d => ({roomId:d.id,...d.data()}))
+    .filter(r => validRoom(r.roomId))
+    .map(r => ({...r, legacy:false}));
+  const previous = localStorage.getItem(USER_ROOM);
+  if (validRoom(previous) && !previous.startsWith('r_')) rememberLegacyRoom(previous);
+  const legacy = getLegacyRooms()
+    .filter(id => !cloud.some(r => r.roomId === id))
+    .map(id => ({roomId:id, name:'Önceki yarışım', legacy:true}));
+  allMyRooms = [...cloud,...legacy]
+    .sort((a,b) => (a.name || '').localeCompare(b.name || '', 'tr'));
+  return allMyRooms;
+}
+function roomNotice(text) {
+  const el = $('raceRoomNotice');
+  if (el) el.textContent = text;
+  else status(text);
+}
+function renderRooms() {
+  const list = $('raceMyRooms');
+  if (!list) return;
+  list.replaceChildren();
+  if (!allMyRooms.length) {
+    const p = document.createElement('p');
+    p.className = 'race-empty-rooms';
+    p.textContent = 'Henüz bir yarışın yok. Yeni yarış oluştur veya arkadaşının davetiyle katıl ♡';
+    list.append(p);
+    return;
+  }
+  for (const item of allMyRooms) {
+    const row = document.createElement('div');
+    row.className = 'race-room-item';
+    row.dataset.roomId = item.roomId;
 
+    const details = document.createElement('div');
+    details.className = 'race-room-details';
+    const title = document.createElement('strong');
+    title.textContent = `🏁 ${item.name || 'Yarışım'}`;
+    const label = document.createElement('small');
+    label.textContent = item.legacy
+      ? 'Eski yarış · sadece bu cihazda kayıtlı'
+      : item.roomId === roomId
+        ? 'Şu anda bu yarıştasın ♡'
+        : 'Hesabına kayıtlı yarış';
+    details.append(title,label);
+
+    const actions = document.createElement('div');
+    actions.className = 'race-room-item-actions';
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.dataset.roomAction = 'open';
+    open.className = 'race-room-open';
+    open.textContent = item.roomId === roomId ? 'Devam et ↗' : 'Aç ↗';
+    const leave = document.createElement('button');
+    leave.type = 'button';
+    leave.dataset.roomAction = 'leave';
+    leave.className = 'race-room-leave';
+    leave.textContent = item.legacy ? 'Kaldır' : 'Yarıştan çık';
+    leave.setAttribute('aria-label', `${item.name || 'Yarışım'} yarışından ${item.legacy ? 'kısa yolu kaldır' : 'çık'}`);
+    actions.append(open,leave);
+    row.append(details,actions);
+    list.append(row);
+  }
+}
+function showLobby(message='') {
+  if (!IS_RACE) return;
+  $('raceRoomLobby').hidden = false;
+  roomNotice(message);
+  renderRooms();
+}
+function hideLobby() {
+  if (IS_RACE) $('raceRoomLobby').hidden = true;
+}
+function stopRoomListening() {
+  if (unsubscribeMembers) {unsubscribeMembers();unsubscribeMembers=null;}
+  if (unsubscribeChat) {unsubscribeChat();unsubscribeChat=null;}
+}
+function forgetActiveRoom(id) {
+  if (roomId !== id) return;
+  stopRoomListening();
+  clearTimeout(syncDebounce);
+  members=[]; lastDraw=''; lastHoursWritten='';
+  roomId=null;roomName='';
+  if ($('raceActiveRoomName')) $('raceActiveRoomName').textContent='🎀 Yarış seç';
+  if ($('clubMount')) $('clubMount').replaceChildren();
+  if ($('clubChatList')) $('clubChatList').replaceChildren();
+  if ($('clubRanking')) $('clubRanking').replaceChildren();
+  if ($('clubInviteAnchor')) {
+    $('clubInviteAnchor').textContent='Yarış seçilmedi';
+    $('clubInviteAnchor').removeAttribute('href');
+  }
+}
+function forgetSavedRoom(id) {
+  if (localStorage.getItem(USER_ROOM) === id) localStorage.removeItem(USER_ROOM);
+  if (localStorage.getItem(ROOM_KEY) === id) localStorage.removeItem(ROOM_KEY);
+  if (IS_RACE) {
+    const url = new URL(location.href);
+    if (url.searchParams.has('room')) {
+      url.searchParams.delete('room');
+      history.replaceState(null, '', url);
+    }
+  }
+}
+async function leaveRoom(item, button) {
+  const name = item.name || 'Yarışım';
+  const question = item.legacy
+    ? `“${name}” eski yarışını bu cihazdaki listenden kaldırmak istiyor musun? Eski yarış kayıtları sunucudan silinmez.`
+    : `“${name}” yarışından çıkmak istiyor musun? Yalnızca senin üyeliğin ve bu ayki yarış saatin kaldırılacak. Diğer kişiler yarışmaya devam edecek.`;
+  if (!window.confirm(question)) return;
+  if (roomActionBusy) return;
+  roomActionBusy = true;
+  button.disabled = true;
+  try {
+    if (item.legacy) {
+      saveLegacyRooms(getLegacyRooms().filter(id => id !== item.roomId));
+    } else {
+      // Tek atomik işlem: bu ayki kendi sıralama kaydı + üyelik + kendi oda listesi.
+      // Sohbet mesajlarını ve diğer kullanıcıların kayıtlarını silmez.
+      const batch = writeBatch(db);
+      batch.delete(doc(db,'raceRooms',item.roomId,'months',MONTH,'members',user.uid));
+      batch.delete(participantDoc(item.roomId));
+      batch.delete(joinedDoc(item.roomId));
+      await batch.commit();
+    }
+    forgetActiveRoom(item.roomId);
+    forgetSavedRoom(item.roomId);
+    await loadMyRooms();
+    showLobby(`“${name}” ${item.legacy ? 'bu cihazdaki listenden kaldırıldı.' : 'yarışından çıktın. Diğer katılımcıların kayıtları duruyor.'}`);
+  } catch (error) {
+    roomNotice(`Yarıştan çıkılamadı: ${error.code || error.message}. v18 Firestore kurallarını kontrol et.`);
+    button.disabled = false;
+  } finally { roomActionBusy = false; }
+}
+async function roomListAction(event) {
+  const button = event.target.closest('button[data-room-action]');
+  if (!button || roomActionBusy) return;
+  const id = button.closest('[data-room-id]')?.dataset.roomId;
+  const item = allMyRooms.find(room => room.roomId === id);
+  if (!item) return;
+  if (button.dataset.roomAction === 'leave') {
+    await leaveRoom(item,button);
+  } else {
+    await activateRoom(item.roomId,item.name || 'Yarışım');
+  }
+}
+async function createRoom(event) {
+  event.preventDefault();
+  const b = $('raceCreateButton');
+  const name = ($('raceNewRoomName')?.value || '').trim().replace(/\s+/g,' ').slice(0,42);
+  if (!name) return roomNotice('Yarışına bir isim ver ♡');
+  b.disabled = true;
+  try {
+    const id = makeRoom();
+    await setDoc(roomDoc(id), {name, ownerUid:user.uid, createdAt:serverTimestamp()});
+    await joinNewRoom(id, name);
+    $('raceNewRoomName').value = '';
+    await activateRoom(id, name);
+  } catch(e) {
+    roomNotice(`Yarış oluşturulamadı: ${e.code || e.message}. Yeni Firestore kurallarını kontrol et.`);
+  } finally { b.disabled = false; }
+}
+async function joinNewRoom(id, name) {
+  const p = participantDoc(id);
+  const joined = await getDoc(p);
+  if (!joined.exists()) {
+    await setDoc(p, {uid:user.uid, joinedAt:serverTimestamp()});
+  }
+  // Kişisel liste: başka cihazda da yarışları bulmak için.
+  await setDoc(joinedDoc(id), {roomId:id, name, joinedAt:serverTimestamp()});
+  await loadMyRooms();
+  renderRooms();
+}
+function parseInvite(value) {
+  const raw = String(value || '').trim();
+  if (validRoom(raw)) return raw;
+  try {
+    const u = new URL(raw);
+    const id = u.searchParams.get('room');
+    if (['http:', 'https:'].includes(u.protocol) && validRoom(id)) return id;
+  } catch { /* Oda kodu veya bağlantı değil. */ }
+  return '';
+}
+async function joinRoom(event) {
+  event.preventDefault();
+  const id = parseInvite($('raceJoinCode')?.value);
+  if (!validRoom(id)) return roomNotice('Geçerli yarış davet bağlantısı veya oda kodu gir.');
+  const b = $('raceJoinButton');b.disabled=true;
+  try {
+    const snap = await getDoc(roomDoc(id));
+    if (snap.exists()) {
+      const name = String(snap.data().name || 'Yarışım').slice(0,42);
+      await joinNewRoom(id,name);
+      $('raceJoinCode').value = '';
+      await activateRoom(id,name);
+    } else {
+      // v13 ve daha eski yarışların kök belgeleri yoktu.
+      // Kullanıcının bağlantıyı özellikle onaylaması gerekir.
+      if (!confirm('Bu bağlantı eski sürümden bir yarışa ait olabilir. Eski yarışların üyelik koruması daha zayıftır. Yine de bu yarışa katılmak istiyor musun?')) return;
+      rememberLegacyRoom(id);
+      $('raceJoinCode').value = '';
+      await loadMyRooms();
+      await activateRoom(id, 'Önceki yarışım');
+      roomNotice('Eski yarış bu cihazdaki listene eklendi. Yeni yarışlar hesabında da görünür.');
+    }
+  } catch(e) { roomNotice(`Yarışa katılamadın: ${e.code || e.message}. Firestore kurallarını kontrol et.`); }
+  finally { b.disabled=false; }
+}
+async function initializeProfileAndLive() {
+  if (profile) {
+    profileButton();
+    listenMembers();
+    await syncHours(true);
+    status(`🟢 ${roomName} · Canlı yarış`);
+    return;
+  }
+  if (!profileReady) {
+    const p = await getDoc(profileRef());
     if (p.exists()) {
       const data = p.data();
-
-      profile = {
-        uid: user.uid,
-        displayName: data.displayName,
-        avatar: resolveAvatar(data.avatar)
-      };
+      profile = {uid:user.uid, displayName:data.displayName, avatar:resolveAvatar(data.avatar)};
     } else {
       const m = await getDoc(memberRef());
-
       if (m.exists()) {
         const data = m.data();
-
-        profile = {
-          uid: user.uid,
-          displayName: data.displayName,
-          avatar: resolveAvatar(data.avatar)
-        };
-
-        await setDoc(
-          profileRef(),
-          {
-            ...profile,
-            updatedAt: serverTimestamp()
-          }
-        );
+        profile = {uid:user.uid,displayName:data.displayName,avatar:resolveAvatar(data.avatar)};
+        await setDoc(profileRef(), {...profile,updatedAt:serverTimestamp()});
       }
     }
-
-    if (!profile) {
-      status(
-        '🎀 Avatarını ve adını seçerek yarışa katıl.'
-      );
-
-      showProfile(true);
-    } else {
-      profileButton();
-      listenMembers();
-
-      await syncHours();
-
-      status('🟢 Çevrimiçi · Canlı yarış');
-    }
-  } catch (error) {
-    status(
-      error.code === 'permission-denied'
-        ? '⚠ Firestore erişimi reddedildi. Önce e-postanı doğrula, sonra yeni güvenlik kurallarını Firebase’de yayımla.'
-        : `⚠ Firebase: ${error.message}`
-    );
+    profileReady = true;
   }
+  if (!profile) {
+    status('🎀 Avatarını ve adını seçerek yarışa katıl.');
+    showProfile(true);
+  } else {
+    profileButton();
+    listenMembers();
+    await syncHours(true);
+    status(`🟢 ${roomName} · Canlı yarış`);
+  }
+}
+async function activateRoom(id, name='Yarışım') {
+  if (!validRoom(id)) return;
+  stopRoomListening();
+  members=[];lastDraw='';lastHoursWritten='';
+  roomId=id;roomName=name;
+  rememberRoom(id);
+  if ($('raceActiveRoomName')) $('raceActiveRoomName').textContent = `🎀 ${name}`;
+  if ($('clubInviteAnchor')) {
+    $('clubInviteAnchor').href=publicUrl();
+    $('clubInviteAnchor').textContent=publicUrl();
+  }
+  hideLobby();
+  renderRooms();
+  await initializeProfileAndLive();
+}
 
-  window.addEventListener('storage', e => {
-    if (e.key === HOUR_KEY) {
-      syncSoon();
+async function initialize() {
+  profileButton();
+  if (IS_RACE) {
+    $('clubMonthName').textContent = new Date().toLocaleDateString('tr-TR', {month:'long',year:'numeric'});
+    $('clubCopyBtn').addEventListener('click', copyInvite);
+    $('clubShareBtn').addEventListener('click', shareInvite);
+    $('clubSyncBtn').addEventListener('click', () => void syncHours(true));
+    $('clubChatForm').addEventListener('submit', sendMessage);
+    $('raceCreateForm').addEventListener('submit', createRoom);
+    $('raceJoinForm').addEventListener('submit', joinRoom);
+    $('raceChangeRoom').addEventListener('click', () => showLobby());
+    $('raceMyRooms').addEventListener('click', event => void roomListAction(event));
+    // Yarışlarımı yükleyene kadar seçim ekranını GİZLİ tut.
+    // Böylece mevcut kullanıcılara her girişte bir pencere fırlamaz.
+  }
+  try {
+    await loadMyRooms();
+    renderRooms();
+
+    // Özel davet bağlantısına gelmiş kullanıcı, farklı bir odaya zaten
+    // katılmışsa da önce daveti kabul edebilmelidir.
+    const invited = validRoom(urlRoom)
+      ? allMyRooms.find(r => r.roomId === urlRoom)
+      : null;
+    const saved = localStorage.getItem(USER_ROOM);
+    const chosen = invited || allMyRooms.find(r => r.roomId === saved) || allMyRooms[0];
+
+    if (IS_RACE && validRoom(urlRoom) && !invited) {
+      // Yeni davet: katılma butonunun onayını bekle. Mevcut odayı
+      // kaybetme, başka bir yarışa kendiliğinden katılma.
+      $('raceJoinCode').value = urlRoom;
+      showLobby('Yeni yarış davetin var ♡ Katılmak istersen onayla.');
+    } else if (chosen) {
+      // Mevcut üye: doğrudan son yarışını göster.
+      await activateRoom(chosen.roomId, chosen.name);
+    } else if (IS_RACE) {
+      // İlk kez gelen veya bütün yarışlarından çıkmış kullanıcı.
+      showLobby('Hoş geldin ♡ İlk yarışını oluştur veya davetle katıl.');
+    } else if ($('clubMount')) {
+      $('clubMount').innerHTML = '<p class="club-empty">Henüz bir yarışa katılmadın. Koşu sayfasından yarış oluşturabilirsin ♡</p>';
     }
-  });
-
-  document.addEventListener(
-    'visibilitychange',
-    () => {
-      if (!document.hidden) {
-        syncSoon();
-      }
-    }
-  );
-
+  } catch(error) {
+    if (IS_RACE) showLobby(error.code === 'permission-denied'
+      ? 'Yarışlar yüklenemedi: Firebase erişim iznini kontrol et.'
+      : `Yarış listesi açılamadı: ${error.message}`);
+    else roomNotice(error.code === 'permission-denied'
+      ? 'Yarışlar yüklenemedi: Firestore izinlerini kontrol et.'
+      : `Yarış listesi açılamadı: ${error.message}`);
+  }
+  window.addEventListener('storage', e => {if(e.key===HOUR_KEY)syncSoon();});
+  document.addEventListener('visibilitychange', () => {if(!document.hidden)syncSoon();});
   if (!IS_RACE) {
-    document.addEventListener('input', e => {
-      if (e.target.matches('[data-field="worked"]')) {
-        syncSoon();
-      }
-    });
-
-    window.addEventListener(
-      'msp:planner-saved',
-      syncSoon
-    );
+    document.addEventListener('input', e => {if (e.target.matches('[data-field="worked"]')) syncSoon();});
+    window.addEventListener('msp:planner-saved', syncSoon);
   }
 }
 
 void initialize();
 
 if (IS_RACE) {
-  import('./race-timer.js?v=10')
+  import('./race-timer.js?v=30chat')
     .then(m => {
       window.MSP.activeTimer = m.initRaceTimer({
         user,
