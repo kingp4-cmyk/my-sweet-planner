@@ -24,12 +24,13 @@ const uuid = () =>
 // Yalnizca SAAT:DAKIKA:SANIYE gosterilir. Salise yoktur.
 // Kayıtlı süre (saniye) ve Firebase senkronizasyon mantığı değişmez.
 const time = totalSeconds => {
-  const wholeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
-  const hours = Math.floor(wholeSeconds / 3600);
-  const minutes = Math.floor((wholeSeconds % 3600) / 60);
-  const seconds = wholeSeconds % 60;
+  const totalSecondsInt = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(totalSecondsInt / 3600);
+  const minutes = Math.floor((totalSecondsInt % 3600) / 60);
+  const seconds = totalSecondsInt % 60;
+
   return [hours, minutes, seconds]
-    .map(value => String(value).padStart(2, '0'))
+    .map(x => String(x).padStart(2, '0'))
     .join(':');
 };
 

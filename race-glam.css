@@ -1,5 +1,7 @@
 @charset "UTF-8";
+/* My Sweet Ajanda v40: önceki yarış CSS sürümleri bu dosyada sırasıyla birleştirildi. */
 
+/* ===== Eski dosya: race-glam.css ===== */
 /* MY SWEET AJANDA — SPRING RUNWAY
    Koşu sayfasının tam ve temiz CSS kodu
    Görsel: assets/race-bg-spring.png
@@ -2165,4 +2167,1374 @@
   .glam-race .club-chat-messages,
   .glam-race .club-chat-panel .club-chat-messages{max-height:280px;min-height:220px;}
   .glam-race .race-v30-clock-labels{width:100%;gap:4px;font-size:9px;}
+}
+
+/* ===== Eski dosya: race-polish-v32.css ===== */
+/*
+  MY SWEET AJANDA - v32 noktasal gorunum duzeltmesi
+  Bu dosya sadece race.html'e eklenir.
+  Pist / arabalar / avatarlar / Firebase / kronometre mantigi DEGISMEZ.
+  Kaynak tasarim: kullanicinin ilk gonderdigi race-glam.css.
+*/
+
+/* 1. Bozuk gorunen CSS sus yazilarini kaldir; gercek HTML sticker'lari kalsin. */
+.glam-race .race-room-active-bar::after,
+.glam-race .race-v27-left .club-hero::before,
+.glam-race .race-v27-stage::after,
+.glam-race .race-v27-stage > .club-chat-panel::after {
+  content: none !important;
+}
+
+/* 2. Mevcut yaris secme cubugu: ayni konum, daha ince. */
+.glam-race .club-page-wrap > .race-room-active-bar {
+  min-height: 74px;
+  padding: 8px clamp(10px, 1.4vw, 20px);
+  gap: clamp(6px, 1vw, 12px);
+  margin: 3px 0 14px;
+  border-radius: 22px;
+}
+.glam-race .race-v27-flag {
+  width: 58px;
+  height: 54px;
+}
+.glam-race .race-v27-banner-flowers {
+  font-size: 21px;
+  letter-spacing: -2px;
+}
+.glam-race .race-room-active-bar #raceActiveRoomName {
+  flex: 1 1 auto;
+  font-size: clamp(21px, 2.5vw, 33px);
+  line-height: 1.1;
+  min-width: 0;
+}
+.glam-race .race-room-active-bar #raceChangeRoom {
+  flex: 0 0 auto;
+  min-height: 39px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+/* 3. Kulup sohbeti: ilk ornek gorselin dokusu + cift pembe-beyaz cerceve. */
+.glam-race .race-v27-stage > .club-chat-panel {
+  position: relative;
+  isolation: isolate;
+  border: 2px solid #fff !important;
+  outline: 2px solid #e89dc9;
+  outline-offset: -7px;
+  border-radius: 25px !important;
+  box-shadow: 0 10px 28px #b9669b32, inset 0 0 0 5px #fff5f9a6 !important;
+  background-color: #fce0ed !important;
+  background-image:
+    linear-gradient(180deg, rgba(255,247,253,.28), rgba(255,249,253,.37)),
+    url('./assets/branding/race-chat-wallpaper-v32.webp') !important;
+  background-size: cover, cover !important;
+  background-position: center, center center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  padding: 15px;
+}
+.glam-race .race-v27-stage > .club-chat-panel::before {
+  content: "";
+  opacity: .45;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, #fff7ff43, transparent 52%, #fff5fa38);
+}
+.glam-race .race-v27-stage > .club-chat-panel > * {
+  position: relative;
+  z-index: 1;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-card-heading {
+  padding: 8px 10px !important;
+  border: 1px solid #f1bdd9;
+  border-radius: 16px;
+  background: rgba(255,249,253,.87);
+  box-shadow: 0 4px 13px #cc80ad25;
+  margin: 0 0 2px;
+}
+.glam-race .race-v27-stage .club-chat-panel #clubChatTitle {
+  font-size: 18px !important;
+  line-height: 1.35;
+  margin: 0;
+  color: #aa3176;
+}
+.glam-race .race-v27-stage .race-v29-chat-day {
+  margin: 2px auto 3px;
+  padding: 5px 16px;
+  border: 1px solid #f1bad9;
+  background: #fffaf0ed;
+  color: #ae447c;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-chat-messages {
+  flex: 1 1 auto;
+  min-height: 180px;
+  max-height: none;
+  height: auto;
+  overflow-y: auto;
+  padding: 12px 8px;
+  gap: 12px;
+  border: 1.5px solid #efbbd8;
+  border-radius: 18px;
+  background: rgba(255,249,253,.40) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  scrollbar-color: #ea9ac7 #fff6fb;
+  box-shadow: inset 0 2px 10px #d47da02b;
+}
+/* Bir mesaji kocaman pembe blok haline getirme: yalnizca balon renkli. */
+.glam-race .race-v27-stage .club-chat-panel .club-chat-message,
+.glam-race .race-v27-stage .club-chat-panel .club-chat-message.mine {
+  display: flex;
+  max-width: none;
+  width: 100%;
+  align-self: stretch;
+  padding: 0;
+  margin: 0;
+  gap: 8px;
+  align-items: flex-start;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.glam-race .race-v27-stage .club-chat-panel .race-v27-chat-avatar {
+  flex: 0 0 37px;
+  width: 37px;
+}
+.glam-race .race-v27-stage .club-chat-panel .race-v27-chat-avatar .glam-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 9px #bf669e45;
+}
+.glam-race .race-v27-stage .club-chat-panel .race-v27-chat-meta {
+  margin-bottom: 4px;
+  gap: 5px;
+}
+.glam-race .race-v27-stage .club-chat-panel .race-v27-chat-meta time {
+  font-size: 10px;
+  color: #a65e82;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-chat-message p {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0;
+  border: 1px solid #f0bdd5;
+  border-radius: 15px 15px 15px 5px;
+  padding: 9px 11px;
+  background: rgba(255,255,255,.92) !important;
+  color: #8e3c68;
+  box-shadow: 0 3px 10px #a95b8b1a;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-chat-message.mine p {
+  background: rgba(255,211,235,.97) !important;
+  border-color: #ec9fc9;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-chat-form {
+  gap: 8px;
+  padding: 6px 0 0;
+  margin: 0;
+}
+.glam-race .race-v27-stage .club-chat-panel .club-chat-form input {
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  min-height: 46px;
+  padding: 10px 13px;
+  border: 1.5px solid #edabc9;
+  border-radius: 16px;
+  background: rgba(255,253,254,.96);
+  color: #8e3d69;
+}
+.glam-race .race-v27-stage .club-chat-panel #clubChatSend {
+  flex: 0 0 45px;
+  height: 45px;
+  width: 45px;
+  border-radius: 15px;
+  border: 1px solid #fff;
+  background: linear-gradient(145deg, #f786bd, #df4c96);
+  box-shadow: 0 4px 11px #c7529254;
+  color: #fff;
+  font-size: 0;
+}
+.glam-race .race-v27-stage .club-chat-panel #clubChatSend::before {
+  content: "\2794";
+  display: inline-block;
+  font: 800 21px/1 Arial, sans-serif;
+  transform: rotate(-28deg);
+  color: white;
+}
+
+/* 4. Kronometre: rakamlar gercek kronometrenin ayni ID'sini kullanir. */
+.glam-race .race-v27-controls .glam-timer-card {
+  min-width: 0;
+}
+.glam-race .race-v27-controls .race-v29-clock-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px,1.8vw,20px);
+  padding: 15px 0 8px;
+  min-width: 0;
+  min-height: 180px;
+}
+.glam-race .race-v27-controls .race-v29-watch {
+  position: relative;
+  flex: 0 0 224px;
+  width: 224px;
+  max-width: 100%;
+  height: 144px;
+  margin: 13px 0 5px;
+  border: 9px solid #f17db1;
+  border-radius: 48% 48% 47% 47% / 54% 54% 50% 50%;
+  background: radial-gradient(ellipse at 40% 20%, #fffdff, #ffe4f0 82%);
+  box-shadow: inset 0 0 0 5px #ffd4e9, inset 0 -8px 12px #fbc2dd7d, 0 8px 0 #d95e9a, 0 12px 17px #b4508557;
+  transform: none;
+}
+.glam-race .race-v27-controls .race-v29-watch .glam-clock {
+  display: block;
+  position: relative;
+  flex: 0 0 auto;
+  top: -8px;
+  width: auto;
+  max-width: calc(100% - 10px);
+  margin: 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 9px 8px 7px;
+  border-radius: 10px;
+  border: 2px solid #e7b0ca;
+  background: #fffafd !important;
+  color: #3e3542;
+  font: 800 20px/1.1 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+  white-space: nowrap;
+  text-align: center;
+  transform: none;
+  box-shadow: inset 0 2px 4px #cd9caf4d, 0 1px 2px #fff;
+}
+.glam-race .race-v27-controls .race-v29-watch .race-v30-clock-labels {
+  display: grid;
+  position: absolute;
+  bottom: 13px;
+  left: 18px;
+  right: 18px;
+  width: auto;
+  margin: 0;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 3px;
+  pointer-events: none;
+  font: 800 8px/1.1 'Trebuchet MS', sans-serif;
+  letter-spacing: 0;
+  color: #a74e7a;
+}
+.glam-race .race-v27-controls .race-v30-clock-labels span {
+  min-width: 0;
+  padding: 3px 0;
+  background: #fff4fa9e;
+  border: 1px solid #efc6de9e;
+}
+.glam-race .race-v27-controls .race-v29-watch-bow {
+  z-index: 2;
+  right: -5px;
+  top: -16px;
+  font-size: 28px;
+}
+.glam-race .race-v27-controls .race-v29-clock-copy {
+  display: flex;
+  flex: 1 1 120px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  gap: 7px;
+  text-align: left;
+}
+.glam-race .race-v27-controls .race-v29-clock-copy strong {
+  font-size: clamp(13px,1.2vw,16px);
+  line-height: 1.35;
+}
+.glam-race .race-v27-controls .glam-clock-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+  margin: 7px 0 9px;
+}
+.glam-race .race-v27-controls .glam-clock-actions button {
+  flex-shrink: 0;
+}
+
+/* 5. Dar alanlarda panel boylari kontrollu, yol/arabalar aynen kalir. */
+@media (max-width: 1380px) {
+  .glam-race .race-v27-controls .race-v29-clock-display {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .glam-race .race-v27-controls .race-v29-watch {
+    flex: 0 0 auto;
+  }
+  .glam-race .race-v27-controls .race-v29-clock-copy {
+    flex: 0 0 auto;
+    align-items: center;
+    text-align: center;
+  }
+  .glam-race .race-v27-controls .race-v29-clock-copy .race-v29-clock-stars {
+    display: none;
+  }
+}
+@media (max-width: 800px) {
+  .glam-race .race-v27-stage > .club-chat-panel {
+    min-height: 0;
+    height: 355px;
+    padding: 12px;
+  }
+  .glam-race .race-v27-stage .club-chat-panel .club-chat-messages {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
+@media (max-width: 620px) {
+  .glam-race .club-page-wrap > .race-room-active-bar {
+    min-height: 0;
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .glam-race .race-v27-flag { width: 43px; height: 40px; }
+  .glam-race .race-v27-banner-flowers { font-size: 17px; }
+  .glam-race .race-room-active-bar #raceActiveRoomName {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+  .glam-race .race-room-active-bar #raceChangeRoom {
+    min-height: 37px; padding: 7px 9px; font-size: 12px;
+  }
+  .glam-race .race-v27-controls .race-v29-watch {
+    width: 210px;
+    flex-basis: auto;
+    height: 140px;
+  }
+  .glam-race .race-v27-controls .race-v29-watch .glam-clock {
+    font-size: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glam-race .race-v27-controls .glam-clock-actions button { transition: none; }
+}
+
+/* ===== Eski dosya: race-track-v33.css ===== */
+/*
+ MY SWEET AJANDA v33 - ISTENEN ORIJINAL PIST GORSELI
+
+ Yalnizca race.html icin. v32 sohbet/kronometre tasarimi ve tum JS aynen kalir.
+ Resim: kullanicinin verdigi birinci PNG (2048 x 682) - pikseller degistirilmedi.
+
+ Onemli: RESMIN ICINDE START, FINISH VE YOL CIZGILERI ZATEN VAR.
+ Eski HTML/CSS yol ve levhalari sadece GORSEL OLARAK saklanir;
+ gercek yariscilar DOM'da kalir, Firebase ve ilerleme motoru aynen calisir.
+*/
+
+/* Pist karti: referanstaki gibi goruntu kenarlara uzansin. */
+.glam-race .race-v27-left > .club-road-card {
+  position: relative;
+  overflow: hidden;
+  padding: 0 0 10px;
+  border: 2px solid rgba(255,255,255,.97);
+  border-radius: 25px;
+  background: linear-gradient(180deg, #fff5fb, #ffe4f1);
+}
+.glam-race .race-v27-left .race-v29-track-stage,
+.glam-race .race-v27-left .race-v29-track-stage #clubMount {
+  position: relative;
+  min-width: 0;
+}
+.glam-race .race-v27-left .club-road-scroller {
+  padding: 0;
+  margin: 0;
+  border-radius: 21px 21px 12px 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: #e6a0c9 #fff1fa;
+  scrollbar-width: thin;
+}
+
+/* 1. gorselin TAM kendisi: ne uretim ne de tekrar cizim. */
+.glam-race .race-v27-left .club-road {
+  position: relative;
+  box-sizing: border-box;
+  width: max(800px, 100%) !important;
+  height: auto !important;
+  aspect-ratio: 2048 / 682;
+  min-height: 0 !important;
+  border: 0;
+  border-radius: 18px;
+  background-image: url('./assets/branding/race-track-v33.png') !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.66);
+}
+
+/* Iki kere cizilmesin: resimdeki yol, yol cizgisi, levhalar ve susler yeterli. */
+.glam-race .race-v27-left .club-road-surface { display: none !important; }
+.glam-race .race-v27-left .club-road::before,
+.glam-race .race-v27-left .club-road::after {
+  content: none !important;
+  display: none !important;
+}
+.glam-race .race-v27-left .club-start,
+.glam-race .race-v27-left .club-finish {
+  display: none !important;
+}
+
+/* Araba ve avatar gercek kullanicilara ait: resimde degil, JS katmaninda. */
+.glam-race .race-v27-left .club-runner {
+  /* Kaydirilmayan mesafeyi degistirmez: x hala JS/Firebase ilerlemesidir.
+     Sadece birinci resimdeki START-FINISH hattina cizilir. */
+  left: calc(18% + var(--x) * .7);
+  top: calc(31% + var(--y));
+  z-index: 5 !important;
+  pointer-events: auto;
+}
+.glam-race .race-v27-left .club-runner .glam-car {
+  filter: drop-shadow(0 4px 4px rgba(146,54,100,.27));
+}
+
+/* 'Pink runway' basligi: referanstaki gibi manzaranin sol ust kosesinde. */
+.glam-race .race-v27-left .club-road-card > .club-section-heading {
+  position: absolute;
+  top: 9px;
+  left: 22px;
+  right: 18px;
+  z-index: 7;
+  pointer-events: none;
+  margin: 0;
+  gap: 6px;
+  align-items: flex-start;
+}
+.glam-race .race-v27-left .club-road-card #clubRoadTitle {
+  margin: 0;
+  color: #b42578;
+  font: italic 700 clamp(22px,2.6vw,37px)/1.15 Georgia,serif;
+  letter-spacing: -.045em;
+  text-shadow: 0 2px 0 #fff, 0 3px 13px rgba(255,255,255,.92), 1px 0 #fff;
+}
+.glam-race .race-v27-left .club-road-card .club-subtle {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 4px 8px;
+  border: 1px solid #f6c5dc;
+  border-radius: 999px;
+  background: rgba(255,250,253,.84);
+  font-size: 10px;
+  color: #9f5479;
+}
+.glam-race .race-v27-left .club-race-description {
+  position: absolute;
+  left: 22px;
+  top: 53px;
+  z-index: 7;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255,249,253,.72);
+  box-shadow: 0 2px 7px rgba(166,85,126,.09);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+/* Tasarimdaki minik tavsan/notlar korunsun, FINISH tabelasini kapatmasin. */
+.glam-race .race-v29-track-stage .race-v29-road-art {
+  z-index: 3;
+  border-radius: 18px;
+  pointer-events: none;
+}
+.glam-race .race-v29-track-stage .race-v29-corner-note {
+  top: auto;
+  right: 83px;
+  bottom: 13px;
+  padding: 6px 8px;
+  font-size: 11px;
+  max-width: 90px;
+}
+.glam-race .race-v29-track-stage .race-v29-cheer-bubble {
+  right: 170px;
+  bottom: 5px;
+  transform: rotate(-7deg) scale(.78);
+  transform-origin: bottom right;
+}
+.glam-race .race-v29-track-stage .race-v29-road-bunny {
+  right: 2px;
+  bottom: -3px;
+  width: 75px;
+}
+.glam-race .race-v27-left .club-road-bottom {
+  position: relative;
+  z-index: 4;
+  padding: 5px 12px 0;
+  margin-top: 0;
+}
+
+/* Mobilde yolun yatay kaydirilmasi bilincli: arabalar kesilmesin. */
+@media (max-width: 800px) {
+  .glam-race .race-v27-left .club-road-card > .club-section-heading {
+    left: 15px;
+    right: 12px;
+    top: 9px;
+  }
+  .glam-race .race-v27-left .club-road-card #clubRoadTitle {
+    font-size: 25px;
+  }
+  .glam-race .race-v27-left .club-race-description {
+    left: 16px;
+    top: 43px;
+  }
+  .glam-race .race-v29-track-stage .race-v29-cheer-bubble {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glam-race .race-v27-left .club-runner { transition: none; }
+}
+
+/* ===== Eski dosya: race-pretty-v34.css ===== */
+/* My Sweet Ajanda v34 – SADECE dekoratif baslik + kronometre.
+   Bu dosya v33 pistini veya v32 sohbetini degistirmez.
+   Yuklenen 2. ekran goruntusunden kesilen yazi gorseli kullanilir.
+*/
+
+/* A – Kullanici gorselindeki baslik/resim aynen yerlestirilir.
+   Asil <h1> ve alt yazi silinmez; ekran okuyuculara erisilebilir kalir. */
+.glam-race.race-v34-theme .race-v27-left .club-hero-left {
+  padding: 0 3px !important;
+  min-width: 0;
+}
+.glam-race.race-v34-theme .race-v27-left .race-v34-title-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  margin: 0;
+  border-radius: 18px;
+  object-fit: contain;
+  mix-blend-mode: normal;
+  box-shadow: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 1.4%, black 97.5%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black 1.4%, black 97.5%, transparent 100%);
+}
+/* Hidden visually only: titles remain announced to assistive technologies. */
+.glam-race.race-v34-theme .race-v27-left #clubPageTitle,
+.glam-race.race-v34-theme .race-v27-left .club-queen-banner {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  border: 0 !important;
+}
+.glam-race.race-v34-theme .race-v27-left .race-v29-title-glint {display: none;}
+.glam-race.race-v34-theme .race-v27-left .club-connection {
+  position: relative;
+  margin: -5px 0 0 13%;
+  z-index: 2;
+}
+
+/* B – Kucuk ekranlarda bile referanstaki pembe stop-saat gorunumu. */
+.glam-race.race-v34-theme .race-v27-controls {
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr);
+  align-items: stretch;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(170px, .95fr) minmax(165px, 1.05fr);
+  grid-template-rows: auto auto auto auto auto;
+  column-gap: 10px;
+  row-gap: 4px;
+  align-content: start;
+  isolation: isolate;
+  min-width: 0;
+  padding: 15px 13px 12px;
+  background:
+    radial-gradient(circle at 2% 96%, #ffe0ee, transparent 40%),
+    radial-gradient(circle at 88% 16%, #fffdfc, transparent 37%),
+    linear-gradient(130deg, #fff6fb 0%, #ffeaf4 65%, #f8eaf8 100%);
+  border: 2px solid #fffafc;
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 2px #f6cae0, 0 6px 18px #b976a031;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card::before {
+  content: '✧  ♡';
+  display: block;
+  position: absolute;
+  left: 4px;
+  top: 96px;
+  font: 28px/1 Georgia, serif;
+  color: #ef8fc4;
+  pointer-events: none;
+  opacity: .9;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card::after {
+  content: '✦  ♡';
+  position: absolute;
+  right: 5px;
+  top: 91px;
+  font-size: 23px;
+  color: #ed8eb6;
+  pointer-events: none;
+  opacity: .75;
+}
+.glam-race.race-v34-theme .race-v27-controls #glamTimerTitle {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: relative;
+  z-index: 2;
+  justify-self: start;
+  margin: 0 0 9px;
+  border: 2px solid #f6bbd9;
+  background: #fffafd;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 19px !important;
+  line-height: 1.15;
+  color: #aa3175;
+  box-shadow: 0 3px 8px #c979a025;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-modes {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+/* display:contents keeps both timer and text in semantic container but allows column layout. */
+.glam-race.race-v34-theme .race-v27-controls .race-v29-clock-display {display: contents !important;}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-watch {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  justify-self: center;
+  align-self: center;
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  width: min(100%, 226px);
+  max-width: 226px;
+  height: 150px;
+  margin: 14px auto 12px;
+  border: 9px solid #ef77b3;
+  border-radius: 50% 50% 47% 47% / 55% 55% 45% 45%;
+  background: radial-gradient(ellipse at 45% 21%, #fffafb 5%, #fff0f6 68%, #ffdbeb 100%);
+  box-shadow:
+    inset 0 0 0 4px #ffc1df,
+    inset 0 0 0 9px #ffe0ee,
+    inset 0 -12px 15px #e982ad25,
+    0 6px 0 #ce478b,
+    0 12px 15px #aa538a54;
+  transform: rotate(-2deg);
+  z-index: 2;
+}
+/* Upper knob + glossy glint: no separate picture layer, no static digits. */
+.glam-race.race-v34-theme .race-v27-controls .race-v29-watch-crown {
+  top: -34px;
+  left: calc(50% - 21px);
+  width: 42px;
+  height: 25px;
+  border: 4px solid #f6a3c9;
+  border-radius: 10px 10px 5px 5px;
+  background: linear-gradient(#ffd2e8, #df5299);
+  box-shadow: inset 0 3px 0 #ffdaed, 0 2px 3px #a34b8033;
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-watch-bow {
+  position: absolute;
+  top: -26px;
+  right: -15px;
+  font-size: 35px;
+  z-index: 3;
+  transform: rotate(8deg);
+  filter: drop-shadow(0 3px 2px #af477c69);
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-watch::after {
+  content: '♡';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  color: #d54e99;
+  text-shadow: 0 1px 0 #fff;
+  pointer-events: none;
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-watch .glam-clock {
+  position: relative;
+  top: -2px;
+  display: block;
+  box-sizing: border-box;
+  width: calc(100% - 14px);
+  max-width: 100%;
+  min-width: 0;
+  padding: 8px 3px 7px;
+  margin: 0 auto;
+  background: #fffafe !important;
+  border: 3px solid #efc3db;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px #b77c9d4b;
+  color: #29222b;
+  font: 900 clamp(22px, 1.8vw, 31px)/1.15 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1.3px;
+  text-align: center;
+  white-space: nowrap;
+  transform: rotate(2deg);
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-clock-copy {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  text-align: left;
+  color: #a82d72;
+  z-index: 1;
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-clock-copy strong {
+  font-size: clamp(12px, 1.1vw, 16px);
+  line-height: 1.3;
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v34-live-hours {
+  font-size: clamp(26px, 2.4vw, 36px);
+  line-height: 1.1;
+  color: #b11f72;
+  font-weight: 900;
+  letter-spacing: -.045em;
+  white-space: nowrap;
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-clock-copy > span:not(.race-v29-clock-stars) {
+  color: #b85088;
+  font: italic 700 clamp(12px, 1.1vw, 17px)/1.25 Georgia, serif;
+  transform: rotate(-3deg);
+}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-clock-stars {display: none;}
+.glam-race.race-v34-theme .race-v27-controls .glam-clock-actions {
+  grid-column: 2;
+  grid-row: 3;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: clamp(5px,1vw,12px);
+  margin: 4px 0 6px;
+  padding: 0;
+  z-index: 2;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-clock-actions .glam-round {
+  flex: 0 0 39px;
+  width: 39px;
+  height: 39px;
+  border: 2px solid #f5afd2;
+  background: #fff1f8;
+  color: #d94590;
+  box-shadow: inset 0 1px 0 #fff, 0 3px 6px #be6b9530;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-clock-actions .glam-play {
+  flex: 0 0 55px;
+  width: 55px;
+  height: 55px;
+  border: 3px solid #ffbddb;
+  background: linear-gradient(140deg, #fa83b9, #df358d);
+  color: #fff;
+  font-size: 25px;
+  box-shadow: inset 0 1px 0 #fff8, 0 4px 0 #d05593, 0 6px 9px #a6578760;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-note,
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-today {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  margin: 3px 0 0 !important;
+  padding: 7px 8px !important;
+  background: rgba(255,255,255,.65);
+  border-radius: 12px;
+  border: 1px solid #f2d7e6;
+  text-align: center;
+  font-size: 10px;
+  color: #ab5d85;
+}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-note {grid-row: 4;}
+.glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-today {grid-row: 5;}
+.glam-race.race-v34-theme .race-v27-controls .race-v29-timer-flower {width: 46px;}
+
+/* C – Eski gorev ekleme / sohbet formu aynen calisir, yalnizca renk uyumu. */
+.glam-race.race-v34-theme .race-v27-controls .glam-assign-card {
+  border-radius: 24px;
+  border: 2px solid #fffafd;
+  background: linear-gradient(145deg,#fff7fc,#ffeef7 60%,#f6eaf8);
+  box-shadow: inset 0 0 0 2px #f3c8dd, 0 6px 18px #b976a02b;
+}
+
+/* Dar cihazlarda kronometre tek sutuna gecer. Gecici metin tasmalari engellenir. */
+@media (max-width: 1380px) {
+  .glam-race.race-v34-theme .race-v27-controls {
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  }
+  .glam-race.race-v34-theme .race-v27-controls .glam-timer-card {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .glam-race.race-v34-theme .race-v27-controls .race-v29-watch {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 19px auto 5px;
+    width: 214px;
+  }
+  .glam-race.race-v34-theme .race-v27-controls .race-v29-clock-copy {
+    grid-column: 1;
+    grid-row: 3;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+  }
+  .glam-race.race-v34-theme .race-v27-controls .glam-clock-actions {
+    grid-column: 1;
+    grid-row: 4;
+    justify-content: center;
+  }
+  .glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-note {grid-row: 5;}
+  .glam-race.race-v34-theme .race-v27-controls .glam-timer-card .glam-today {grid-row: 6;}
+}
+@media (max-width: 800px) {
+  .glam-race.race-v34-theme .race-v27-controls {grid-template-columns: repeat(2, minmax(0,1fr));}
+}
+@media (max-width: 620px) {
+  .glam-race.race-v34-theme .race-v27-controls {grid-template-columns: minmax(0,1fr);}
+  .glam-race.race-v34-theme .race-v27-controls .glam-timer-card {padding: 13px 10px;}
+  .glam-race.race-v34-theme .race-v27-controls #glamTimerTitle {font-size: 18px !important;}
+  .glam-race.race-v34-theme .race-v27-controls .race-v29-watch .glam-clock {font-size: 27px;}
+  .glam-race.race-v34-theme .race-v27-left .race-v34-title-art {border-radius: 10px;}
+  .glam-race.race-v34-theme .race-v27-left .club-connection {margin-left: 7px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .glam-race.race-v34-theme .race-v27-controls button {transition: none;}
+}
+
+/* ===== Eski dosya: race-finish-v35.css ===== */
+/* My Sweet Ajanda — v35: sadece tavsan tabelasi + kronometre gorunumu.
+   Yuklenen kullanici PNG'si oldugu gibi kullanilir.
+   JS, Firebase, pist, araba konumu ve sohbet tasarimi DEGISTIRILMEZ.
+   En son CSS olarak race.html tarafindan yuklenir. */
+
+/* A. Kullanici gorselindeki tavsan + tabela; eskisinin yerine tek parca. */
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-road-bunny,
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-corner-note {
+  display: none !important;
+}
+.glam-race.race-v35-theme .race-v29-track-stage .race-v29-road-art {
+  z-index: 4;
+  overflow: visible;
+  pointer-events: none;
+}
+.glam-race.race-v35-theme .race-v29-track-stage .race-v35-bunny-sign {
+  position: absolute;
+  display: block;
+  width: clamp(132px, 21%, 205px);
+  height: auto;
+  max-height: 93%;
+  right: 0;
+  bottom: -8px;
+  object-fit: contain;
+  object-position: bottom right;
+  z-index: 4;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 54% 54%, #000 58%, rgba(0,0,0,.96) 68%, transparent 98%);
+  mask-image: radial-gradient(ellipse 70% 70% at 54% 54%, #000 58%, rgba(0,0,0,.96) 68%, transparent 98%);
+  filter: drop-shadow(0 5px 5px rgba(149,50,108,.20));
+}
+/* Gercek yariscilar yeni resmin onunde kalir. */
+.glam-race.race-v35-theme .race-v27-left .club-runner {z-index: 5 !important;}
+
+/* B. Kronometre karti: referans gibi pembe cam/porselen panel. */
+.glam-race.race-v35-theme .race-v27-controls {
+  gap: 12px;
+  align-items: stretch;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding: 16px 15px 12px;
+  gap: 6px 9px;
+  border: 2px solid #fff9fd;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 13% 100%, rgba(255,182,211,.30) 0%,transparent 58%),
+    radial-gradient(ellipse at 96% 0%, rgba(255,255,255,.95) 0%, transparent 40%),
+    linear-gradient(123deg,#ffebf6 0%,#fff9fd 45%,#ffe3f0 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(241,163,205,.70),
+    inset 0 3px 0 rgba(255,255,255,.94),
+    0 7px 18px rgba(167,83,133,.20);
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card::before {
+  content: "✧";
+  display: block;
+  position: absolute;
+  top: 125px;
+  left: 9px;
+  font: 33px/1 Georgia,serif;
+  color: #f079b9;
+  text-shadow: 0 2px 0 #fff, 0 0 9px #ffb4dc;
+  pointer-events: none;
+  opacity: .92;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card::after {
+  content: "♡  ✧";
+  display: block;
+  position: absolute;
+  top: 104px;
+  right: 10px;
+  font: 22px/1 Georgia,serif;
+  color: #f285c0;
+  text-shadow: 0 1px 0 #fff;
+  pointer-events: none;
+}
+.glam-race.race-v35-theme .race-v27-controls #glamTimerTitle {
+  justify-self: start;
+  border: 2px solid #f4b2d2;
+  border-radius: 999px;
+  padding: 8px 17px;
+  background: linear-gradient(#fffefa,#fff2f9);
+  color: #a82f75;
+  box-shadow: 0 2px 5px #cd84ad24, inset 0 1px 0 white;
+  font-size: clamp(16px, 1.5vw, 19px) !important;
+  letter-spacing: .01em;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch {
+  box-sizing: border-box;
+  width: min(100%, 240px);
+  height: 169px;
+  max-width: 240px;
+  margin: 20px auto 12px;
+  border: 10px solid #ef72ad;
+  border-radius: 51% 51% 49% 49% / 52% 52% 48% 48%;
+  background:
+    radial-gradient(ellipse at 26% 16%, #fffdfd 0%, #fff1f9 50%, #ffd5e7 100%);
+  box-shadow:
+    inset 0 0 0 5px #ffcae2,
+    inset 0 0 0 11px rgba(255,255,255,.67),
+    inset 0 -10px 14px rgba(232,95,153,.20),
+    0 5px 0 #d95199,
+    0 10px 11px rgba(176,58,119,.38),
+    0 15px 18px rgba(205,105,154,.20);
+  transform: rotate(-2deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch-crown {
+  top: -34px;
+  left: calc(50% - 23px);
+  height: 26px;
+  width: 46px;
+  background: linear-gradient(#fff2fa 0%,#fda5cb 38%,#e75a9c 100%);
+  border: 4px solid #f68abe;
+  box-shadow: inset 0 2px 0 #fff9, 0 3px 3px #ba629154;
+  border-radius: 10px 10px 4px 4px;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch-bow {
+  top: -28px;
+  right: -18px;
+  font-size: 43px;
+  transform: rotate(9deg);
+  filter: drop-shadow(0 3px 2px #ad4e7950);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-watch::after {
+  content: "♡";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  font: bold 26px/1 Georgia,serif;
+  color: #d83983;
+  text-shadow: 0 1px #fff;
+  pointer-events: none;
+}
+/* SADECE uc alan: saat:dakika:saniye. Salise etiketi yoktur. */
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-display .glam-clock {
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  width: calc(100% - 14px);
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 9px 2px 8px;
+  border: 3px solid #efbbd5;
+  border-radius: 13px;
+  background: #fffafd !important;
+  box-shadow: inset 0 3px 6px #c18ca44f, 0 1px 0 #fff;
+  color: #292329;
+  font: 900 clamp(21px,2.3vw,34px)/1.1 'Courier New',monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1.5px;
+  text-align: center;
+  white-space: nowrap;
+  transform: rotate(2deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v30-clock-labels {display:none !important;}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy {
+  justify-content: center;
+  gap: 6px;
+  z-index: 2;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy strong {
+  color: #a63b74;
+  font-size: clamp(13px,1.35vw,19px);
+  line-height: 1.25;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v34-live-hours {
+  color: #b21e6e;
+  font-size: clamp(28px,2.5vw,40px);
+  line-height: 1.1;
+  font-weight: 900;
+}
+.glam-race.race-v35-theme .race-v27-controls .race-v29-clock-copy > span:not(.race-v29-clock-stars) {
+  color: #c04783;
+  font: italic 700 clamp(12px,1.35vw,17px)/1.3 Georgia,serif;
+  transform: rotate(-3deg);
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 7px 0 6px;
+  padding: 0;
+  z-index: 5;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions .glam-round {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #f4a0c7;
+  background: #fff0f8;
+  color: #d8448d;
+  box-shadow: inset 0 2px 0 #fff, 0 3px 6px #b85c8a2c;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-clock-actions .glam-play {
+  flex: 0 0 65px;
+  width: 65px;
+  height: 65px;
+  border: 3px solid #ffb8d9;
+  border-radius: 50%;
+  background: linear-gradient(140deg,#fc93c3 0%,#ef68ae 47%,#d72d86 100%);
+  color: #fff;
+  font-size: 28px;
+  box-shadow: inset 0 2px 0 #fff8, 0 4px 0 #c9478a, 0 7px 12px #b6558654;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card .glam-note,
+.glam-race.race-v35-theme .race-v27-controls .glam-timer-card .glam-today {
+  border: 1px solid #f4d4e3;
+  background: #fffafde8;
+  border-radius: 13px;
+  color: #ae5685;
+  font-size: 11px;
+  padding: 8px 10px !important;
+}
+/* Komşu formun buton ve cicekli karti da ayni tasarim ailesinden. */
+.glam-race.race-v35-theme .race-v27-controls .glam-assign-card {
+  position: relative;
+  background: linear-gradient(135deg,#fffafb,#ffe7f3 75%,#fff5fc);
+  border: 2px solid white;
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 2px #f2c8df, 0 6px 18px #b976a02b;
+}
+.glam-race.race-v35-theme .race-v27-controls .glam-assign-card .glam-assign-btn {
+  border: 2px solid #ffd0e6;
+  border-radius: 22px;
+  background: linear-gradient(150deg,#fbb0d2,#ea6eab,#dd4d94);
+  color: white;
+  text-shadow: 0 1px 1px #aa5783;
+  box-shadow: 0 4px 10px #c371a23a, inset 0 2px 0 #ffebf5;
+}
+/* Dar ekranda buton/saat tasmasin, mesaj ve pist korunur. */
+@media (max-width: 1380px) {
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-watch {
+    width: min(100%,220px);
+    height: 160px;
+    margin: 20px auto 10px;
+  }
+  .glam-race.race-v35-theme .race-v27-controls .glam-clock-actions {
+    justify-content: center;
+  }
+}
+@media (max-width: 620px) {
+  .glam-race.race-v35-theme .race-v27-controls .glam-timer-card {padding: 13px 10px;}
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-watch {width: 210px;}
+  .glam-race.race-v35-theme .race-v27-controls .race-v29-clock-display .glam-clock {font-size: 26px;}
+  .glam-race.race-v35-theme .race-v29-track-stage .race-v35-bunny-sign {width: 145px;right: -2px;bottom: -2px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .glam-race.race-v35-theme .race-v27-controls button {transition:none;}
+}
+
+/* ===== Eski dosya: race-display-v36.css ===== */
+/* My Sweet Ajanda v36: başlık süsleri kesilmeyecek, kronometre sadece HH:MM:SS.
+   Önceki tasarımlar, yarış pisti ve Firebase mantığı korunur. */
+
+/* v34 görseli bir ekran görüntüsünün kesiti. Görselin kenarlarında
+   yarım kalan fiyonk/kalp parçalarını sert kesmek yerine pembe zemine
+   yumuşakça geçiriyoruz. Başlık metninin tamamı korunur. */
+.glam-race.race-v36-theme .race-v27-left .club-hero-left {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding: 8px 12px 2px !important;
+  overflow: visible;
+}
+.glam-race.race-v36-theme .race-v27-left .race-v36-title-frame {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0;
+  isolation: isolate;
+  overflow: visible;
+  border-radius: 23px;
+  background: #fff0f9;
+}
+.glam-race.race-v36-theme .race-v27-left .race-v36-title-frame > .race-v34-title-art {
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+  aspect-ratio: 922 / 300;
+  object-fit: contain !important;
+  object-position: center center;
+  border: 0;
+  border-radius: 22px;
+  /* Ekran görüntüsünün tam sınırında kesilmiş yarım süsler görünmesin. */
+  -webkit-mask-image: linear-gradient(to right,
+    transparent 0%, rgba(0,0,0,.2) 3%, black 13%, black 91%, transparent 100%);
+  mask-image: linear-gradient(to right,
+    transparent 0%, rgba(0,0,0,.2) 3%, black 13%, black 91%, transparent 100%);
+}
+/* Kenar süsleri bütün olarak çizilir; yazıya dokunmazlar. */
+.glam-race.race-v36-theme .race-v27-left .race-v36-title-frame::before {
+  content: "🎀";
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 9%;
+  transform: translateX(-13%) rotate(-12deg);
+  font-size: clamp(28px,3.6vw,54px);
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px #e68cb482);
+}
+.glam-race.race-v36-theme .race-v27-left .race-v36-title-frame::after {
+  content: "💗";
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 22%;
+  transform: translateX(12%) rotate(13deg);
+  font-size: clamp(19px,2.6vw,38px);
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px #e68cb482);
+}
+/* Hazır CSS'deki bağlantı rozeti görselin üzerine binmesin. */
+.glam-race.race-v36-theme .race-v27-left .club-hero-left .club-connection {
+  position: relative;
+  margin: 3px 0 0 10px;
+}
+/* Kronometrede yalnızca üç zaman alanı. Salise etiketleri de gizlidir. */
+.glam-race.race-v36-theme #glamClock {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  overflow: visible;
+}
+.glam-race.race-v36-theme .race-v30-clock-labels {display: none !important;}
+@media (max-width: 620px) {
+  .glam-race.race-v36-theme .race-v27-left .club-hero-left {padding: 7px 7px 3px !important;}
+  .glam-race.race-v36-theme .race-v27-left .race-v36-title-frame::before {font-size: 25px;}
+  .glam-race.race-v36-theme .race-v27-left .race-v36-title-frame::after {font-size: 20px;}
+  .glam-race.race-v36-theme .race-v27-controls #glamClock {letter-spacing:-1.15px;}
+}
+
+/* SOHBET: sabit yükseklik, içeride kaydırma */
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+  height: 640px !important;
+  min-height: 0 !important;
+  max-height: 640px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.glam-race.race-v36-theme .club-chat-panel .club-chat-messages {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+}
+
+.glam-race.race-v36-theme .club-chat-panel .club-chat-form {
+  flex-shrink: 0 !important;
+}
+
+/* PİSTTEKİ MOTİVASYON BALONCUĞU */
+.glam-race.race-v36-theme .race-v29-track-stage .race-v29-cheer-bubble {
+  opacity: 1 !important;
+  z-index: 10 !important;
+  right: 195px;
+  background: #fff7fc !important;
+  color: #b52770 !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 5px 15px rgba(177, 56, 119, 0.25) !important;
+  font-weight: 800 !important;
+  backdrop-filter: none !important;
+}
+
+/* Mobil ekranlar */
+@media (max-width: 800px) {
+  .glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+    height: 380px !important;
+    max-height: 380px !important;
+  }
+}
+
+/* ============================================================
+   V40 | KALICI YERLEŞİM DÜZELTMELERİ
+   Bu bölüm, önceki sürümlerin kurallarından sonra uygulanır.
+   ============================================================ */
+
+/* Sohbet paneli artık içerik büyüdükçe uzamaz.
+   Dört satır: başlık / gün / KAYDIRILABİLİR MESAJLAR / yazma alanı. */
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+  box-sizing: border-box !important;
+  align-self: start !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 650px !important;
+  min-height: 0 !important;
+  max-height: 650px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  align-content: stretch !important;
+  gap: 9px !important;
+  overflow: hidden !important;
+}
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel .club-card-heading,
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel .race-v29-chat-day,
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel .club-chat-form {
+  min-height: 0;
+  margin-top: 0 !important;
+  flex: none !important;
+}
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel #clubChatList {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel #clubChatForm {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  min-width: 0;
+}
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel #clubChatInput {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.glam-race.race-v36-theme .race-v27-stage > .club-chat-panel #clubChatSend {
+  flex: 0 0 auto;
+}
+
+/* Baloncuk, tavşan görselinin saydamlaştırılmış dekor katmanından
+   çıkarılıp doğrudan pist sahnesine taşındı. Böylece metin nettir. */
+.glam-race.race-v36-theme .race-v29-track-stage > .race-v29-cheer-bubble {
+  box-sizing: border-box;
+  display: block !important;
+  position: absolute !important;
+  z-index: 9 !important;
+  right: clamp(180px, 22%, 235px) !important;
+  bottom: 18px !important;
+  width: 148px !important;
+  min-height: 79px;
+  padding: 11px 12px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  border: 2px solid #fff !important;
+  outline: 1px solid #df94bf;
+  border-radius: 44% 48% 43% 45% / 48% 46% 44% 47% !important;
+  background: #fff9fd !important;
+  color: #ac226d !important;
+  font: italic 800 14px/1.3 Georgia, serif !important;
+  text-align: center;
+  text-shadow: none !important;
+  transform: rotate(-5deg) !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  box-shadow: 0 5px 16px rgba(139,40,98,.34) !important;
+  pointer-events: none;
+}
+@media (max-width: 1090px) {
+  .glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+    height: 490px !important;
+    max-height: 490px !important;
+  }
+}
+@media (max-width: 800px) {
+  .glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+    height: 380px !important;
+    max-height: 380px !important;
+  }
+  .glam-race.race-v36-theme .race-v29-track-stage > .race-v29-cheer-bubble {
+    right: 165px !important;
+    bottom: 12px !important;
+    width: 128px !important;
+    min-height: 68px;
+    padding: 8px 9px !important;
+    font-size: 12px !important;
+  }
+}
+@media (max-width: 480px) {
+  .glam-race.race-v36-theme .race-v27-stage > .club-chat-panel {
+    height: 340px !important;
+    max-height: 340px !important;
+  }
+  .glam-race.race-v36-theme .race-v29-track-stage > .race-v29-cheer-bubble {
+    right: 150px !important;
+    bottom: 8px !important;
+    width: 118px !important;
+    font-size: 11px !important;
+  }
 }
