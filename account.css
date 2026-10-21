@@ -225,3 +225,31 @@
 .account-remember{display:flex!important;align-items:center;gap:9px;text-align:left;font-weight:700;color:#945078;font-size:13px;margin:10px 0 14px;}
 .account-remember input{width:18px;height:18px;flex:none;accent-color:#d66fa9;cursor:pointer;}
 .account-remember small{display:block;font-weight:400;font-size:11px;color:#a47495;}
+
+
+/* MY SWEET AJANDA V42 - public, readable introductory SEO copy */
+.account-gate .msp-public-intro {
+  margin-top: 17px;
+  padding: 12px 15px;
+  border: 1px solid #f0c5db;
+  border-radius: 17px;
+  background: linear-gradient(135deg,#fff7fb,#ffedf6);
+  text-align: center;
+}
+.account-gate .msp-public-intro h2 {
+  margin: 0 0 6px;
+  color: #a23d79;
+  font-size: 15px;
+}
+.account-gate .msp-public-intro p {
+  margin: 0;
+  color: #925777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.account-gate .msp-public-intro .msp-public-intro-tags {
+  margin-top: 9px;
+  color: #b64f87;
+  font-size: 11px;
+}
+#accountGate:has(#accountBootPanel:not([hidden])) .msp-public-intro {display:none;}

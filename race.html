@@ -11,7 +11,7 @@
 <link href="./account.css?v=20261021-v41" rel="stylesheet"/>
 <title>My Sweet Ajanda ♡</title>
 <link href="./club.css?v=20261021-v41" rel="stylesheet"/>
-<link href="./race-glam.css?v=20261021-v41" rel="stylesheet"/>
+<link href="./race-glam.css?v=20261021-v42" rel="stylesheet"/>
 
 </head>
 <body class="club-race-page glam-race race-v34-theme race-v35-theme race-v36-theme" data-club-page="race">
@@ -167,7 +167,7 @@
 <div id="clubMount"></div>
 <div class="race-v29-road-art" aria-hidden="true">
 <img class="race-v29-road-lily" src="./assets/stickers/race-pink-lily-v29.webp" loading="lazy" decoding="async" alt="" />
-<img class="race-v35-bunny-sign" src="./assets/branding/race-bunny-sign-v35.png" loading="lazy" decoding="async" width="340" height="306" alt="" aria-hidden="true" />
+<img class="race-v35-bunny-sign" src="./assets/branding/race-bunny-sign-v42.webp" loading="lazy" decoding="async" width="340" height="306" alt="" aria-hidden="true" />
 
 <div class="race-v29-corner-note">Bigger<br/>Stronger<br/>Bitchier ♡</div>
 </div>
@@ -220,7 +220,19 @@
 <input aria-label="Mesajın" id="clubChatInput" maxlength="300" placeholder="Mesaj yaz... ♡" required=""/>
 <button class="club-btn" id="clubChatSend" type="submit">Gönder ♡</button>
 </form>
-</section></section>
+</section>
+
+<section aria-labelledby="raceV42BreakTitle" class="club-card race-v42-break-card">
+  <div class="race-v42-break-heading"><span aria-hidden="true">🌷</span><h2 id="raceV42BreakTitle">Mini mola köşesi</h2></div>
+  <p>Biraz dinlen, sonra yeniden parılda! ♡</p>
+  <div class="race-v42-break-time" id="raceV42BreakClock" role="timer" aria-label="Mola için kalan süre">05:00</div>
+  <div class="race-v42-break-actions">
+    <button type="button" id="raceV42BreakToggle">▶ Mola başlat</button>
+    <button type="button" id="raceV42BreakReset">↺ Sıfırla</button>
+  </div>
+  <p class="race-v42-break-tip" id="raceV42BreakNote" role="status">Mola öncesinde çalışma kronometreni duraklat ♡</p>
+</section>
+</section>
 
 
 <section aria-labelledby="clubInviteTitle" class="club-card club-invite-card">
@@ -248,5 +260,61 @@
 </div>
 <script src="./firebase-config.js?v=11"></script>
 <script src="./app.js?v=20261021-v41" type="module"></script>
+
+<!-- MY SWEET AJANDA V42: MINI BREAK TIMER (no Firebase / no storage) -->
+<script>
+(() => {
+  'use strict';
+  const clock = document.getElementById('raceV42BreakClock');
+  const toggle = document.getElementById('raceV42BreakToggle');
+  const reset = document.getElementById('raceV42BreakReset');
+  const note = document.getElementById('raceV42BreakNote');
+  if (!clock || !toggle || !reset || !note) return;
+  const duration = 5 * 60;
+  let remaining = duration;
+  let deadline = null;
+  let interval = null;
+  function paint() {
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    clock.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    toggle.textContent = deadline === null ? '▶ Mola başlat' : 'Ⅱ Duraklat';
+    if (remaining === 0) toggle.textContent = '▶ Yeniden başlat';
+  }
+  function stop() {
+    if (interval !== null) { clearInterval(interval); interval = null; }
+    deadline = null;
+  }
+  function tick() {
+    if (deadline === null) return;
+    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    if (remaining === 0) {
+      stop();
+      note.textContent = 'Molan bitti! Hazırsan kaldığın yerden devam et ♡';
+    }
+    paint();
+  }
+  toggle.addEventListener('click', () => {
+    if (deadline !== null) {
+      remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      stop();
+      note.textContent = 'Molan duraklatıldı ♡';
+    } else {
+      if (remaining === 0) remaining = duration;
+      deadline = Date.now() + remaining * 1000;
+      interval = setInterval(tick, 500);
+      note.textContent = 'Şimdi biraz kendine zaman ayır! 🌸';
+    }
+    paint();
+  });
+  reset.addEventListener('click', () => {
+    stop(); remaining = duration;
+    note.textContent = 'Mola öncesinde çalışma kronometreni duraklat ♡';
+    paint();
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+  paint();
+})();
+</script>
 </body>
 </html>
