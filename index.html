@@ -48,6 +48,18 @@
   "inLanguage": "tr-TR"
 }
   </script>
+  <!-- MY SWEET AJANDA: CLEAN CHATGPT UTM -->
+  <script>
+    // Yalnızca ChatGPT kaynak etiketini URL'den gizle; yeniden yükleme yapma.
+    // Diğer parametreler (?room=, vb.) ve # bağlantı parçası aynen kalır.
+    (() => {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.getAll('utm_source').includes('chatgpt.com')) return;
+      url.searchParams.delete('utm_source', 'chatgpt.com');
+      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+    })();
+  </script>
+  <!-- /MY SWEET AJANDA: CLEAN CHATGPT UTM -->
 </head>
 
 <body data-club-page="planner">
