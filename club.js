@@ -92,7 +92,7 @@ let roomActionBusy = false;
 function rememberRoom(id) {
   localStorage.setItem(USER_ROOM, id);
   localStorage.setItem(ROOM_KEY, id); // Sadece hızlı erişim, yetki kaynağı değildir.
-  if ($('clubRaceLink')) $('clubRaceLink').href = `./race.html?v=20261021-v37&room=${encodeURIComponent(id)}`;
+  if ($('clubRaceLink')) $('clubRaceLink').href = `./race.html?v=20261021-v41&room=${encodeURIComponent(id)}`;
   // Davet bağlantısını adres satırında tutma: kullanıcı tekrar sayfayı
   // açtığında katılım alanının yeniden dolmasını önler.
   if (IS_RACE) {
@@ -145,7 +145,7 @@ const monthCollection = type =>
   );
 
 const publicUrl = () => roomId ?
-  `https://kingp4-cmyk.github.io/my-sweet-planner/race.html?v=20261021-v37&room=${encodeURIComponent(roomId)}` : '';
+  `https://kingp4-cmyk.github.io/my-sweet-planner/race.html?v=20261021-v41&room=${encodeURIComponent(roomId)}` : '';
 
 function status(text) {
   if ($('clubStatus')) {
@@ -401,7 +401,7 @@ function render() {
           </h2>
 
           <a
-            href="./race.html?v=20261021-v37&room=${encodeURIComponent(roomId)}"
+            href="./race.html?v=20261021-v41&room=${encodeURIComponent(roomId)}"
             class="club-btn club-btn-soft"
             style="text-decoration:none">
             Yarışa git →
@@ -1237,7 +1237,7 @@ async function initialize() {
 void initialize();
 
 if (IS_RACE) {
-  import('./race-timer.js?v=20261021-v37')
+  import('./race-timer.js?v=20261021-v41')
     .then(m => {
       window.MSP.activeTimer = m.initRaceTimer({
         user,
