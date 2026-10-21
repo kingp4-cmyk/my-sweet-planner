@@ -8,6 +8,13 @@
   <title>Günlüğüm ♡ | My Sweet Ajanda</title>
   <link rel="stylesheet" href="./journal.css?v=26-delete-save">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
+<!-- v44: journal typewriter button in writing toolbar -->
+<style>
+.journal-tools .tools-body #journalTypewriterToggle[aria-pressed="true"] { background:linear-gradient(130deg,#ffe0ef,#f1ddff); border-color:#df79ba; box-shadow:inset 0 0 0 1px #fce4f4; }
+.journal-tools .tools-body #journalTypewriterLabel { font-size:11px; min-width:0; text-align:left; line-height:1.3; }
+@media(max-width:740px) { .journal-tools .tools-body #journalTypewriterLabel { font-size:10px; text-align:center; } }
+</style>
 </head>
 <body class="journal-app">
   <div class="journal-shell" id="journalRoot" hidden>
@@ -62,6 +69,7 @@
             </button>
             <div id="journalFontChoices" class="journal-font-choices" hidden aria-label="Yazı tipini seç"><button type="button" data-journal-font="georgia" style="font-family:Georgia,serif" aria-pressed="false"><span>Klasik günlük</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="trebuchet" style="font-family:'Trebuchet MS',sans-serif" aria-pressed="false"><span>Tatlı modern</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="verdana" style="font-family:Verdana,sans-serif" aria-pressed="false"><span>Kolay okunan</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="comic" style="font-family:'Comic Sans MS',cursive" aria-pressed="false"><span>El yazısı havası</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="courier" style="font-family:'Courier New',monospace" aria-pressed="false"><span>Daktilo</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="times" style="font-family:'Times New Roman',serif" aria-pressed="false"><span>Roman</span><strong>Bugün güzel bir gün ♡</strong></button><button type="button" data-journal-font="cursive" style="font-family:cursive" aria-pressed="false"><span>Romantik el yazısı</span><strong>Bugün güzel bir gün ♡</strong></button></div>
           </div>
+          <button type="button" id="journalTypewriterToggle" aria-pressed="false" title="Yazarken yumuşak daktilo sesini aç veya kapat"><span aria-hidden="true">⌨️</span><span id="journalTypewriterLabel">Daktilo: Kapalı</span></button>
           <span class="toolbar-divider" aria-hidden="true"></span>
           <span aria-hidden="true">🎀 ♡ ✦ 🌷</span>
           <div class="journal-date-controls">
@@ -216,5 +224,6 @@
   </section>
   <script src="./firebase-config.js?v=12"></script>
   <script type="module" src="./journal.js?v=26-delete-save"></script>
+<script src="./cozy-features.js?v=48-fairydust" defer></script>
 </body>
 </html>

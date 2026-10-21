@@ -13,6 +13,21 @@
 <link href="./club.css?v=20261021-v41" rel="stylesheet"/>
 <link href="./race-glam.css?v=20261021-v42" rel="stylesheet"/>
 
+
+<!-- v44: mini-break settings; original race styles untouched -->
+<style>
+.glam-race .race-v43-break-settings { display:grid; justify-items:center; gap:6px; margin:8px auto 3px; width:100%; max-width:360px; }
+.glam-race .race-v43-break-settings > label:first-child { font-size:12px; font-weight:850; color:#9f3c75; }
+.glam-race .race-v43-break-duration-row { display:flex; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; }
+.glam-race .race-v43-break-duration-row input { width:72px; min-height:36px; padding:5px 7px; border-radius:11px; border:1px solid #eda9cf; background:#fffafd; color:#982e70; font-size:15px; font-weight:800; text-align:center; }
+.glam-race .race-v43-break-duration-row span { font-size:10px; color:#a5678f; }
+.glam-race .race-v43-break-presets { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+.glam-race .race-v43-break-presets button { padding:5px 11px; font-size:11px; font-weight:800; border-radius:999px; border:1px solid #efb4d2; background:#fff8fc; color:#aa4884; cursor:pointer; }
+.glam-race .race-v43-break-presets button[aria-pressed="true"] { background:#dc76ac; border-color:#dc76ac; color:white; }
+.glam-race .race-v43-break-sound { display:flex; align-items:center; justify-content:center; gap:5px; font-size:11px; font-weight:700; color:#a34e83; cursor:pointer; text-align:left; }
+.glam-race .race-v43-break-sound input { width:15px; height:15px; accent-color:#d85b9c; flex:none; }
+@media (max-width:480px) { .glam-race .race-v43-break-settings { gap:7px; } }
+</style>
 </head>
 <body class="club-race-page glam-race race-v34-theme race-v35-theme race-v36-theme" data-club-page="race">
 <section class="account-gate" id="accountGate">
@@ -225,11 +240,29 @@
 <section aria-labelledby="raceV42BreakTitle" class="club-card race-v42-break-card">
   <div class="race-v42-break-heading"><span aria-hidden="true">🌷</span><h2 id="raceV42BreakTitle">Mini mola köşesi</h2></div>
   <p>Biraz dinlen, sonra yeniden parılda! ♡</p>
+  <div class="race-v43-break-settings">
+    <label for="raceV43BreakMinutes">⏳ Mola süren (dakika)</label>
+    <div class="race-v43-break-duration-row">
+      <input type="number" id="raceV43BreakMinutes" min="1" max="240" step="1" value="5" inputmode="numeric" aria-describedby="raceV43BreakHelp">
+      <span id="raceV43BreakHelp">1–240 dakika arasında seçebilirsin ♡</span>
+    </div>
+    <div class="race-v43-break-presets" role="group" aria-label="Hızlı mola süresi">
+      <button type="button" data-race-break-minutes="5">5 dk</button>
+      <button type="button" data-race-break-minutes="10">10 dk</button>
+      <button type="button" data-race-break-minutes="15">15 dk</button>
+    </div>
+    <label class="race-v43-break-sound" for="raceV43BreakSound">
+      <input type="checkbox" id="raceV43BreakSound" checked>
+      <span>🔔 Mola bitince tatlı bir melodi çal</span>
+    </label>
+  </div>
   <div class="race-v42-break-time" id="raceV42BreakClock" role="timer" aria-label="Mola için kalan süre">05:00</div>
   <div class="race-v42-break-actions">
     <button type="button" id="raceV42BreakToggle">▶ Mola başlat</button>
     <button type="button" id="raceV42BreakReset">↺ Sıfırla</button>
+    <button type="button" id="raceV44Silence" hidden>🔕 Zili sustur</button>
   </div>
+  <button type="button" id="raceV44Permission" style="font-size:11px;border:1px solid #efbdd9;border-radius:10px;background:#fff6fc;padding:5px 9px;color:#a2457c;cursor:pointer;margin-top:10px">🔔 Masaüstü bildirimlerine izin ver</button>
   <p class="race-v42-break-tip" id="raceV42BreakNote" role="status">Mola öncesinde çalışma kronometreni duraklat ♡</p>
 </section>
 </section>
@@ -261,60 +294,6 @@
 <script src="./firebase-config.js?v=11"></script>
 <script src="./app.js?v=20261021-v41" type="module"></script>
 
-<!-- MY SWEET AJANDA V42: MINI BREAK TIMER (no Firebase / no storage) -->
-<script>
-(() => {
-  'use strict';
-  const clock = document.getElementById('raceV42BreakClock');
-  const toggle = document.getElementById('raceV42BreakToggle');
-  const reset = document.getElementById('raceV42BreakReset');
-  const note = document.getElementById('raceV42BreakNote');
-  if (!clock || !toggle || !reset || !note) return;
-  const duration = 5 * 60;
-  let remaining = duration;
-  let deadline = null;
-  let interval = null;
-  function paint() {
-    const minutes = Math.floor(remaining / 60);
-    const seconds = remaining % 60;
-    clock.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-    toggle.textContent = deadline === null ? '▶ Mola başlat' : 'Ⅱ Duraklat';
-    if (remaining === 0) toggle.textContent = '▶ Yeniden başlat';
-  }
-  function stop() {
-    if (interval !== null) { clearInterval(interval); interval = null; }
-    deadline = null;
-  }
-  function tick() {
-    if (deadline === null) return;
-    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-    if (remaining === 0) {
-      stop();
-      note.textContent = 'Molan bitti! Hazırsan kaldığın yerden devam et ♡';
-    }
-    paint();
-  }
-  toggle.addEventListener('click', () => {
-    if (deadline !== null) {
-      remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-      stop();
-      note.textContent = 'Molan duraklatıldı ♡';
-    } else {
-      if (remaining === 0) remaining = duration;
-      deadline = Date.now() + remaining * 1000;
-      interval = setInterval(tick, 500);
-      note.textContent = 'Şimdi biraz kendine zaman ayır! 🌸';
-    }
-    paint();
-  });
-  reset.addEventListener('click', () => {
-    stop(); remaining = duration;
-    note.textContent = 'Mola öncesinde çalışma kronometreni duraklat ♡';
-    paint();
-  });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
-  paint();
-})();
-</script>
+<script src="./cozy-features.js?v=48-fairydust" defer></script>
 </body>
 </html>
