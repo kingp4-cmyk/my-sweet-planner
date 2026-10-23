@@ -1,0 +1,23 @@
+# macOS / archive metadata
+.DS_Store
+.AppleDouble
+__MACOSX/
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+
+# Local exports and temporary files
+*.zip
+*.log
+*.bak
+*.orig
+*.tmp
+
+# Generated build and test outputs (if used later)
+node_modules/
+dist/
+coverage/
