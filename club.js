@@ -38,7 +38,25 @@ const AVATARS = [
   ['mint', 'Kizil sacli tatli kiz', 'female'],
   ['blonde', 'Pembe sapkali cool girl', 'female'],
   ['sky', 'Yaz gunu sarisin', 'female'],
-  ['navy', 'Cupcake seven romantik', 'female']
+  ['navy', 'Cupcake seven romantik', 'female'],
+  ['extra09', 'Pembe kurdeleli sarışın', 'female'],
+  ['extra10', 'Kıvırcık kızıl saçlı', 'female'],
+  ['extra11', 'Pembe fiyonklu siyah saçlı', 'female'],
+  ['extra12', 'Mavi saçlı yıldız kız', 'female'],
+  ['extra13', 'Kahverengi saçlı romantik', 'female'],
+  ['extra14', 'Pembe yıldızlı saç', 'female'],
+  ['extra15', 'Beyaz saçlı çiçekli kız', 'female'],
+  ['extra16', 'Mor kelebekli kız', 'female'],
+  ['extra17', 'Örgülü siyah saçlı kız', 'female'],
+  ['extra18', 'Yeşil saçlı çiçekli kız', 'female'],
+  ['extra19', 'Pembe mavi kulaklıklı', 'female'],
+  ['extra20', 'Turuncu saçlı peri', 'female'],
+  ['extra21', 'Sarı yıldızlı peri', 'female'],
+  ['extra22', 'Çiçek taçlı kız', 'female'],
+  ['extra23', 'Kulaklıklı koyu mavi saçlı', 'female'],
+  ['extra24', 'Kısa pembe saçlı kız', 'female'],
+  ['extra25', 'Deniz temalı kıvırcık kız', 'female'],
+  ['extra26', 'Pembe çiçekli peri', 'female']
 ];
 
 const LOOKS = new Map(

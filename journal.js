@@ -871,7 +871,12 @@ async function openJournal(nextUser) {
   void getDoc(doc(db,'raceProfiles',user.uid)).then(snap=>{
     if(!snap.exists())return;
     const profile=snap.data();
-    const looks=['pink','denim','violet','black','mint','blonde','sky','navy'];
+    const looks=[
+      'pink','denim','violet','black','mint','blonde','sky','navy',
+      'extra09', 'extra10', 'extra11', 'extra12', 'extra13', 'extra14',
+      'extra15', 'extra16', 'extra17', 'extra18', 'extra19', 'extra20',
+      'extra21', 'extra22', 'extra23', 'extra24', 'extra25', 'extra26'
+    ];
     const legacy={moss:'pink',charcoal:'black',amber:'denim',coral:'mint'};
     const key=legacy[profile.avatar]||profile.avatar;
     const idx=looks.indexOf(key);
