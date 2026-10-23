@@ -18,6 +18,23 @@ My Sweet Ajanda is a personal web development project designed to make everyday 
 
 The interface is in Turkish. An account and email verification are required to use the cloud-connected features.
 
+## Screenshots
+
+### Planner
+<p align="center">
+  <img src="assets/readme/planner-page.png" alt="My Sweet Ajanda planner page" width="80%">
+</p>
+
+### Journal
+<p align="center">
+  <img src="assets/readme/journal-page.png" alt="My Sweet Ajanda personal journal page" width="80%">
+</p>
+
+### Real-time Study Race
+<p align="center">
+  <img src="assets/readme/study-race-page.png" alt="My Sweet Ajanda real-time study race page" width="80%">
+</p>
+
 ## Features
 
 ### Planner
